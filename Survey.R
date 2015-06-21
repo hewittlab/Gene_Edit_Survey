@@ -150,5 +150,4 @@ ggplot(data=data,aes(x=age,fill=sex)) +
 ggsave(file="Pyramid_Plot.eps", width=12, height=10)
 
 
-test - this is a test
 
