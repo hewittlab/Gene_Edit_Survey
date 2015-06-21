@@ -1,3 +1,6 @@
+# MARK SYSTEM TIME
+t_start<-Sys.time()
+
 library(jsonlite) # Import .json file
 library(stringr) # Trim whitespace 
 library(XML) # Bubble plot map
@@ -150,4 +153,8 @@ ggplot(data=data,aes(x=age,fill=sex)) +
 ggsave(file="Pyramid_Plot.eps", width=12, height=10)
 
 
-
+# MARK SYSTEM TIME AGAIN
+# Subtract from t_start and print difference
+t_end<-Sys.time()
+t_dur=t_end-t_start
+print(t_dur)
