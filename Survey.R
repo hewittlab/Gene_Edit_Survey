@@ -141,7 +141,29 @@ data$worked_health <- recode(data$worked_health,
 c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
 levels(data$worked_health)
                       
-                      
+
+# WORKED_HEALTH_TYPE
+# Trim Whitespace
+data$worked_health_type <- str_trim(data$worked_health_type, side = "both")
+# Make as Factor
+data$worked_health_type <- as.factor(data$worked_health_type)
+levels(data$worked_health_type)
+# Recode
+data$worked_health_type <- recode(data$worked_health_type,
+'c("Medical Doctor", "طبيب", "医生", "Docteur / Doctoresse", "Arzt", "चिकित्सक", "医師", "Médico(a)", "Врач", "Doctorado en medicina", "Tıbbi Doktor") = 1;
+
+c("Scientific Researcher", "باحث علمى", "科研工作者", "Scientifique", "wissenschaftlicher Mitarbeiter", "वैज्ञानिकशोधकर्ता", "科学研究者", "Pesquisador(a) Científico(a)", "Научный сотрудник", "Investigación científica", "Bilimsel Araştırmacı") = 2;
+
+c("Nurse", "ممرض", "护士", "Infirmier/ infirmière", "Krankenschwester", "नर्स", "看護師", "Enfermeiro(a)", "Медсестра (медбрат)", "Enfermería", "Hemşire") = 3;
+
+c("Allied health worker", "عامل صحى", "合作医疗工作者", "Auxiliaire de médecine", "Krankenpfleger", "अन्यस्वास्थ्यकार्यकर्ता", "保険ワーカー", "Agente de Saúde Conveniado", "Похожие медицинские специальности", "Trabajador aliado de la salud", "Yardımcı sağlık görevlisi") = 4;
+
+c("Other role at hospital/medical centre", "دور آخر فى مستشفى/مركز طبى", "医院或其他医疗中心工 作者", "Autre rôle dans un hôpital / centre médical", "andere Rolle im Krankenhaus/Klinikum", "अस्पताल/मेडिकलसेंटरमेंअन्यभूमिका", "病院／医療センターでの他の仕事", "Outro cargo no centro médico/hospital", "Прочие должности при больнице/медицинском центре", "Otra función en un hospital/centro médico", "Hastanede/sağlık merkezinde diğer bir rol") = 5;
+
+c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他", "Outros", "Другое", "Otro", "Diğer") = 6')
+levels(data$worked_health_type)
+
+
 
 #GEOFUNC----------------------------------------------------------------------------------------
 
