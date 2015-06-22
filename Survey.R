@@ -1,3 +1,4 @@
+#IMPORT----
 # MARK SYSTEM TIME
 t_start<-Sys.time()
 
@@ -22,11 +23,11 @@ library(doBy) # Group summary stats
 setwd('~/Dropbox/Research Projects/2015/Gene Edit Survey')
 data <- fromJSON('Answers.json')
 
-#----------------------------------------------------------------------------------------
+#MERGE----------------------------------------------------------------------------------------
 
 # NEED TO MERGE WE CHAT DATA HERE
 
-#----------------------------------------------------------------------------------------
+#RENAME----------------------------------------------------------------------------------------
 
 # RENAME AND REORDER VARIABLES
 
@@ -39,7 +40,7 @@ data$age <- 2015-data$YOB
 # Reorder
 data <- data[c("client", "objectId", "createdAt", "updatedAt", "ip", "language", "country", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "other_traits_alter", "gen_mod_food", "religion", "religion_type", "question_25", "question_100", "question_101", "question_102" )]
 
-#----------------------------------------------------------------------------------------
+#RECODE----------------------------------------------------------------------------------------
 
 # RECODE VARIABLES AS NOMINAL/ORDINAL
 
@@ -54,6 +55,7 @@ data$sex <- recode(data$sex,
 'c("Male", "Homme", "ذكر", "男", "Männlich", "पुरुषों", "男性", "Masculino", "Мужской", "Erkek") = "M";
 c("Female", "Femme", "أنثى", "女", "Weiblich", "मिहला", "女性", "Feminino", "Женский", "Femenino", "Kadın") = "F"')
 levels(data$sex)
+
 
 # ETHNICITY
 # Trim Whitespace
@@ -86,6 +88,7 @@ c("Pacific (Polynesian, micronesian, etc)", "المحيط الهادى (بولو
 c("South East Asian (Chinese, Thai, Malay, Filipino, etc)", "جنوب شرق آسيا (صينى، تايلاندى، ماليزى، فليبينى، إلخ)", "东南亚裔（中国，泰国，马来，菲律宾等）", "Asiatique du sud-est -Chinois, Thaï, Malaisienne, Philippine, etc...)", "Südöstliche Asiaten (chinesisch, thai,  malaysisch, Filipino etc.)", "दक्षिणपूर्वएशियाई (चीनी, थाई, मलय, फिलिपिनो,आदि)", "南東アジア（中国人、タイ人、マレーシア人、フィリピン人、など）", "Do Sudeste Asiático (chinês, tailandês, malaio, filipino, etc)", "Юго-восточный азиат (китаец, таец, малаец, филиппинец и т.п.)", "Del sudeste asiático (chino, tailandés, malayo, filipino, etc.)", "Güney Doğu Asyalı (Çinli, Tay, Malezyalı, Filipinli, vs)") = 11')
 levels(data$ethnicity) 
 
+
 # WEALTH
 # Trim Whitespace
 data$wealth <- str_trim(data$wealth, side = "both")
@@ -100,10 +103,44 @@ c("Average wealth", "متوسط", "平均水平", "Dans la moyenne financière",
 
 c("Below average wealth", "تحت المتوسط", "低于平均水平", "En dessous de la moyenne financièr", "unterdurchschnittlich Wohlstand", "औसतधनराशि सेनीचे", "平均よりも下", "Classe Baixa", "Ниже среднего", "Por debajo del salario promedio", "Genel refah düzeyinin altında") = 3')
 levels(data$wealth)
-              
 
 
-#----------------------------------------------------------------------------------------
+# EDU_LEVEL
+# Trim Whitespace
+data$edu_level <- str_trim(data$edu_level, side = "both")
+# Make as Factor
+data$edu_level <- as.factor(data$edu_level)
+levels(data$edu_level)
+# Recode
+data$edu_level <- recode(data$edu_level,
+'c("No formal schooling", "تعليم غير رسمى", "未上过正规学校", "Aucune éducation scolaire", "keine Schulausbildung", "कोईऔपचारिकस्कूलीशिक्षानहीं", "学校教育なし", "Sem escolaridade formal", "Нет официального образования", "Sin escolaridad formal", "Herhangi bir resmi eğitimim yok") = 1;
+
+c("Finished primary school", "أنهيت المرحلة الابتدائية", "小学毕业", "École primaire", "Grunds hulabschluss", "प्राथमिकविद्यालयपूरीकी", "小学校を卒業", "Primário completo", "Начальное", "Escuela primaria concluida", "İlkokul veya ortaokul mezunuyum") = 2;
+
+c("Finished high school", "أنهيت المرحلة الثانوية", "高中毕业", "Lycée", "Abitur", "उच्चविद्यालयपूरीकी", "高校を卒業", "Ensino médio completo", "Среднее", "Escuela secundaria concluida", "Lise veya dengi mezunuyum") = 3;
+
+c("Finished a course following school", "أنهيت دورة بعد المرحلة المدرسة", "仅完成学校学业", "Cours en dehors de l’école", "Kurs nach der Schule", "स्कूलकेबादएककोर्ससमाप्तकिया", "学校卒業に続くコースを終了", "Completou um curso após a escola", "Среднее специальное", "Concluí un curso después de la educación básica", "Okulu müteakip bir kurs bitirdim") = 4;
+
+c("Finished undergraduate university degree", "أنهيت التعليم الجامعى", "大学毕业", "Licence", "Bachelor-Abschluss", "विश्वविद्यालयकेस्नातक(undergraguate)कीडिग्रीली", "年制大学を卒業", "Formação universitária de graduação completa", "Бакалавр", "Escolaridad a nivel licenciatura concluida", "Yüksekokul ya da fakülte mezunuyum") = 5;
+
+c("Finished postgraduate university degree", "أنهيت الراسات العليا", "研究生毕业", "Master", "Doctorat", "Diplom‐Abschluss", "स्नातकोत्तर(postgraduate)विश्वविद्यालयकीडिग्रीली", "大学院を卒業", "Formação universitária de pós-graduação completa", "Магистр", "Escolaridad a nivel de posgrado concluida", "Yüksek lisans mezunuyum") = 6;
+
+"" = NA')
+levels(data$edu_level)
+
+
+# WORKED_HEALTH
+# Trim Whitespace
+data$worked_health <- str_trim(data$worked_health, side = "both")
+# Make as Factor
+data$worked_health <- as.factor(data$worked_health)
+levels(data$worked_health)
+# Recode
+data$worked_health <- recode(data$worked_health,
+                      
+                      
+
+#GEOFUNC----------------------------------------------------------------------------------------
 
 # FUNCTION TO GEOLOCATE FROM IP ADDRESS
 
@@ -129,7 +166,7 @@ freegeoip <- function(ip, format = ifelse(length(ip)==1,'list','dataframe'))
   }
 }  
 
-#----------------------------------------------------------------------------------------
+#IPVEC----------------------------------------------------------------------------------------
 
 # CREATE VECTOR OF IP ADDRESSES, TRIM PRECEDING WHITESPACE AND REMOVE NA'S
 
@@ -138,14 +175,14 @@ ipvec<-str_trim(ipvec, side = "left")
 sum(is.na(ipvec))
 ipvec <- ipvec[!is.na(ipvec)]
 
-#----------------------------------------------------------------------------------------
+#GEODATA----------------------------------------------------------------------------------------
 
 # GENERATE GEOLOCATION DATA
 
 geodata <- freegeoip(ipvec)
 geodata
 
-#----------------------------------------------------------------------------------------
+#BUBBLE----------------------------------------------------------------------------------------
 
 # BUBBLE PLOT OF IP DATA
 
@@ -176,7 +213,7 @@ geom_polygon(data = map, aes(long, lat, group=group), fill="grey50") +
 geom_point(data = mapdata, aes(x=longitude.m, y=latitude.m, map_id = time_zone, size = latitude.N), col="red")
 ggsave(file="Bubble_Plot.eps", width=12, height=6)
 
-#----------------------------------------------------------------------------------------
+#POPN----------------------------------------------------------------------------------------
 
 # POPULATION PYRAMID
 
