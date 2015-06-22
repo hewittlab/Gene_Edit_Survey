@@ -3,8 +3,6 @@ t_start<-Sys.time()
 
 library(jsonlite) # Import .json file
 library(stringr) # Trim whitespace 
-library(XML) # Bubble plot map
-library(httr) # Bubble plot map
 library(maps) # Bubble plot map
 library(ggplot2) # Plots
 library(plyr) # Various
@@ -52,7 +50,9 @@ data$sex <- str_trim(data$sex, side = "both")
 data$sex <- as.factor(data$sex)
 levels(data$sex)
 # Recode
-data$sex <- recode(data$sex,'c("Male", "Homme", "ذكر", "男", "Männlich", "पुरुषों", "男性", "Masculino", "Мужской", "Erkek") = "M"; c("Female", "Femme", "أنثى", "女", "Weiblich", "मिहला", "女性", "Feminino", "Женский", "Femenino", "Kadın") = "F"')
+data$sex <- recode(data$sex,
+'c("Male", "Homme", "ذكر", "男", "Männlich", "पुरुषों", "男性", "Masculino", "Мужской", "Erkek") = "M";
+c("Female", "Femme", "أنثى", "女", "Weiblich", "मिहला", "女性", "Feminino", "Женский", "Femenino", "Kadın") = "F"')
 levels(data$sex)
 
 # ETHNICITY
@@ -62,8 +62,34 @@ data$ethnicity <- str_trim(data$ethnicity, side = "both")
 data$ethnicity <- as.factor(data$ethnicity)
 levels(data$ethnicity)
 # Recode
-data$ethnicity <- recode(data$ethnicity,'c("Mixed Race", "Karışık (Melez)", "Raza mixta", "Смешанная раса", "Raça mista", "Gemischte Rasse", "Métis", "混血", "عرقية مختلطة", "मिश्र जाति") = 1; c("African/African American", "Afroamericano/Africano", "Africana/afro-americana", "Africain/Afro-américain", "Afro/Afro-Amerikanisch", "Африканец/Афроамериканец", "Afrikalı", "非裔美籍", "アフリカ人／アフリカ系アメリカ人", "أفريقى/ أمريكى أفريقى", "अफ्रीकी / अफ्रीकी अमेरिकी") = 2; c("Asian Indian", "Indio asiático", "Asiatische Inder", "Asiático Índico", "Indien d’Asie", "印度裔", "भारतीय/एशियाई", "هندى أسيوى", "Индиец", "Hint Asyalı", "アジア系インド人") = 3')
-                 
+data$ethnicity <- recode(data$ethnicity,
+'c("Mixed Race", "Karışık (Melez)", "Raza mixta", "Смешанная раса", "Raça mista", "Gemischte Rasse", "Métis", "混血", "عرقية مختلطة", "मिश्र जाति") = 1; 
+
+c("African/African American", "Afroamericano/Africano", "Africana/afro-americana", "Africain/Afro-américain", "Afro/Afro-Amerikanisch", "Африканец/Афроамериканец", "Afrikalı", "非裔美籍 ", "アフリカ人／アフリカ系アメリカ人 ", "أفريقى/ أمريكى أفريقى", "अफ्रीकी / अफ्रीकी अमेरिकी") = 2; 
+
+c("Asian Indian", "Indio asiático", "Asiatische Inder", "Asiático Índico", "Indien d’Asie", "印度裔 ", "भारतीय/एशियाई", "هندى أسيوى", "Индиец", "Hint Asyalı", "アジア系インド人 ") = 3; 
+
+c("Caucasian (European)", "قوقازى (أوروبى)", "白种人（欧洲）", "Caucasien (Européen)", "Kaukasic/Europäer", "श्वेतजाति  (यूरोपीय)", "白人（ヨーロッパ系）", "Caucasiano (Europeu)", "Европеоид (Европа)", "Caucásico (europeo)", "Avrupalı") = 4; 
+
+c("Caucasian (Middle East)", "قوقازى (شرق أوسطى)", "白种人（中东）", "Caucasien (Moyen-Orient)", "श्वेतजाति  (मध्यपूर्व)", "白人（中東系)", "Caucasiano (Oriente Médio)", "Европеоид (Ближний Восток)", "Caucásico (medio oriente)", "Orta Doğulu") = 5; 
+
+c("Hispanic, Latino or Spanish", "هسبانى أو لاتينى أو اسبانى", "西班牙，拉美裔 ", "Hispanique, Latino", "Hispanic, Latino oder Spanish", "हिस्पैनिकलातीनोयास्पेनिश", "ヒスパニック、ラテン系またはスペイン人", "Hispânico, latino ou espanhol", "Латиноамериканец или испанец", "Hispano, latinoamericano o español", "Hispanik, Latin veya İspanyol") = 6; 
+
+c("Indigenous Australian", "أسترالى أصلى", "澳大利亚土著人 ", "Indigène australien", "Einheimischer Australier", "मूलऑस्ट्रेलियाई", "原住民オーストラリア人", "Indígena Australiano", "Австралийский абориген", "Indígena australiano", "Avusturalya Yerlisi") = 7;
+
+c("Native American", "أمريكى أصلى", "美国人 ", "Indien d’Amérique", "Einheimischer Amerikaner (Indianer)", "मूलअमेरिकी", "アメリカ先住民 ", "Americano Nativo", "Коренной американец", "Nativo americano", "Amerika Yerlisi") = 8;
+
+c("North East Asian (Mongol, Tibetan, Korean, Japanese, etc)", "شمال شرق آسيا (منغولى، تبتى، كورى، يابانى، إلخ)", "东北亚裔（蒙古，西藏，韩国，日本等）", "Asiatique du nord-est (Mongol, Tibétaine, Coréen, Japonais, etc...)", "Nordöstliche Asiaten (mongolisch, tibetisch, koreanisch, japanisch etc.)", "उत्तर-पूर्वएशियाई (मंगोल, तिब्बती, कोरियाई, जापानी, आदि)", "北東アジア（モンゴル人、チベット族、韓国人、日本人、など）", "Norte Leste Asiático (mongol, tibetano, coreano, japonês, etc.)", "Северо-восточный азиат (монгол, тибетец, кореец, японец и т.п.)", "Del noreste asiático (mongol, tibetano, coreano, japonés, etc.)", "Kuzey Doğu Asyalı (Moğol, Tibet, Koreli, Japon, vs)") = 9;
+
+c("Pacific (Polynesian, micronesian, etc)", "المحيط الهادى (بولونيزى، ميكرونيزى، إلخ)", "太平洋(波利尼西亚, 密克罗尼西亚等) ", "Pacifique (Polynésien, Micronésien, etc...)", "Pazifische (Polynesisch etc.)", "प्रशांत (पॉलिनीषियन, माइक्रोनेशियन, आदि)", "大西洋（ポリネシア人、ミクロネシア人、など）", "Pacífico (etc. da Micronésia, Polinésia,)", "Тихоокеанец (полинезиец, микронезиец и т.п.)", "Del Pacífico (polinesio, micronesio, etc.)", "Pasifik (Polinezyalı, Mikronezyalı, vs)") = 10;
+
+c("South East Asian (Chinese, Thai, Malay, Filipino, etc)", "جنوب شرق آسيا (صينى، تايلاندى، ماليزى، فليبينى، إلخ)", "东南亚裔（中国，泰国，马来，菲律宾等）", "Asiatique du sud-est -Chinois, Thaï, Malaisienne, Philippine, etc...)", "Südöstliche Asiaten (chinesisch, thai,  malaysisch, Filipino etc.)", "दक्षिणपूर्वएशियाई (चीनी, थाई, मलय, फिलिपिनो,आदि)", "南東アジア（中国人、タイ人、マレーシア人、フィリピン人、など）", "Do Sudeste Asiático (chinês, tailandês, malaio, filipino, etc)", "Юго-восточный азиат (китаец, таец, малаец, филиппинец и т.п.)", "Del sudeste asiático (chino, tailandés, malayo, filipino, etc.)", "Güney Doğu Asyalı (Çinli, Tay, Malezyalı, Filipinli, vs)") = 11')
+
+levels(data$ethnicity) 
+
+
+
+              
 
 
 #----------------------------------------------------------------------------------------
