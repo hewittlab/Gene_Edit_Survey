@@ -137,6 +137,9 @@ data$worked_health <- as.factor(data$worked_health)
 levels(data$worked_health)
 # Recode
 data$worked_health <- recode(data$worked_health,
+'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
+c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+levels(data$worked_health)
                       
                       
 
