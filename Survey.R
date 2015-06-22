@@ -84,11 +84,22 @@ c("North East Asian (Mongol, Tibetan, Korean, Japanese, etc)", "شمال شرق 
 c("Pacific (Polynesian, micronesian, etc)", "المحيط الهادى (بولونيزى، ميكرونيزى، إلخ)", "太平洋(波利尼西亚, 密克罗尼西亚等) ", "Pacifique (Polynésien, Micronésien, etc...)", "Pazifische (Polynesisch etc.)", "प्रशांत (पॉलिनीषियन, माइक्रोनेशियन, आदि)", "大西洋（ポリネシア人、ミクロネシア人、など）", "Pacífico (etc. da Micronésia, Polinésia,)", "Тихоокеанец (полинезиец, микронезиец и т.п.)", "Del Pacífico (polinesio, micronesio, etc.)", "Pasifik (Polinezyalı, Mikronezyalı, vs)") = 10;
 
 c("South East Asian (Chinese, Thai, Malay, Filipino, etc)", "جنوب شرق آسيا (صينى، تايلاندى، ماليزى، فليبينى، إلخ)", "东南亚裔（中国，泰国，马来，菲律宾等）", "Asiatique du sud-est -Chinois, Thaï, Malaisienne, Philippine, etc...)", "Südöstliche Asiaten (chinesisch, thai,  malaysisch, Filipino etc.)", "दक्षिणपूर्वएशियाई (चीनी, थाई, मलय, फिलिपिनो,आदि)", "南東アジア（中国人、タイ人、マレーシア人、フィリピン人、など）", "Do Sudeste Asiático (chinês, tailandês, malaio, filipino, etc)", "Юго-восточный азиат (китаец, таец, малаец, филиппинец и т.п.)", "Del sudeste asiático (chino, tailandés, malayo, filipino, etc.)", "Güney Doğu Asyalı (Çinli, Tay, Malezyalı, Filipinli, vs)") = 11')
-
 levels(data$ethnicity) 
 
+# WEALTH
+# Trim Whitespace
+data$wealth <- str_trim(data$wealth, side = "both")
+# Make as Factor
+data$wealth <- as.factor(data$wealth)
+levels(data$wealth)
+# Recode
+data$wealth <- recode(data$wealth,
+'c("Above average wealth", "فوق المتوسط", "平均水平之上", "Au dessus de la moyenne financièree", "überdurchschnittlicher Wohlstand", "औसतधनराशिकेऊपर", "平均よりも上", "Classe Alta", "Выше среднего", "Por encima del salario promedio", "Genel refah düzeyinin üstünde") = 1;
 
+c("Average wealth", "متوسط", "平均水平", "Dans la moyenne financière", "mittlerer Wohlstand", "औसतधनराशि", "平均", "Classe Média", "Среднее", "Salario promedio", "Genel refah düzeyinde") = 2;
 
+c("Below average wealth", "تحت المتوسط", "低于平均水平", "En dessous de la moyenne financièr", "unterdurchschnittlich Wohlstand", "औसतधनराशि सेनीचे", "平均よりも下", "Classe Baixa", "Ниже среднего", "Por debajo del salario promedio", "Genel refah düzeyinin altında") = 3')
+levels(data$wealth)
               
 
 
