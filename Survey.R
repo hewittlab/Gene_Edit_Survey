@@ -69,7 +69,7 @@ data$ethnicity <- recode(data$ethnicity,
 
 c("African/African American", "Afroamericano/Africano", "Africana/afro-americana", "Africain/Afro-américain", "Afro/Afro-Amerikanisch", "Африканец/Афроамериканец", "Afrikalı", "非裔美籍 ", "アフリカ人／アフリカ系アメリカ人 ", "أفريقى/ أمريكى أفريقى", "अफ्रीकी / अफ्रीकी अमेरिकी") = 2; 
 
-c("Asian Indian", "Indio asiático", "Asiatische Inder", "Asiático Índico", "Indien d’Asie", "印度裔 ", "भारतीय/एशियाई", "هندى أسيوى", "Индиец", "Hint Asyalı", "アジア系インド人 ") = 3; 
+c("Asian Indian", "Indio asiático", "Asiatische Inder", "Asiático Índico", "Indien d’Asie", "印度裔 ", "भारतीय/एशियाई", "هندى أسيوى", "Индиец", "Hint Asyalı", "アジア系インド人") = 3; 
 
 c("Caucasian (European)", "قوقازى (أوروبى)", "白种人（欧洲）", "Caucasien (Européen)", "Kaukasic/Europäer", "श्वेतजाति  (यूरोपीय)", "白人（ヨーロッパ系）", "Caucasiano (Europeu)", "Европеоид (Европа)", "Caucásico (europeo)", "Avrupalı") = 4; 
 
@@ -164,6 +164,30 @@ c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他",
 levels(data$worked_health_type)
 
 
+# HEARD_ABOUT
+# Trim Whitespace
+data$heard_about <- str_trim(data$heard_about, side = "both")
+# Make as Factor
+data$heard_about <- as.factor(data$heard_about)
+levels(data$heard_about)
+# Recode
+# There is a problem here with the string matching for the Hindi response = 2. In the raw text ouput there are 2 levels displayed that appear exactly the same - one of them will match using recode and the other won't (I can't figure this out - a Boolean even says they're the same). So I have needed to recode twice, forcing the non-matching string in an 'else' statement. 
+data$heard_about <- recode(data$heard_about,
+'c("I have never heard of it", "لم أسمع بها من قبل", "从未听说过", "Je n’en ai jamais entendu parler", "Ich habe nie etwas darüber gehört", "मैंनेइसकेबारेमेंकभीनहींसुना|", "聞いたことがない", "Nunca ouvi falar sobre isso", "никогда не слышал об этом", "Jamás he escuchado al respecto", "Hiç duymadım") = 1;
+
+c("I have heard a little about it", "سمعت القليل عنها", "听说过一点点", "J’en ai un peu entendu parler", "Ich eine ein wenig darüber gehört", "मैंने  इसकेबारेमेंथोड़ासासुनाहै|", "少しだけなら聞いたことがある", "Ouvi um pouco sobre isso", "немного слышал об этом", "He escuchado un poco al respecto", "Biraz fikrim var") = 2;
+
+c("I have heard a lot about it", "سمعت الكثير عنها", "很了解", "J’en ai beaucoup entendu parler", "Ich habe viel davon gehört", "मैंनेइसकेबारेमेंकाफीसुनाहै|", "たくさん聞いたことがある", "Ouvi muito sobre isso", "много слышал об этом", "He escuchado mucho al respecto", "Hakkında çok şey duydum") = 3') 
+levels(data$heard_about)
+####
+#Run to here and check that only "मैंने  इसकेबारेमेंथोड़ासासुनाहै|" isn't recoded, before forcing this string to be recoded as 2.
+####
+data$heard_about <- recode(data$heard_about, '1 = 1; 2 = 2; 3 = 3; NA = NA; else = 2')
+levels(data$heard_about)
+
+
+
+
 
 #GEOFUNC----------------------------------------------------------------------------------------
 
@@ -241,6 +265,9 @@ ggsave(file="Bubble_Plot.eps", width=12, height=6)
 #POPN----------------------------------------------------------------------------------------
 
 # POPULATION PYRAMID
+
+# Set ages above 90 <- NA
+data$age[data$age > 90] <- NA
 
 ggplot(data=data,aes(x=age,fill=sex)) + 
   geom_bar(subset=.(sex=="F")) + 
