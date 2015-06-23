@@ -23,6 +23,7 @@ library(doBy) # Group summary stats
 setwd('~/Dropbox/Research Projects/2015/Gene Edit Survey')
 data <- fromJSON('Answers.json')
 
+
 #MERGE----------------------------------------------------------------------------------------
 
 # NEED TO MERGE WE CHAT DATA HERE
@@ -171,7 +172,7 @@ data$heard_about <- str_trim(data$heard_about, side = "both")
 data$heard_about <- as.factor(data$heard_about)
 levels(data$heard_about)
 # Recode
-# There is a problem here with the string matching for the Hindi response = 2. In the raw text ouput there are 2 levels displayed that appear exactly the same - one of them will match using recode and the other won't (I can't figure this out - a Boolean even says they're the same). So I have needed to recode twice, forcing the non-matching string in an 'else' statement. 
+# There is a problem here with the string matching for the Hindi response = 2. In the raw text ouput there are 2 levels displayed that appear exactly the same - one of them will match using recode and the other won't (I can't figure this out - a Boolean even says they're the same). So I have needed to recode twice, coercing the non-matching string in an 'else' statement. 
 data$heard_about <- recode(data$heard_about,
 'c("I have never heard of it", "لم أسمع بها من قبل", "从未听说过", "Je n’en ai jamais entendu parler", "Ich habe nie etwas darüber gehört", "मैंनेइसकेबारेमेंकभीनहींसुना|", "聞いたことがない", "Nunca ouvi falar sobre isso", "никогда не слышал об этом", "Jamás he escuchado al respecto", "Hiç duymadım") = 1;
 
@@ -186,6 +187,33 @@ data$heard_about <- recode(data$heard_about, '1 = 1; 2 = 2; 3 = 3; NA = NA; else
 levels(data$heard_about)
 
 
+# GENETIC_COND
+# Trim Whitespace
+data$genetic_cond <- str_trim(data$genetic_cond, side = "both")
+# Make as Factor
+data$genetic_cond <- as.factor(data$genetic_cond)
+levels(data$genetic_cond)
+# Recode
+data$genetic_cond <- recode(data$genetic_cond,
+'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
+c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+levels(data$genetic_cond)
+
+
+# GENETIC_COND_AFFECTED
+# Trim Whitespace
+data$genetic_cond_affected <- str_trim(data$genetic_cond_affected, side = "both")
+# Make as Factor
+data$genetic_cond_affected <- as.factor(data$genetic_cond_affected)
+levels(data$genetic_cond_affected)
+# Recode
+data$genetic_cond_affected <- recode(data$genetic_cond_affected,
+'c("Me", "أنا", "我", "Moi", "Ich", "मैं", "自分", "Eu", "Я", "Yo", "Ben") = 1;
+
+c("Another family member(s)", "فرد)أفراد( آخر فى الأسرة)", "其他家庭成员", "Un autre membre de ma famille", "Ein Familienzugehöriger", "परिवार का अन्य सदस्य", "自分以外の家族メンバー（複数)", "Outro membro (s) da família", "Другой(-ие) член(-ы) семьи", "Otro(s) miembro(s) de mi familia", "Diğer aile üyesi veya üyeleri") = 2;
+
+c("Me and a family member(s)", "أنا وفرد )أفراد( آخر فى الأسرة)", "我和另外的家庭成员 症状为哪些", "Moi et un membre de ma famille", "Ich und meine Familie", "मैं और परिवार का एक सदस्य", "自分と家族（複数）　 病症は何ですか", "Eu e um membro (s) da família ", "Я и член(-ы) семьи", "Yo y un (otros) miembro(s) de mi familia", "Ben ve diğer bir aile üyesi/üyeleri") = 3')
+levels(data$genetic_cond_affected)
 
 
 
@@ -229,7 +257,6 @@ ipvec <- ipvec[!is.na(ipvec)]
 # GENERATE GEOLOCATION DATA
 
 geodata <- freegeoip(ipvec)
-geodata
 
 #BUBBLE----------------------------------------------------------------------------------------
 
@@ -284,3 +311,4 @@ ggsave(file="Pyramid_Plot.eps", width=12, height=10)
 t_end<-Sys.time()
 t_dur=t_end-t_start
 print(t_dur)
+
