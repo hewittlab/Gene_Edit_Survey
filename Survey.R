@@ -37,8 +37,18 @@ data<-rename(data, c("question_1"="sex", "question_2"="YOB", "question_3"="count
 data$YOB <- as.numeric(data$YOB)
 data$age <- 2015-data$YOB
 
+# Clean time variables and generate time_to_do variable (minutes0)
+time_start <- strptime(data$createdAt, format='%Y-%m-%dT%H:%M:%S')
+time_end <- strptime(data$updatedAt, format='%Y-%m-%dT%H:%M:%S')
+data$createdAt <- time_start
+data$updatedAt <- time_end
+data$time_to_do <- (time_end - time_start)/60
+rm(time_start)
+rm(time_end)
+
 # Reorder
-data <- data[c("client", "objectId", "createdAt", "updatedAt", "ip", "language", "country", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "religion", "religion_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "other_traits_alter", "gen_mod_food", "question_25", "question_100", "question_101", "question_102" )]
+data <- data[c("client", "objectId", "createdAt", "updatedAt", "time_to_do", "ip", "language", "country", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "religion", "religion_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "other_traits_alter", "gen_mod_food", "question_25", "question_100", "question_101", "question_102" )]
+
 
 # Delete free text variables
 data$other_traits_alter <- data$question_25 <- data$question_100 <- data$question_101 <- data$question_102 <- NULL
@@ -297,10 +307,179 @@ c("Druze", "درزى", "德鲁兹教派", "Druze", "Drusen", "ड्रूज़
 = 13;
 
 c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他", "Outras", "Другое ", "Otra", "Diğer") = 14')
-levels(data$religion_type)                           
-                             
-                                                  
-                        
+levels(data$religion_type)
+
+
+# KIDS_CURE_LIFE
+# Trim Whitespace
+data$kids_cure_life <- str_trim(data$kids_cure_life, side = "both")
+# Make as Factor
+data$kids_cure_life <- as.factor(data$kids_cure_life)
+levels(data$kids_cure_life)
+# Recode
+data$kids_cure_life <- recode(data$kids_cure_life,
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+
+c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
+
+c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
+
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+levels(data$kids_cure_life)
+
+
+# KIDS_CURE_DEBIL
+# Trim Whitespace
+data$kids_cure_debil <- str_trim(data$kids_cure_debil, side = "both")
+# Make as Factor
+data$kids_cure_debil <- as.factor(data$kids_cure_debil)
+levels(data$kids_cure_debil)
+# Recode
+data$kids_cure_debil <- recode(data$kids_cure_debil,
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+
+c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
+
+c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
+
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+levels(data$kids_cure_debil)
+
+
+# EMBR_PREV_LIVE
+# Trim Whitespace
+data$embr_prev_life <- str_trim(data$embr_prev_life, side = "both")
+# Make as Factor
+data$embr_prev_life <- as.factor(data$embr_prev_life)
+levels(data$embr_prev_life)
+# Recode
+data$embr_prev_life <- recode(data$embr_prev_life,
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+
+c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
+
+c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
+
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+levels(data$embr_prev_life)
+
+
+# EMBR_PREV_DEBIL
+# Trim Whitespace
+data$embr_prev_debil <- str_trim(data$embr_prev_debil, side = "both")
+# Make as Factor
+data$embr_prev_debil <- as.factor(data$embr_prev_debil)
+levels(data$embr_prev_debil)
+# Recode
+data$embr_prev_debil <- recode(data$embr_prev_debil,
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+
+c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
+
+c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
+
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+levels(data$embr_prev_debil)
+
+
+# EMBR_FOR_NONDIS
+# Trim Whitespace
+data$edit_for_nondis <- str_trim(data$edit_for_nondis, side = "both")
+# Make as Factor
+data$edit_for_nondis <- as.factor(data$edit_for_nondis)
+levels(data$edit_for_nondis)
+# Recode
+data$edit_for_nondis <- recode(data$edit_for_nondis,
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+
+c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
+
+c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
+
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+levels(data$edit_for_nondis)
+
+
+# GEN_MOD_FOOD
+# Trim Whitespace
+data$gen_mod_food <- str_trim(data$gen_mod_food, side = "both")
+# Make as Factor
+data$gen_mod_food <- as.factor(data$gen_mod_food)
+levels(data$gen_mod_food)
+# Recode
+data$gen_mod_food <- recode(data$gen_mod_food,
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+
+c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
+
+c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
+
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+levels(data$gen_mod_food)
+
+
+# DETER_PYHS_APPEAR
+# Trim Whitespace
+data$deter_phys_appear <- str_trim(data$deter_phys_appear, side = "both")
+# Make as Factor
+data$deter_phys_appear <- as.factor(data$deter_phys_appear)
+levels(data$deter_phys_appear)
+# Recode
+data$deter_phys_appear <- recode(data$deter_phys_appear,
+'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
+c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+levels(data$deter_phys_appear)
+
+
+# DETER_INTELL
+# Trim Whitespace
+data$deter_intell <- str_trim(data$deter_intell, side = "both")
+# Make as Factor
+data$deter_intell <- as.factor(data$deter_intell)
+levels(data$deter_intell)
+# Recode
+data$deter_intell <- recode(data$deter_intell,
+'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
+c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+levels(data$deter_intell)
+
+
+# DETER_STRENGTH
+# Trim Whitespace
+data$deter_strength <- str_trim(data$deter_strength, side = "both")
+# Make as Factor
+data$deter_strength <- as.factor(data$deter_strength)
+levels(data$deter_strength)
+# Recode
+data$deter_strength <- recode(data$deter_strength,
+'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
+c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+levels(data$deter_strength)
+
 #GEOFUNC----------------------------------------------------------------------------------------
 
 # FUNCTION TO GEOLOCATE FROM IP ADDRESS
