@@ -23,7 +23,6 @@ library(doBy) # Group summary stats
 setwd('~/Dropbox/Research Projects/2015/Gene Edit Survey')
 data <- fromJSON('Answers.json')
 
-
 #MERGE----------------------------------------------------------------------------------------
 
 # NEED TO MERGE WE CHAT DATA HERE
@@ -39,7 +38,10 @@ data$YOB <- as.numeric(data$YOB)
 data$age <- 2015-data$YOB
 
 # Reorder
-data <- data[c("client", "objectId", "createdAt", "updatedAt", "ip", "language", "country", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "other_traits_alter", "gen_mod_food", "religion", "religion_type", "question_25", "question_100", "question_101", "question_102" )]
+data <- data[c("client", "objectId", "createdAt", "updatedAt", "ip", "language", "country", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "religion", "religion_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "other_traits_alter", "gen_mod_food", "question_25", "question_100", "question_101", "question_102" )]
+
+# Delete free text variables
+data$other_traits_alter <- data$question_25 <- data$question_100 <- data$question_101 <- data$question_102 <- NULL
 
 #RECODE----------------------------------------------------------------------------------------
 
@@ -215,6 +217,36 @@ c("Another family member(s)", "فرد)أفراد( آخر فى الأسرة)"
 c("Me and a family member(s)", "أنا وفرد )أفراد( آخر فى الأسرة)", "我和另外的家庭成员 症状为哪些", "Moi et un membre de ma famille", "Ich und meine Familie", "मैं और परिवार का एक सदस्य", "自分と家族（複数）　 病症は何ですか", "Eu e um membro (s) da família ", "Я и член(-ы) семьи", "Yo y un (otros) miembro(s) de mi familia", "Ben ve diğer bir aile üyesi/üyeleri") = 3')
 levels(data$genetic_cond_affected)
 
+
+# GENETIC_COND_TYPE
+# Trim Whitespace
+data$genetic_cond_type <- str_trim(data$genetic_cond_type, side = "both")
+# Make as Factor
+data$genetic_cond_type <- as.factor(data$genetic_cond_type)
+levels(data$genetic_cond_type)
+# Recode
+data$genetic_cond_type <- recode(data$genetic_cond_type,
+'c("Cystic Fibrosis", "تليف كيسى", "囊胞性纤维症", "Mucoviscidose", "Mukoviszidose", "सिस्टिकफाइब्रोसिस", "嚢胞性繊維証", "Fibrose Cística", "Муковисцидоз", "Fibrosis quística", "Kistik Fibroz") = 1;
+
+c("Huntington’s Disease", "مرض هونتيغتون", "亨廷顿病", "Maladie de Huntington", "Huntigton-Kranhkheit", "हनटिंग्टनरोग", "ハンティントン病", "Doença de Huntington", "Enfermedad de Huntington", "Huntington Hastalığı") = 2;
+
+c("Muscular Dystrophy", "ضمور العضلات", "肌肉萎缩症", "Dystrophie musculaire", "Muskeldystrophie", "मांसपेशीयदुर्विकास (Muscular Dystrophy)", "筋ジストロフィー", "Distrofia", "Мышечная дистрофия", "Distrofia muscular", "Kas Distrofisi") = 3;
+
+c("Sickle Cell Anaemia", "أنيميا الخلايا المنجلية", "镰状细胞贫血", "Hydroxyurée", "Sichzellenänemie", "रक्तकीलालकोशिकाओंकीकमी (Sickle Cell Ananemia)", "鎌状赤血球貧血", "Anemia Falciforme", "Серповидно-клеточная анемия", "Anemia de células falciformes", "Orak Hücre Anemisi") = 4;
+
+c("Beta Thalassemia", "ثلاسيمية بيتا", "地中海贫血", "Cardiomyopathie par surcharge en fer", "Beta Thalässamie", "बीटाथैलेसीमिया", "地中海性貧血", "Beta Talassemia", "Бета-талассемия ", "Talasemia beta", "Akdeniz Anemisi") = 5;
+
+c("Haemophilia", "سيولة الدم", "血友病", "Hémophilie", "Hämophilie", "हीमोफीलिया", "血友病", "Hemofilia", "Гемофилия", "Hemofilia", "Hemofili") = 6;
+
+c("Tay Sachs Disease", "شحام سفينغولى )تاى ساكس(", "泰-萨克斯病", "Hyperacousie", "Tay-Sachs-Syndrom", "टेसेक्सबीमारी", "テイ•サックス病", "Doença de Tay Sachs", "Болезнь Тея-Сакса", "Enfermedad de Tay Sachs", "Tay Sachs Hastalığı") = 7;
+
+c("Fragile X Syndrome", "متلازمة كروموزوم اكس الهش", "X染色体易损综合征", "Syndrome de l’X fragile", "Fragiles-X-Syndrom", "कमजोरएक्सलक्षण ( Fragile X Syndrome)", "脆弱X症候群", "Síndrome Frágil X", "Синдром Мартина-Белл", "Síndrome X frágil", "Frajil X Sendromu") = 8;
+
+c("Down’s Syndrome, Edward’s Syndrome, Patau Syndrome", "متلازمة داون، متلازمة إدوارد، متلازمة باتو", "唐氏综合症,爱德华综 合症,三体综合征", "Syndrome de Down, Syndrome d’Edward, Syndrome de Patau", "Down Syndrom,  Edwards Syndrom,  Pätau Syndrom", "डाउनसिंड्रोम, एडवर्ड\'ससिंड्रोम, पतौसिंड्रोम", "ダウン症候群、エドワード症候群、パトー症候群", "Síndrome de Down, Síndrome de Edward, Síndrome de Patau", "Синдром Дауна, Синдром Эдвардса, Синдром Патау", "Síndrome de Down, síndrome de Edward, síndrome de Patau", "Down Sendromu, Edward Sendromu, Patau Sendromu") = 9;
+
+c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他", "Outras", "Другое", "Otro", "Diğer") = 10')
+levels(data$genetic_cond_type)
+                                 
 
 
 #GEOFUNC----------------------------------------------------------------------------------------
