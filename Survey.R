@@ -23,6 +23,40 @@ library(doBy) # Group summary stats
 setwd('~/Dropbox/Research Projects/2015/Gene Edit Survey')
 data <- fromJSON('Answers.json')
 
+# Variable Names
+# 1.client - as is
+# 2.objectId - as is
+# 3.createdAt - date/time survey started
+# 4.updatedAt - date/time survey ended
+# 5.time_to_do - time in minutes to complete survey
+# 6.ip - ip address
+# 7.language - as is
+# 8.country - as is
+# 9.sex - Factor variable (levels - M/F)
+# 10.YOB - year of birth
+# 11.age - age in years
+# 12.ethnicity - Factor variable (levels - 1:11)
+# 13.wealth - Factor variable (levels - 1:3)
+# 14.edu_level - Factor variable (levels - 1:6)
+# 15.worked_health - have you ever worked in a health or medical related field? Factor variable (levels - N/Y)
+# 16.worked_health_type - type of work. Factor variable (levels - 1:6)
+# 17.heard_about - have you ever heard of human genetic engineering or gene editing? Factor variable (levels - 1:3)
+# 18.genetic_cond - do you or anyone in your family have an inherited or genetic condition? Factor variable (levels - N/Y)
+# 19.genetic_cond_affected - who is affected? Factor variable (levels 1:3)
+# 20.genetic_cond_type - what is the disease? Factor variable (levels 1:10)
+# 21.religion - Factor variable (levels - N/Y)
+# 22.religion_type - type of religion. Factor variable (levels 1:14)
+# 23.kids_cure_life - how much do you agree with the use of genetic editing of cells in children or adults to cure a life threatening disease? Factor variable (levels 1:6)
+# 24.kids_cure_debil - how much do you agree with the use of genetic editing of cells in children or adults to cure a debilitating disease? Factor variable (levels 1:6)
+# 25.embr_prev_life - how much do you agree with the use of genetic editing of cells in embryos to prevent a life threatening disease? Factor variable (levels 1:6)
+# 26.embr_prev_debil - how much do you agree with the use of genetic editing of cells in embryos to prevent a debilitating disease? Factor variable (levels 1:6)
+# 27.edit_for_nondis - how much do you agree with the use of genetic editing of cells in embryos to alter any non-disease characteristic? Factor variable (levels 1:6)
+# 28.deter_phys_appear - would you use this technology to determine Physical appearance? Factor variable (levels - N/Y)
+# 29.deter_intell - would you use this technology to determine Intelligence? Factor variable (levels - N/Y)
+# 30.deter_strength - would you use this technology to determine Strength or Sporting ability? Factor variable (levels - N/Y)
+# 31.gen_mod_food - how much do you agree with the use of genetically modified food? Factor variable (levels 1:6)
+
+
 #MERGE----------------------------------------------------------------------------------------
 
 # NEED TO MERGE WE CHAT DATA HERE
