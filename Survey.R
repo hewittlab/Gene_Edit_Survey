@@ -248,7 +248,59 @@ c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他",
 levels(data$genetic_cond_type)
                                  
 
+# RELIGION
+# Trim Whitespace
+data$religion <- str_trim(data$religion, side = "both")
+# Make as Factor
+data$religion <- as.factor(data$religion)
+levels(data$religion)
+# Recode
+data$religion <- recode(data$religion,
+'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
+c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+levels(data$religion)                   
+                        
 
+# RELIGION_TYPE
+# Trim Whitespace
+data$religion_type <- str_trim(data$religion_type, side = "both")
+# Make as Factor
+data$religion_type <- as.factor(data$religion_type)
+levels(data$religion_type)
+# Recode
+data$religion_type <- recode(data$religion_type,
+'c("Christian - Protestant/Anglican", "مسيحى – بروتوستانتى/إنجيلى", "基督教-新教/英国 国教", "Chrétien - Protestant/Anglican", "Christlich – evangelische/anglikanisch", "ईसाई- प्रोटेस्टेंट / अँग्रेज़ी", "キリスト教—プロテスタント／英国国教会派", "Cristão Protestante/Anglicano", "Христианство - протестантство/англиканство", "Cristianismo (protestante/anglicano)", "Hristiyan Protestan/Anglikan") = 1;
+
+c("Christian - Catholic", "مسيحى – كاثوليكى", "基督教-天主教", "Chrétien - Catholique", "Christlich – Katholisch", "ईसाई- कैथोलिक", "キリスト教—カトリック教会", "Cristão – Católico", "Христианство - католичество", "Cristianismo (católico)", "Hristiyan Katolik") = 2;
+
+c("Christian - Other", "مسيحى – أخرى", "基督教-其他", "Chrétien - Autre", "Christlich – andere", "ईसाई- अन्य", "キリスト教—その他", "Cristão - Outro", "Христианство - прочее", "Cristianismo (otra)", "Hristiyan Diğer") = 3;
+
+c("Muslim", "مسلم", "穆斯林", "Musulman", "Muslim", "मुस्लिम", "イスラム教", "Muçulmano", "Ислам", "Islamismo", "Müslüman") = 4;
+
+c("Jewish", "يهودى", "犹太教", "Juif", "Jüdisch", "यहूदी", "ユダヤ教", "Judeu", "Иудейство", "Judaísmo", "Musevi") = 5;
+
+c("Buddhist", "بوذى", "佛教", "Bouddhiste", "Buddhismus", "बौद्ध", "仏教", "Budista", "Буддизм", "Budismo", "Budist") = 6;
+
+c("Hindu", "هندوسى", "印度教", "Hindouiste", "Hindu", "हिन्दू", "ヒンズー教", "Hindu", "Индуизм", "Hindú", "Hindu") = 7;
+
+c("Shinto", "شنتو", "日本神道教", "Shintoïste", "Shinto", "शिंटो", "神道", "Xintoísmo", "Синтоизм", "Shinto", "Şinto") = 8;
+
+c("Taoism", "طاوى", "道教", "Taoïste", "Taoismus", "ताओधर्म", "道教", "Taoísmo", "Даосизм", "Taoísmo", "Taoizm") = 9;
+
+c("Confucianism", "كنفوشيوسى", "儒家", "Confucianiste", "Konfuzianismus", "कन्फ्यूशीवाद", "儒教", "Confucionismo", "Конфуцианство", "Confucianismo", "Konfüçyüsçülük") = 10;
+
+c("Sikhism", "سيخى", "锡克教", "Sikh", "Sihismus", "सिखधर्म", "シーク教", "Sikhismo", "Сикхизм", "Sijismo", "Sihizim") = 11;
+
+c("Jainism", "يانى", "耆那教", "Djaïniste", "Janis", "जैनधर्म", "ジャイナ教", "Jainismo", "Джайнизм", "Jainismo", "Jainizm") = 12;
+
+c("Druze", "درزى", "德鲁兹教派", "Druze", "Drusen", "ड्रूज़", "ドルーズ教", "Druso", "Друзы", "Druso", "Dürzi")
+= 13;
+
+c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他", "Outras", "Другое ", "Otra", "Diğer") = 14')
+levels(data$religion_type)                           
+                             
+                                                  
+                        
 #GEOFUNC----------------------------------------------------------------------------------------
 
 # FUNCTION TO GEOLOCATE FROM IP ADDRESS
