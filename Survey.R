@@ -37,12 +37,12 @@ data<-rename(data, c("question_1"="sex", "question_2"="YOB", "question_3"="count
 data$YOB <- as.numeric(data$YOB)
 data$age <- 2015-data$YOB
 
-# Clean time variables and generate time_to_do variable (minutes0)
+# Clean time variables and generate time_to_do variable (minutes)
 time_start <- strptime(data$createdAt, format='%Y-%m-%dT%H:%M:%S')
 time_end <- strptime(data$updatedAt, format='%Y-%m-%dT%H:%M:%S')
 data$createdAt <- time_start
 data$updatedAt <- time_end
-data$time_to_do <- (time_end - time_start)/60
+data$time_to_do <- round((time_end - time_start)/60,digits=2)
 rm(time_start)
 rm(time_end)
 
@@ -306,7 +306,9 @@ c("Jainism", "يانى", "耆那教", "Djaïniste", "Janis", "जैनधर्
 c("Druze", "درزى", "德鲁兹教派", "Druze", "Drusen", "ड्रूज़", "ドルーズ教", "Druso", "Друзы", "Druso", "Dürzi")
 = 13;
 
-c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他", "Outras", "Другое ", "Otra", "Diğer") = 14')
+c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他", "Outras", "Другое ", "Otra", "Diğer") = 14;
+
+"मुि\u1b6dलम" = NA')
 levels(data$religion_type)
 
 
@@ -480,6 +482,17 @@ data$deter_strength <- recode(data$deter_strength,
 c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
 levels(data$deter_strength)
 
+
+# Print Factors and their levels as check
+PrintLvls <- function(x) 
+{print(data.frame(Lvls=sapply(x[sapply(x, is.factor)], nlevels), 
+  Names=sapply(x[sapply(x, is.factor)], 
+  function(y) paste0(levels(y), collapse=", "))), 
+  right=FALSE) 
+  } 
+PrintLvls(data)
+
+
 #GEOFUNC----------------------------------------------------------------------------------------
 
 # FUNCTION TO GEOLOCATE FROM IP ADDRESS
@@ -564,7 +577,7 @@ ggplot(data=data,aes(x=age,fill=sex)) +
   geom_bar(subset=.(sex=="M"),aes(y=..count..*(-1))) + 
   scale_fill_grey(start = 0.1, end = 0.4, na.value = "grey50") +
   scale_x_continuous(breaks=seq(0,100,10),labels=abs(seq(0,100,10))) +
-  scale_y_continuous(breaks=seq(-120,120,20),labels=abs(seq(-120,120,20))) + 
+  scale_y_continuous(breaks=seq(-220,120,20),labels=abs(seq(-220,120,20))) + 
   coord_flip()
 ggsave(file="Pyramid_Plot.eps", width=12, height=10)
 
