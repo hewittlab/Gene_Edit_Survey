@@ -24,42 +24,37 @@ setwd('~/Dropbox/Research Projects/2015/Gene Edit Survey')
 data <- fromJSON('Answers.json')
 
 # Variable Names
-# 1.client - as is
-# 2.objectId - as is
-# 3.createdAt - date/time survey started
-# 4.updatedAt - date/time survey ended
-# 5.time_to_do - time in minutes to complete survey
-# 6.ip - ip address
-# 7.language - as is
-# 8.country - as is
-# 9.sex - Factor variable (levels - M/F)
-# 10.YOB - year of birth
-# 11.age - age in years
-# 12.ethnicity - Factor variable (levels - 1:11)
-# 13.wealth - Factor variable (levels - 1:3)
-# 14.edu_level - Factor variable (levels - 1:6)
-# 15.worked_health - have you ever worked in a health or medical related field? Factor variable (levels - N/Y)
-# 16.worked_health_type - type of work. Factor variable (levels - 1:6)
-# 17.heard_about - have you ever heard of human genetic engineering or gene editing? Factor variable (levels - 1:3)
-# 18.genetic_cond - do you or anyone in your family have an inherited or genetic condition? Factor variable (levels - N/Y)
-# 19.genetic_cond_affected - who is affected? Factor variable (levels 1:3)
-# 20.genetic_cond_type - what is the disease? Factor variable (levels 1:10)
-# 21.religion - Factor variable (levels - N/Y)
-# 22.religion_type - type of religion. Factor variable (levels 1:14)
-# 23.kids_cure_life - how much do you agree with the use of genetic editing of cells in children or adults to cure a life threatening disease? Factor variable (levels 1:6)
-# 24.kids_cure_debil - how much do you agree with the use of genetic editing of cells in children or adults to cure a debilitating disease? Factor variable (levels 1:6)
-# 25.embr_prev_life - how much do you agree with the use of genetic editing of cells in embryos to prevent a life threatening disease? Factor variable (levels 1:6)
-# 26.embr_prev_debil - how much do you agree with the use of genetic editing of cells in embryos to prevent a debilitating disease? Factor variable (levels 1:6)
-# 27.edit_for_nondis - how much do you agree with the use of genetic editing of cells in embryos to alter any non-disease characteristic? Factor variable (levels 1:6)
-# 28.deter_phys_appear - would you use this technology to determine Physical appearance? Factor variable (levels - N/Y)
-# 29.deter_intell - would you use this technology to determine Intelligence? Factor variable (levels - N/Y)
-# 30.deter_strength - would you use this technology to determine Strength or Sporting ability? Factor variable (levels - N/Y)
-# 31.gen_mod_food - how much do you agree with the use of genetically modified food? Factor variable (levels 1:6)
+# 1.createdAt - date/time survey started
+# 2.updatedAt - date/time survey ended
+# 3.time_to_do - time in minutes to complete survey
+# 4.cohort - responses from main survey (1) or wechat (2)
+# 5.ip - ip address
+# 6.language - as is
+# 7.country - as is
+# 8.sex - Factor variable (levels - M/F)
+# 9.YOB - year of birth
+# 10.age - age in years
+# 11.ethnicity - Factor variable (levels - 1:11)
+# 12.wealth - Factor variable (levels - 1:3)
+# 13.edu_level - Factor variable (levels - 1:6)
+# 14.worked_health - have you ever worked in a health or medical related field? Factor variable (levels - N/Y)
+# 15.worked_health_type - type of work. Factor variable (levels - 1:6)
+# 16.heard_about - have you ever heard of human genetic engineering or gene editing? Factor variable (levels - 1:3)
+# 17.genetic_cond - do you or anyone in your family have an inherited or genetic condition? Factor variable (levels - N/Y)
+# 18.genetic_cond_affected - who is affected? Factor variable (levels 1:3)
+# 19.genetic_cond_type - what is the disease? Factor variable (levels 1:10)
+# 20.religion - Factor variable (levels - N/Y)
+# 21.religion_type - type of religion. Factor variable (levels 1:14)
+# 22.kids_cure_life - how much do you agree with the use of genetic editing of cells in children or adults to cure a life threatening disease? Factor variable (levels 1:6)
+# 23.kids_cure_debil - how much do you agree with the use of genetic editing of cells in children or adults to cure a debilitating disease? Factor variable (levels 1:6)
+# 24.embr_prev_life - how much do you agree with the use of genetic editing of cells in embryos to prevent a life threatening disease? Factor variable (levels 1:6)
+# 25.embr_prev_debil - how much do you agree with the use of genetic editing of cells in embryos to prevent a debilitating disease? Factor variable (levels 1:6)
+# 26.edit_for_nondis - how much do you agree with the use of genetic editing of cells in embryos to alter any non-disease characteristic? Factor variable (levels 1:6)
+# 27.deter_phys_appear - would you use this technology to determine Physical appearance? Factor variable (levels - N/Y)
+# 28.deter_intell - would you use this technology to determine Intelligence? Factor variable (levels - N/Y)
+# 29.deter_strength - would you use this technology to determine Strength or Sporting ability? Factor variable (levels - N/Y)
+# 30.gen_mod_food - how much do you agree with the use of genetically modified food? Factor variable (levels 1:6)
 
-
-#MERGE----------------------------------------------------------------------------------------
-
-# NEED TO MERGE WE CHAT DATA HERE
 
 #RENAME----------------------------------------------------------------------------------------
 
@@ -67,9 +62,10 @@ data <- fromJSON('Answers.json')
 
 data<-rename(data, c("question_1"="sex", "question_2"="YOB", "question_3"="country", "question_4"="ethnicity", "question_5"="religion", "question_6"="religion_type", "question_7"="edu_level", "question_8"="worked_health", "question_9"="worked_health_type", "question_10"="heard_about", "question_11"="wealth", "question_12"="genetic_cond", "question_13"="genetic_cond_affected", "question_14"="genetic_cond_type", "question_15"="kids_cure_life", "question_16"="kids_cure_debil", "question_17"="embr_prev_life", "question_18"="embr_prev_debil", "question_19"="edit_for_nondis", "question_20"="deter_phys_appear", "question_21"="deter_intell", "question_22"="deter_strength", "question_23"="other_traits_alter","question_24"="gen_mod_food"))
 
-# Generate age variable
+# Generate age and cohort variables
 data$YOB <- as.numeric(data$YOB)
 data$age <- 2015-data$YOB
+data$cohort <- 1
 
 # Clean time variables and generate time_to_do variable (minutes)
 time_start <- strptime(data$createdAt, format='%Y-%m-%dT%H:%M:%S')
@@ -80,12 +76,15 @@ data$time_to_do <- round((time_end - time_start)/60,digits=2)
 rm(time_start)
 rm(time_end)
 
-# Reorder
-data <- data[c("client", "objectId", "createdAt", "updatedAt", "time_to_do", "ip", "language", "country", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "religion", "religion_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "other_traits_alter", "gen_mod_food", "question_25", "question_100", "question_101", "question_102" )]
-
+# Delete unnecessary variables
+data$client <- data$objectId <- NULL
 
 # Delete free text variables
 data$other_traits_alter <- data$question_25 <- data$question_100 <- data$question_101 <- data$question_102 <- NULL
+
+# Reorder
+data <- data[c("createdAt", "updatedAt", "time_to_do", "cohort", "ip", "language", "country", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "religion", "religion_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "gen_mod_food")]
+
 
 #RECODE----------------------------------------------------------------------------------------
 
@@ -525,7 +524,6 @@ PrintLvls <- function(x)
   right=FALSE) 
   } 
 PrintLvls(data)
-
 
 #GEOFUNC----------------------------------------------------------------------------------------
 
