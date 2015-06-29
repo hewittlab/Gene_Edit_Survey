@@ -149,11 +149,12 @@ wechat$edu_level <- as.factor(wechat$edu_level)
 levels(wechat$edu_level)
 # Recode
 wechat$edu_level <- recode(wechat$edu_level,
-'"小学毕业" = 1;
-"高中毕业" = 2;
-"仅完成大学学业（结业）" = 3;
-"大学毕业" = 4;
-"研究生毕业" = 5;
+'"未上过正规学校" = 1;
+"小学毕业" = 2;
+"高中毕业" = 3;
+"仅完成大学学业（结业）" = 4;
+"大学毕业" = 5;
+"研究生毕业" = 6;
 "" = NA')
 levels(wechat$edu_level)
 
@@ -292,8 +293,10 @@ levels(wechat$kids_cure_life)
 # Recode
 wechat$kids_cure_life <- recode(wechat$kids_cure_life,
 '"非常同意" = 1;
+"同意" = 2;
 "中立" = 3;
 "不同意" = 4;
+"坚决反对" = 5;
 "不知道" = 6')
 levels(wechat$kids_cure_life)
 
@@ -420,17 +423,6 @@ wechat$deter_strength <- recode(wechat$deter_strength,
 '"" = "N";
 "力量或者体育能力" = "Y"')
 levels(wechat$deter_strength)
-
-
-# Print Factors and their levels as check
-PrintLvls <- function(x) 
-{print(data.frame(Lvls=sapply(x[sapply(x, is.factor)], nlevels), 
-  Names=sapply(x[sapply(x, is.factor)], 
-  function(y) paste0(levels(y), collapse=", "))), 
-  right=FALSE) 
-} 
-
-PrintLvls(wechat)
 
 #MAIN----------------------------------------------------------------------------------------
 
@@ -893,6 +885,16 @@ data$deter_strength <- recode(data$deter_strength,
 c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
 levels(data$deter_strength)
 
+
+# Print Factors and their levels as check
+PrintLvls <- function(x) 
+{print(data.frame(Lvls=sapply(x[sapply(x, is.factor)], nlevels), 
+  Names=sapply(x[sapply(x, is.factor)], 
+  function(y) paste0(levels(y), collapse=", "))), 
+  right=FALSE) 
+} 
+
+PrintLvls(wechat)
 PrintLvls(data)
 
 #MERGE----------------------------------------------------------------------------------------
