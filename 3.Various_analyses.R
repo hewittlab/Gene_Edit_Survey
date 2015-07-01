@@ -3,8 +3,12 @@
 # MARK SYSTEM TIME
 t_start3<-Sys.time()
 
+library(plyr)
+library(likert)
+library(ggplot2) # Plots
 
-# Check attrition as questions progress - Count NA's
+
+# CHECK ATTRITION as questions progress - Count NA's
 
 # Demographic variables
 # "sex","YOB","country","ethnicity","religion","religion_type","edu_level","worked_health","worked_health_type","heard_about","wealth"
@@ -20,11 +24,34 @@ NA_count <- data.frame(NA_count, percent_complete)
 NA_count
 
 
+#LIKERT----------------------------------------------------------------------------------------
 
+# LIKERT PLOT
 
+likert_vec <- c("kids_cure_life","kids_cure_debil","embr_prev_life","embr_prev_debil","edit_for_nondis","gen_mod_food")
 
+likert_df <- all[,likert_vec]
 
+levels(likert_df$kids_cure_life)[levels(likert_df$kids_cure_life)=="1"] <- "Strongly Agree"
+levels(likert_df$kids_cure_life)[levels(likert_df$kids_cure_life)=="2"] <- "Agree"
+levels(likert_df$kids_cure_life)[levels(likert_df$kids_cure_life)=="3"] <- "Neutral"
+levels(likert_df$kids_cure_life)[levels(likert_df$kids_cure_life)=="4"] <- "Disagree"
+levels(likert_df$kids_cure_life)[levels(likert_df$kids_cure_life)=="5"] <- "Strongly Disagree"
+levels(likert_df$kids_cure_life)[levels(likert_df$kids_cure_life)=="6"] <- "Don't Know"
 
+likert_df<-rename(likert_df, c("kids_cure_life"="How much do you agree with the use of genetic editing of cells in children or adults to cure a life threatening disease?","kids_cure_debil"="How much do you agree with the use of genetic editing of cells in children or adults to cure a debilitating disease?","embr_prev_life"="How much do you agree with the use of genetic editing of cells in embryos to prevent a life threatening disease?","embr_prev_debil"="How much do you agree with the use of genetic editing of cells in embryos to prevent a debilitating disease?","edit_for_nondis"="How much do you agree with the use of genetic editing of cells in embryos to alter any non-disease characteristic - such as memory, eye colour or height?","gen_mod_food"="How much do you agree with the use of genetically modified food?"))
+
+likert_df <-likert(likert_df)
+
+summary(likert_df)
+
+plot(likert_df, type="density")
+
+plot(likert_df, type="density", facet=F)
+
+plot(likert_df, type="heat", ordered=T)
+
+plot(likert_df, ordered=F)
 
 
 

@@ -4,8 +4,6 @@ t_start1<-Sys.time()
 
 library(jsonlite) # Import .json file
 library(stringr) # Trim whitespace 
-library(maps) # Bubble plot map
-library(ggplot2) # Plots
 library(plyr) # Various
 library(car) # Recode variables
 library(doBy) # Group summary stats

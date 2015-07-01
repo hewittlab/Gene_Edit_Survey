@@ -3,6 +3,9 @@
 # MARK SYSTEM TIME
 t_start2<-Sys.time()
 
+library(maps) # Bubble plot map
+library(ggplot2) # Plots
+
 #GEOFUNC----------------------------------------------------------------------------------------
 
 # FUNCTION TO GEOLOCATE FROM IP ADDRESS
