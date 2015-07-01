@@ -916,6 +916,12 @@ PrintLvls(data)
 
 all <- rbind(data, wechat)
 
+# Remove observations with ages < 10 and > 90
+
+all <- all[which(all$age > 9 & all$age < 91), ]
+
+
+
 #----------------------------------------------------------------------------------------
 
 # MARK SYSTEM TIME AGAIN
