@@ -15,6 +15,7 @@ library(doBy) # Group summary stats
 # ]
 
 # CHANGE WORKING DIRECTORY HERE
+# setwd('~/Desktop/Research/CRISPR/PublicPercpeption/Analysis/Active/')
 
 setwd('~/Dropbox/Research Projects/2015/Gene Edit Survey')
 
