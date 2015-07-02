@@ -1,7 +1,7 @@
 # Need to have run the 1.Data_prep.R script and have the resulting data in this workspace
 
 # MARK SYSTEM TIME
-t_start2<-Sys.time()
+t_start<-Sys.time()
 
 library(maps) # Bubble plot map
 library(ggplot2) # Plots
@@ -84,7 +84,7 @@ ggsave(file="Bubble_Plot.eps", width=12, height=6)
 
 # MARK SYSTEM TIME AGAIN
 # Subtract from t_start and print difference
-t_end2<-Sys.time()
-t_dur2=t_end2-t_start2
-print(t_dur2)
+t_end<-Sys.time()
+t_dur=t_end-t_start
+print(t_dur)
 

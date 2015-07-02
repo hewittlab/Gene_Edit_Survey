@@ -1,8 +1,5 @@
 # Need to have run the 1.Data_prep.R script and have the resulting data in this workspace
 
-# MARK SYSTEM TIME
-t_start4<-Sys.time()
-
 library(plyr)
 library(likert)
 library(ggplot2) # Plots
@@ -54,11 +51,3 @@ ggsave(file="Pyramid_Plot.eps", width=12, height=10)
 #----------------------------------------------------------------------------------------
 
 
-
-
-
-# MARK SYSTEM TIME AGAIN
-# Subtract from t_start and print difference
-t_end4<-Sys.time()
-t_dur4=t_end4-t_start4
-print(t_dur4)

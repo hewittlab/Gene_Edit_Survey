@@ -1,6 +1,4 @@
 #IMPORT----
-# MARK SYSTEM TIME
-t_start1<-Sys.time()
 
 library(jsonlite) # Import .json file
 library(stringr) # Trim whitespace 
@@ -242,7 +240,8 @@ wechat$genetic_cond_type <- as.factor(wechat$genetic_cond_type)
 levels(wechat$genetic_cond_type)
 # Recode
 wechat$genetic_cond_type <- recode(wechat$genetic_cond_type,
-'"肌肉萎缩症" = 3;
+'"囊胞性纤维症" = 1;
+"肌肉萎缩症" = 3;
 "地中海贫血" = 5;
 "唐氏综合症，爱德华综合症，三体综合征" = 9;
 "其他" = 10;
@@ -924,9 +923,5 @@ all <- all[which(all$age > 9 & all$age < 91), ]
 
 #----------------------------------------------------------------------------------------
 
-# MARK SYSTEM TIME AGAIN
-# Subtract from t_start and print difference
-t_end1<-Sys.time()
-t_dur1=t_end1-t_start1
-print(t_dur1)
+
 
