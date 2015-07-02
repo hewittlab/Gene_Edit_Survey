@@ -1,4 +1,4 @@
-## Need to have run the 1.Data_prep.R script and have the resulting data in this workspace
+# Need to have run the 1.Data_prep.R script and have the resulting data in this workspace
 
 # MARK SYSTEM TIME
 t_start2<-Sys.time()
