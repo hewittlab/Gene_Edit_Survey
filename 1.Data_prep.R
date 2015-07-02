@@ -636,7 +636,7 @@ data$genetic_cond_affected <- recode(data$genetic_cond_affected,
 
 c("Another family member(s)", "فرد)أفراد( آخر فى الأسرة)", "其他家庭成员", "Un autre membre de ma famille", "Ein Familienzugehöriger", "परिवार का अन्य सदस्य", "自分以外の家族メンバー（複数)", "Outro membro (s) da família", "Другой(-ие) член(-ы) семьи", "Otro(s) miembro(s) de mi familia", "Diğer aile üyesi veya üyeleri") = 2;
 
-c("Me and a family member(s)", "أنا وفرد )أفراد( آخر فى الأسرة)", "我和另外的家庭成员 症状为哪些", "Moi et un membre de ma famille", "Ich und meine Familie", "मैं और परिवार का एक सदस्य", "自分と家族（複数）　 病症は何ですか", "自分と家族（複数）　 病", "Eu e um membro (s) da família ", "u e um membro (s) da família", "Я и член(-ы) семьи", "Yo y un (otros) miembro(s) de mi familia", "Ben ve diğer bir aile üyesi/üyeleri") = 3')
+c("Me and a family member(s)", "أنا وفرد )أفراد( آخر فى الأسرة)", "我和另外的家庭成员", "Moi et un membre de ma famille", "Ich und meine Familie", "मैं और परिवार का एक सदस्य", "自分と家族（複数）　 病症は何ですか", "自分と家族（複数）　 病", "Eu e um membro (s) da família ", "u e um membro (s) da família", "Я и член(-ы) семьи", "Yo y un (otros) miembro(s) de mi familia", "Ben ve diğer bir aile üyesi/üyeleri") = 3')
 levels(data$genetic_cond_affected)
 
 
@@ -650,7 +650,7 @@ levels(data$genetic_cond_type)
 data$genetic_cond_type <- recode(data$genetic_cond_type,
 'c("Cystic Fibrosis", "تليف كيسى", "囊胞性纤维症", "Mucoviscidose", "Mukoviszidose", "सिस्टिकफाइब्रोसिस", "嚢胞性繊維証", "Fibrose Cística", "Муковисцидоз", "Fibrosis quística", "Kistik Fibroz") = 1;
 
-c("Huntington’s Disease", "مرض هونتيغتون", "亨廷顿病", "Maladie de Huntington", "Huntigton-Kranhkheit", "हनटिंग्टनरोग", "ハンティントン病", "Doença de Huntington", "Enfermedad de Huntington", "Huntington Hastalığı") = 2;
+c("Huntington’s Disease", "مرض هونتيغتون", "亨廷顿病", "Maladie de Huntington", "Huntigton‐Kranhkheit", "हनटिंग्टनरोग", "ハンティントン病", "Doença de Huntington", "Enfermedad de Huntington", "Huntington Hastalığı") = 2;
 
 c("Muscular Dystrophy", "ضمور العضلات", "肌肉萎缩症", "Dystrophie musculaire", "Muskeldystrophie", "मांसपेशीयदुर्विकास (Muscular Dystrophy)", "筋ジストロフィー", "Distrofia", "Мышечная дистрофия", "Distrofia muscular", "Kas Distrofisi") = 3;
 
