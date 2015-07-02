@@ -29,11 +29,11 @@ likert_df <-likert(likert_df)
 
 summary(likert_df)
 
-plot(likert_df, type="density")
+#plot(likert_df, type="density")
 
-plot(likert_df, type="density", facet=F)
+#plot(likert_df, type="density", facet=F)
 
-plot(likert_df, type="heat", ordered=T)
+#plot(likert_df, type="heat", ordered=T)
 
 plot(likert_df, ordered=F)
 
@@ -47,7 +47,7 @@ ggplot(data=all,aes(x=age,fill=sex)) +
   geom_bar(subset=.(sex=="M"),aes(y=..count..*(-1))) + 
   scale_fill_grey(start = 0.1, end = 0.4, na.value = "grey50") +
   scale_x_continuous(breaks=seq(0,100,10),labels=abs(seq(0,100,10))) +
-  scale_y_continuous(breaks=seq(-260,120,20),labels=abs(seq(-260,120,20))) + 
+  scale_y_continuous(breaks=seq(-440,200,80),labels=abs(seq(-440,200,80))) + 
   coord_flip()
 ggsave(file="Pyramid_Plot.eps", width=12, height=10)
 

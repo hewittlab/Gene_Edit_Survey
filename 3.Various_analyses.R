@@ -24,10 +24,7 @@ NA_count <- data.frame(NA_count, percent_complete)
 NA_count
 
 
-
-
-
-# 2) Demographic summary stats 
+# DEMOGRAPHIC SUMMARY STATS
 # - Number of countries & % 
 # - Age 
 # - Sex 
@@ -35,10 +32,17 @@ NA_count
 # - Self reported wealth 
 # - Religion 
 # - Self-reported inherited disease 
-# 
-# 3) Summary of responses to each question 
-# - likely collapse Strongly Agree + Agree & Strongly Disagree + Disagree 
-# 
+
+
+#write.table(country_dem, "country_dem", sep="\t")
+country_table <- table(all$country)
+country_prop <- round(prop.table(country_table)*100,2)
+country_stat <- data.frame(country_table, country_prop)
+
+
+
+
+
 # 4) comparisons 
 # a) between ethnicity 
 # - Caucasian vs Non-Caucasian 
