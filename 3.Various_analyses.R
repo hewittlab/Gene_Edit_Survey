@@ -23,8 +23,8 @@ obs_count <- total_count - NA_count
 attrition <- data.frame(total_count, obs_count, NA_count, prop_complete)
 attrition
 # Write results
-write.csv(attrition, "attrition.csv")
-write.table(attrition, "attrition.txt", sep="\t")
+write.csv(attrition, "Results/attrition.csv")
+write.table(attrition, "Results/attrition.txt", sep="\t")
 
 
 #DEM_SUMMARY_STATS---------------------------------------------------------------------------------------
@@ -41,8 +41,8 @@ country_stat <- rename(country_stat,c("Var1"="country","Freq"="freq","Freq.1"="%
 country_stat <- country_stat[order(-country_stat$freq),] 
 country_stat
 # Write results
-write.csv(country_stat, "country_stat.csv")
-write.table(country_stat, "country_stat.txt", sep="\t")
+write.csv(country_stat, "Results/country_stat.csv")
+write.table(country_stat, "Results/country_stat.txt", sep="\t")
 
 
 # ETHNICITY
@@ -57,8 +57,8 @@ ethnicity_stat$ethnicity <- factor(ethnicity_stat$ethnicity, levels = c(1,2,3,4,
 ethnicity_stat <- ethnicity_stat[order(-ethnicity_stat$freq),] 
 ethnicity_stat
 # Write results
-write.csv(ethnicity_stat, "ethnicity_stat.csv")
-write.table(ethnicity_stat, "ethnicity_stat.txt", sep="\t")
+write.csv(ethnicity_stat, "Results/ethnicity_stat.csv")
+write.table(ethnicity_stat, "Results/ethnicity_stat.txt", sep="\t")
 
 
 # AGE
@@ -79,8 +79,8 @@ age_stat
 age_stat$age.length <-as.numeric(age_stat$age.length)
 nrow(all)-sum(age_stat[1:2,4])
 # Write results
-write.csv(age_stat, "age_stat.csv")
-write.table(age_stat, "age_stat.txt", sep="\t")
+write.csv(age_stat, "Results/age_stat.csv")
+write.table(age_stat, "Results/age_stat.txt", sep="\t")
 
 
 # SEX
@@ -91,8 +91,8 @@ sex_stat <- sex_stat[,c(1,2,4)]
 sex_stat <- rename(sex_stat,c("Var1"="sex","Freq"="freq","Freq.1"="%"))
 sex_stat
 # Write results
-write.csv(sex_stat, "sex_stat.csv")
-write.table(sex_stat, "sex_stat.txt", sep="\t")
+write.csv(sex_stat, "Results/sex_stat.csv")
+write.table(sex_stat, "Results/sex_stat.txt", sep="\t")
 
 
 # EDUCATION
@@ -105,8 +105,8 @@ edu_level_stat <- rename(edu_level_stat,c("Var1"="education","Freq"="freq","Freq
 edu_level_stat$education <- factor(edu_level_stat$education, levels = c(1,2,3,4,5,6),labels = c("No formal schooling","Finished primary school","Finished high school","Finished a course following school","Finished undergraduate university degree","Finished postgraduate university degree"))
 edu_level_stat
 # Write results
-write.csv(edu_level_stat, "edu_level_stat.csv")
-write.table(edu_level_stat, "edu_level_stat.txt", sep="\t")
+write.csv(edu_level_stat, "Results/edu_level_stat.csv")
+write.table(edu_level_stat, "Results/edu_level_stat.txt", sep="\t")
 
 
 # WEALTH
@@ -119,8 +119,8 @@ wealth_stat <- rename(wealth_stat,c("Var1"="wealth","Freq"="freq","Freq.1"="%"))
 wealth_stat$wealth <- factor(wealth_stat$wealth, levels = c(1,2,3),labels = c("Above average wealth","Average wealth","Below average wealth"))
 wealth_stat
 # Write results
-write.csv(wealth_stat, "wealth_stat.csv")
-write.table(wealth_stat, "wealth_stat.txt", sep="\t")
+write.csv(wealth_stat, "Results/wealth_stat.csv")
+write.table(wealth_stat, "Results/wealth_stat.txt", sep="\t")
 
 
 # RELIGION
@@ -131,11 +131,12 @@ religion_stat <- religion_stat[,c(1,2,4)]
 religion_stat <- rename(religion_stat,c("Var1"="religion","Freq"="freq","Freq.1"="%"))
 religion_stat
 # Write results
-write.csv(religion_stat, "religion_stat.csv")
-write.table(religion_stat, "religion_stat.txt", sep="\t")
+write.csv(religion_stat, "Results/religion_stat.csv")
+write.table(religion_stat, "Results/religion_stat.txt", sep="\t")
 
 
 # - Self-reported inherited disease 
+
 
 # 4) comparisons 
 # a) between ethnicity 
