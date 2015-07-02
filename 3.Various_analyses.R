@@ -65,6 +65,9 @@ ethnicity_stat
 write.csv(ethnicity_stat, "ethnicity_stat.csv")
 write.table(ethnicity_stat, "ethnicity_stat.txt", sep="\t")
 
+# AGE
+summary(all$age)
+
 
 # SEX
 sex_table <- table(all$sex)
