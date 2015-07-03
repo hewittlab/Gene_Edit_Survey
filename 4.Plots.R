@@ -4,6 +4,7 @@ library(plyr)
 library(likert)
 library(ggplot2) # Plots
 
+## Need to create a "Figures symlink" folder in the WD to save plots to.
 
 #LIKERT----------------------------------------------------------------------------------------
 
@@ -26,14 +27,17 @@ likert_df <-likert(likert_df)
 
 summary(likert_df)
 
-#plot(likert_df, type="density")
-
-#plot(likert_df, type="density", facet=F)
-
-#plot(likert_df, type="heat", ordered=T)
+# plot(likert_df, type="density")
+# ggsave(file="Figures symlink/Likert_Density_Faceted.eps", width=12, height=10)
+# 
+# plot(likert_df, type="density", facet=F)
+# ggsave(file="Figures symlink/Likert_Density.eps", width=12, height=10)
+# 
+# plot(likert_df, type="heat", ordered=T)
+# ggsave(file="Figures symlink/Likert_Heat.eps", width=12, height=10)
 
 plot(likert_df, ordered=F)
-
+ggsave(file="Figures symlink/Likert_Bar.eps", width=12, height=10)
 
 #POPN----------------------------------------------------------------------------------------
 
@@ -46,7 +50,7 @@ ggplot(data=all,aes(x=age,fill=sex)) +
   scale_x_continuous(breaks=seq(0,100,10),labels=abs(seq(0,100,10))) +
   scale_y_continuous(breaks=seq(-440,200,80),labels=abs(seq(-440,200,80))) + 
   coord_flip()
-ggsave(file="Pyramid_Plot.eps", width=12, height=10)
+ggsave(file="Figures symlink/Pyramid_Plot.eps", width=12, height=10)
 
 #----------------------------------------------------------------------------------------
 
