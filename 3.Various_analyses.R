@@ -64,7 +64,7 @@ write.csv(ethnicity_stat, "Results symlink/ethnicity_stat.csv")
 write.table(ethnicity_stat, "Results symlink/ethnicity_stat.txt", sep="\t")
 
 
-# AGE
+# AGE(*SEX)
 age_stat <- data.frame(age=all$age, group=all$sex)
 age_stat <- summaryBy(age~group, data=age_stat, FUN=c(mean, sd, length))
 age.prop <- c(round(length(all$sex[all$sex == "F"])/nrow(all)*100,1), round(length(all$sex[all$sex == "M"])/nrow(all)*100,1))
@@ -138,7 +138,120 @@ write.csv(religion_stat, "Results symlink/religion_stat.csv")
 write.table(religion_stat, "Results symlink/religion_stat.txt", sep="\t")
 
 
-# - Self-reported inherited disease 
+# RELIGION_TYPE
+relig_type_table <- table(all$religion_type)
+relig_type_prop <- round(prop.table(relig_type_table)*100,2)
+relig_type_stat <- data.frame(relig_type_table, relig_type_prop)
+relig_type_stat <- relig_type_stat[,c(1,2,4)]
+relig_type_stat <- rename(relig_type_stat,c("Var1"="religion_type","Freq"="freq","Freq.1"="%"))
+# Label the levels
+relig_type_stat$religion_type <- factor(relig_type_stat$religion_type, levels = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14),labels = c("Christian - Protestant/Anglican","Christian - Catholic","Christian - Other","Muslim","Jewish","Buddhist","Hindu","Shinto","Taoism","Confucianism","Sikhism","Jainism","Druze","Other"))
+# Sort
+relig_type_stat <- relig_type_stat[order(-relig_type_stat$freq),] 
+relig_type_stat
+# Write results
+write.csv(relig_type_stat, "Results symlink/relig_type_stat.csv")
+write.table(relig_type_stat, "Results symlink/relig_type_stat.txt", sep="\t")
+
+
+# WORKED IN HEALTH
+worked_health_table <- table(all$worked_health)
+worked_health_prop <- round(prop.table(worked_health_table)*100,2)
+worked_health_stat <- data.frame(worked_health_table, worked_health_prop)
+worked_health_stat <- worked_health_stat[,c(1,2,4)]
+worked_health_stat <- rename(worked_health_stat,c("Var1"="worked_health","Freq"="freq","Freq.1"="%"))
+worked_health_stat
+# Write results
+write.csv(worked_health_stat, "Results symlink/worked_health_stat.csv")
+write.table(worked_health_stat, "Results symlink/worked_health_stat.txt", sep="\t")
+
+
+# WORKED_TYPE
+worked_type_table <- table(all$worked_health_type)
+worked_type_prop <- round(prop.table(worked_type_table)*100,2)
+worked_type_stat <- data.frame(worked_type_table, worked_type_prop)
+worked_type_stat <- worked_type_stat[,c(1,2,4)]
+worked_type_stat <- rename(worked_type_stat,c("Var1"="worked_type","Freq"="freq","Freq.1"="%"))
+# Label the levels
+worked_type_stat$worked_type <- factor(worked_type_stat$worked_type, levels = c(1,2,3,4,5,6),labels = c("Medical Doctor","Scientific Researcher","Nurse","Allied health worker","Other role at hospital/medical centre","Other"))
+# Sort
+worked_type_stat <- worked_type_stat[order(-worked_type_stat$freq),] 
+worked_type_stat
+# Write results
+write.csv(worked_type_stat, "Results symlink/worked_type_stat.csv")
+write.table(worked_type_stat, "Results symlink/worked_type_stat.txt", sep="\t")
+
+
+# HEARD ABOUT
+heard_table <- table(all$heard_about)
+heard_prop <- round(prop.table(heard_table)*100,2)
+heard_stat <- data.frame(heard_table, heard_prop)
+heard_stat <- heard_stat[,c(1,2,4)]
+heard_stat <- rename(heard_stat,c("Var1"="heard_about","Freq"="freq","Freq.1"="%"))
+# Label the levels
+heard_stat$heard_about <- factor(heard_stat$heard_about, levels = c(1,2,3),labels = c("I have never heard of it","I have heard a little about it","I have heard a lot about it"))
+heard_stat
+# Write results
+write.csv(heard_stat, "Results symlink/heard_stat.csv")
+write.table(heard_stat, "Results symlink/heard_stat.txt", sep="\t")
+
+
+# GENETIC CONDITION
+genetic_cond_table <- table(all$genetic_cond)
+genetic_cond_prop <- round(prop.table(genetic_cond_table)*100,2)
+genetic_cond_stat <- data.frame(genetic_cond_table, genetic_cond_prop)
+genetic_cond_stat <- genetic_cond_stat[,c(1,2,4)]
+genetic_cond_stat <- rename(genetic_cond_stat,c("Var1"="genetic_cond","Freq"="freq","Freq.1"="%"))
+genetic_cond_stat
+# Write results
+write.csv(genetic_cond_stat, "Results symlink/genetic_cond_stat.csv")
+write.table(genetic_cond_stat, "Results symlink/genetic_cond_stat.txt", sep="\t")
+
+
+# GENETIC CONDITION AFFECTED
+genetic_affected_table <- table(all$genetic_cond_affected)
+genetic_affected_prop <- round(prop.table(genetic_affected_table)*100,2)
+genetic_affected_stat <- data.frame(genetic_affected_table, genetic_affected_prop)
+genetic_affected_stat <- genetic_affected_stat[,c(1,2,4)]
+genetic_affected_stat <- rename(genetic_affected_stat,c("Var1"="genetic_affected","Freq"="freq","Freq.1"="%"))
+# Label the levels
+genetic_affected_stat$genetic_affected <- factor(genetic_affected_stat$genetic_affected, levels = c(1,2,3),labels = c("Me","Another family member(s)","Me and a family member(s)"))
+genetic_affected_stat
+# Write results
+write.csv(genetic_affected_stat, "Results symlink/genetic_affected_stat.csv")
+write.table(genetic_affected_stat, "Results symlink/genetic_affected_stat.txt", sep="\t")
+
+
+# GENETIC CONDITION TYPE
+genetic_type_table <- table(all$genetic_cond_type)
+genetic_type_prop <- round(prop.table(genetic_type_table)*100,2)
+genetic_type_stat <- data.frame(genetic_type_table, genetic_type_prop)
+genetic_type_stat <- genetic_type_stat[,c(1,2,4)]
+genetic_type_stat <- rename(genetic_type_stat,c("Var1"="genetic_type","Freq"="freq","Freq.1"="%"))
+# Label the levels
+genetic_type_stat$genetic_type <- factor(genetic_type_stat$genetic_type, levels = c(1,2,3,4,5,6,7,8,9,10),labels = c("Cystic Fibrosis","Huntington’s Disease","Muscular Dystrophy","Sickle Cell Anaemia","Beta Thalassemia","Haemophilia","Tay Sachs Disease","Fragile X Syndrome","Down’s Syndrome, Edward’s Syndrome, Patau Syndrome","Other"))
+# Sort
+genetic_type_stat <- genetic_type_stat[order(-genetic_type_stat$freq),] 
+genetic_type_stat
+# Write results
+write.csv(genetic_type_stat, "Results symlink/genetic_type_stat.csv")
+write.table(genetic_type_stat, "Results symlink/genetic_type_stat.txt", sep="\t")
+
+
+
+# AGE(*COUNTRY)
+age_country_stat <- data.frame(age=all$age, group=all$country)
+age_country_stat <- summaryBy(age~group, data=age_country_stat, FUN=c(mean, sd, length))
+age_country_stat$age.mean <- round(age_country_stat$age.mean,2)
+age_country_stat$age.sd <- round(age_country_stat$age.sd,2)
+age_country_stat <- rename(age_country_stat,c("age.length"="age.freq"))
+# Sort
+age_country_stat <- age_country_stat[order(-age_country_stat[,4]),] 
+age_country_stat
+# Write results
+write.csv(age_country_stat, "Results symlink/age_country_stat.csv")
+write.table(age_country_stat, "Results symlink/age_country_stat.txt", sep="\t")
+
 
 
 # 4) comparisons 
