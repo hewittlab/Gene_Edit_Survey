@@ -253,6 +253,26 @@ write.csv(age_country_stat, "Results symlink/age_country_stat.csv")
 write.table(age_country_stat, "Results symlink/age_country_stat.txt", sep="\t")
 
 
+# SEX(*COUNTRY)
+sex_country_table <- table(all$country,all$sex)
+sex_country_prop <- prop.table(sex_country_table,1)*100 # 1 specifies row margins (2 for columns I think)
+sex_country_prop <- sex_country_prop[,1:2]
+# Retrieve total country counts from above (need to reorder)
+country_stat <- country_stat[order(country_stat$country),] 
+sex_country_stat <- cbind(country_stat$freq, sex_country_table, sex_country_prop)
+sex_country_stat <- data.frame(sex_country_stat)
+sex_country_stat <- rename(sex_country_stat,c("V1"="Total","F"="F.freq","M"="M.freq","F.1"="F.prop","M.1"="M.prop"))
+sex_country_stat$F.prop <- round(sex_country_stat$F.prop,2)
+sex_country_stat$M.prop <- round(sex_country_stat$M.prop,2)
+# Sort
+sex_country_stat <- sex_country_stat[order(-country_stat$freq),] 
+sex_country_stat
+# Write results
+write.csv(sex_country_stat, "Results symlink/sex_country_stat.csv")
+write.table(sex_country_stat, "Results symlink/sex_country_stat.txt", sep="\t")
+
+
+
 
 # 4) comparisons 
 # a) between ethnicity 
