@@ -272,6 +272,28 @@ write.csv(sex_country_stat, "Results symlink/sex_country_stat.csv")
 write.table(sex_country_stat, "Results symlink/sex_country_stat.txt", sep="\t")
 
 
+# SEX(*ETHNICITY)
+ethnic_vec <- all$ethnicity
+ethnic_vec <- factor(ethnic_vec, levels = c(1,2,3,4,5,6,7,8,9,10,11),labels = c("Mixed Race","African/African American","Asian Indian","Caucasian (European)","Caucasian (Middle East)","Hispanic, Latino or Spanish","Indigenous Australian","Native American","North East Asian (Mongol, Tibetan, Korean, Japanese, etc)","Pacific (Polynesian, micronesian, etc)","South East Asian (Chinese, Thai, Malay, Filipino, etc)"))
+sex_ethnicity_table <- table(ethnic_vec,all$sex)
+sex_ethnicity_prop <- prop.table(sex_ethnicity_table,1)*100 # 1 specifies row margins (2 for columns I think)
+sex_ethnicity_prop <- sex_ethnicity_prop[,1:2]
+# Retrieve total ethnicity counts from above (need to reorder)
+ethnicity_stat <- ethnicity_stat[order(ethnicity_stat$ethnicity),] 
+sex_ethnicity_stat <- cbind(ethnicity_stat$ethnicity, ethnicity_stat$freq, sex_ethnicity_table, sex_ethnicity_prop)
+sex_ethnicity_stat <- data.frame(sex_ethnicity_stat)
+sex_ethnicity_stat <- rename(sex_ethnicity_stat,c("V1"="ethnicity", "V2"="Total","F"="F.freq","M"="M.freq","F.1"="F.prop","M.1"="M.prop"))
+sex_ethnicity_stat$F.prop <- round(sex_ethnicity_stat$F.prop,2)
+sex_ethnicity_stat$M.prop <- round(sex_ethnicity_stat$M.prop,2)
+# Sort
+sex_ethnicity_stat <- sex_ethnicity_stat[order(-ethnicity_stat$freq),] 
+sex_ethnicity_stat
+# Write results
+write.csv(sex_ethnicity_stat, "Results symlink/sex_ethnicity_stat.csv")
+write.table(sex_ethnicity_stat, "Results symlink/sex_ethnicity_stat.txt", sep="\t")
+
+
+
 
 
 # 4) comparisons 
