@@ -293,6 +293,31 @@ write.csv(sex_ethnicity_stat, "Results symlink/sex_ethnicity_stat.csv")
 write.table(sex_ethnicity_stat, "Results symlink/sex_ethnicity_stat.txt", sep="\t")
 
 
+#EDUCATION(*COUNTRY)
+edu_vec <- all$edu_level
+edu_vec <- factor(edu_vec, levels = c(1,2,3,4,5,6),labels = c("None","Primary","High","Course","Undergrad","Postgrad"))
+edu_country_table <- table(all$country, edu_vec)
+edu_country_prop <- prop.table(edu_country_table,1)*100 # 1 specifies row margins (2 for columns I think)
+edu_country_stat <- cbind(edu_country_table, edu_country_prop)
+edu_country_stat[,7] <- round(edu_country_stat[,7],2)
+edu_country_stat[,8] <- round(edu_country_stat[,8],2)
+edu_country_stat[,9] <- round(edu_country_stat[,9],2)
+edu_country_stat[,10] <- round(edu_country_stat[,10],2)
+edu_country_stat[,11] <- round(edu_country_stat[,11],2)
+edu_country_stat[,12] <- round(edu_country_stat[,12],2)
+edu_country_stat
+# Write results
+write.csv(edu_country_stat, "Results symlink/edu_country_stat.csv")
+write.table(edu_country_stat, "Results symlink/edu_country_stat.txt", sep="\t")
+
+
+
+
+
+
+
+
+
 
 
 
