@@ -311,9 +311,19 @@ write.csv(edu_country_stat, "Results symlink/edu_country_stat.csv")
 write.table(edu_country_stat, "Results symlink/edu_country_stat.txt", sep="\t")
 
 
-
-
-
+# GENETIC CONDITION(*COUNTRY)
+gc_country_table <- table(all$country,all$genetic_cond)
+gc_country_prop <- prop.table(gc_country_table,1)*100 # 1 specifies row margins (2 for columns I think)
+gc_country_prop <- gc_country_prop[,1:2]
+# Retrieve total country counts from above (need to reorder)
+country_stat <- country_stat[order(country_stat$country),] 
+gc_country_stat <- cbind(country_stat$freq, gc_country_table, gc_country_prop)
+gc_country_stat <- data.frame(gc_country_stat)
+gc_country_stat <- rename(gc_country_stat,c("V1"="Total","N"="N.freq","Y"="Y.freq","N.1"="N.prop","Y.1"="Y.prop"))
+gc_country_stat
+# Write results
+write.csv(gc_country_stat, "Results symlink/gc_country_stat.csv")
+write.table(gc_country_stat, "Results symlink/gc_country_stat.txt", sep="\t")
 
 
 
