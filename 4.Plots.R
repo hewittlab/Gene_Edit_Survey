@@ -48,10 +48,37 @@ ggplot(data=all,aes(x=age,fill=sex)) +
   geom_bar(subset=.(sex=="M"),aes(y=..count..*(-1))) + 
   scale_fill_grey(start = 0.1, end = 0.4, na.value = "grey50") +
   scale_x_continuous(breaks=seq(0,100,10),labels=abs(seq(0,100,10))) +
-  scale_y_continuous(breaks=seq(-440,200,80),labels=abs(seq(-440,200,80))) + 
+  scale_y_continuous(breaks=seq(-700,300,80),labels=abs(seq(-700,300,80))) +
+  labs(title="Population Pyramid", x="Age", y="Frequency") +
   coord_flip()
 ggsave(file="Figures symlink/Pyramid_Plot.eps", width=12, height=10)
 
+
+#AGE_BOXPLOTS----------------------------------------------------------------------------------------
+
+# BOXPLOTS OF AGE BY ETHNICITY
+
+ethnic_vec <- all$ethnicity
+ethnic_vec <- factor(ethnic_vec, levels = c(1,2,3,4,5,6,7,8,9,10,11),labels = c("Mixed Race","African/African American","Asian Indian","Caucasian (European)","Caucasian (Middle East)","Hispanic, Latino or Spanish","Indigenous Australian","Native American","North East Asian (Mongol, Tibetan, Korean, Japanese, etc)","Pacific (Polynesian, micronesian, etc)","South East Asian (Chinese, Thai, Malay, Filipino, etc)"))
+age_stat <- data.frame(age=all$age, group=ethnic_vec)
+
+ggplot(age_stat, aes(x=group, y=age)) + 
+  geom_boxplot() + 
+  scale_y_continuous(breaks=seq(10,100,10),labels=seq(10,100,10)) + 
+  labs(title="Boxplots of Age by Ethnicity",x="Ethnicity", y="Age") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(file="Figures symlink/Boxplot_Age*Ethnicity.eps", width=12, height=8)
+
+
 #----------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
 
 
