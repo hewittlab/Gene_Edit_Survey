@@ -320,6 +320,8 @@ country_stat <- country_stat[order(country_stat$country),]
 gc_country_stat <- cbind(country_stat$freq, gc_country_table, gc_country_prop)
 gc_country_stat <- data.frame(gc_country_stat)
 gc_country_stat <- rename(gc_country_stat,c("V1"="Total","N"="N.freq","Y"="Y.freq","N.1"="N.prop","Y.1"="Y.prop"))
+gc_country_stat$N.prop <- round(gc_country_stat$N.prop,2)
+gc_country_stat$Y.prop <- round(gc_country_stat$Y.prop,2)
 gc_country_stat
 # Write results
 write.csv(gc_country_stat, "Results symlink/gc_country_stat.csv")
@@ -328,7 +330,16 @@ write.table(gc_country_stat, "Results symlink/gc_country_stat.txt", sep="\t")
 
 #COMPARISONS---------------------------------------------------------------------------------------
 
+# Can do chi-square
+# chisq.test(sex_ethnicity_mat)
+# Or a proportions test - Prop.test function calculates the value of chi-square, given the values of success (in the vector x) and total attempts (in the vector n).
+# F    M
+# 616 1160
+# 427  293
+# prop.test(x=c(616,427),n=c(1776,720),correct=F)
 
+
+# SEX DIFFS CAUCASIAN AND ASIAN
 ethnic_vec <- all$ethnicity
 ethnic_vec <- factor(ethnic_vec, levels = c(1,2,3,4,5,6,7,8,9,10,11),labels = c("Mixed Race","African/African American","Asian Indian","Caucasian (European)","Caucasian (Middle East)","Hispanic, Latino or Spanish","Indigenous Australian","Native American","North East Asian (Mongol, Tibetan, Korean, Japanese, etc)","Pacific (Polynesian, micronesian, etc)","South East Asian (Chinese, Thai, Malay, Filipino, etc)"))
 sex_ethnicity_table <- table(ethnic_vec,all$sex)
@@ -343,30 +354,69 @@ sex_ethnicity_df <- cbind(sex_ethnicity_rn, sex_ethnicity_df)
 # Rename first column (i.e. rownames)
 colnames(sex_ethnicity_df)[1]="ethnicity"
 sex_ethnicity_df
-sex_ethnicity_df <- sex_ethnicity_df[which(sex_ethnicity_df$ethnicity == "Caucasian (European)" | sex_ethnicity_df$ethnicity == "South East Asian (Chinese, Thai, Malay, Filipino, etc)"), ]
+# Create separate dataframes for Caucasian and Asian
+sex_ethnicity_df1 <- sex_ethnicity_df[which(sex_ethnicity_df$ethnicity == "Caucasian (European)" | sex_ethnicity_df$ethnicity == "Caucasian (Middle East)"), ]
+sex_ethnicity_df1
+sex_ethnicity_df2 <- sex_ethnicity_df[which(sex_ethnicity_df$ethnicity == "South East Asian (Chinese, Thai, Malay, Filipino, etc)" | sex_ethnicity_df$ethnicity == "North East Asian (Mongol, Tibetan, Korean, Japanese, etc)"), ]
+sex_ethnicity_df2
+# Sum columns and rbind two aggregate rows
+sex_ethnicity_df <- rbind(colSums(sex_ethnicity_df1[,2:3]), colSums(sex_ethnicity_df2[,2:3]))
 sex_ethnicity_df
-# Strip country variable and convert to matrix
-sex_ethnicity_df <- sex_ethnicity_df[,2:3]
+# Convert to matrix
 sex_ethnicity_mat <- as.matrix(sex_ethnicity_df)
-# Can do chi-square
-chisq.test(sex_ethnicity_mat)
-# Or a proportions test - Prop.test function calculates the value of chi-square, given the values of success (in the vector x) and total attempts (in the vector n).
-# F    M
-# 616 1160
-# 427  293
-# prop.test(x=c(616,427),n=c(1776,720),correct=F)
 prop.test(sex_ethnicity_mat,correct=F)
 sex_ethnicity_prop.test <- prop.test(sex_ethnicity_mat,correct=F)
 # Remove old file
-file.remove("Results symlink/sex_ethnicity_prop.test_4vs11.txt")
+file.remove("Results symlink/sex_ethnicity_prop.test_CaucasianVsAsian.txt")
 # Write results
-descrip <- "Proportions test comparing Males and Females in Caucasian (European)(4) and South East Asian (Chinese, Thai, Malay, Filipino, etc)(11) samples"
+descrip <- "Proportions test comparing Males and Females in combined Caucasian (4)+(5) and Asian (9)+(11) samples. Sample estimates represent the proportions of females. Row 1 = Caucasian, Row 2 = Asian"
 txt <-capture.output(descrip,file=NULL) # Print description
 mat <-capture.output(sex_ethnicity_mat,file=NULL) # Print contingency table
 out<-capture.output(sex_ethnicity_prop.test) # Print proportions test result
-cat(txt,file="Results symlink/sex_ethnicity_prop.test_4vs11.txt",sep="\n",append=T)
-cat(mat,file="Results symlink/sex_ethnicity_prop.test_4vs11.txt",sep="\n",append=T)
-cat(out,file="Results symlink/sex_ethnicity_prop.test_4vs11.txt",sep="\n", append=T)
+cat(txt,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsAsian.txt",sep="\n",append=T)
+cat(mat,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsAsian.txt",sep="\n",append=T)
+cat(out,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsAsian.txt",sep="\n", append=T)
+
+
+# SEX DIFFS CAUCASIAN AND CHINESE
+ethnic_vec <- all$ethnicity
+ethnic_vec <- factor(ethnic_vec, levels = c(1,2,3,4,5,6,7,8,9,10,11),labels = c("Mixed Race","African/African American","Asian Indian","Caucasian (European)","Caucasian (Middle East)","Hispanic, Latino or Spanish","Indigenous Australian","Native American","North East Asian (Mongol, Tibetan, Korean, Japanese, etc)","Pacific (Polynesian, micronesian, etc)","South East Asian (Chinese, Thai, Malay, Filipino, etc)"))
+sex_ethnicity_table <- table(ethnic_vec,all$sex)
+# Save table rownames in a vector
+sex_ethnicity_rn <- rownames(sex_ethnicity_table)
+# Now set to NULL so they aren't duplicated when the table is converted to a df.
+rownames(sex_ethnicity_table) <- NULL
+# Convert table to df
+sex_ethnicity_df <- as.data.frame.matrix(sex_ethnicity_table)
+# Add rownames back in
+sex_ethnicity_df <- cbind(sex_ethnicity_rn, sex_ethnicity_df)
+# Rename first column (i.e. rownames)
+colnames(sex_ethnicity_df)[1]="ethnicity"
+sex_ethnicity_df
+# Create separate dataframes for Caucasian and Chinese
+sex_ethnicity_df1 <- sex_ethnicity_df[which(sex_ethnicity_df$ethnicity == "Caucasian (European)" | sex_ethnicity_df$ethnicity == "Caucasian (Middle East)"), ]
+sex_ethnicity_df1
+sex_ethnicity_df2 <- sex_ethnicity_df[which(sex_ethnicity_df$ethnicity == "South East Asian (Chinese, Thai, Malay, Filipino, etc)"), ]
+sex_ethnicity_df2
+# Sum columns and rbind two aggregate rows
+sex_ethnicity_df <- rbind(colSums(sex_ethnicity_df1[,2:3]), colSums(sex_ethnicity_df2[,2:3]))
+sex_ethnicity_df
+# Convert to matrix
+sex_ethnicity_mat <- as.matrix(sex_ethnicity_df)
+prop.test(sex_ethnicity_mat,correct=F)
+sex_ethnicity_prop.test <- prop.test(sex_ethnicity_mat,correct=F)
+# Remove old file
+file.remove("Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt")
+# Write results
+descrip <- "Proportions test comparing Males and Females in combined Caucasian (4)+(5) and Chinese (11) samples. Sample estimates represent the proportions of females. Row 1 = Caucasian, Row 2 = Chinese"
+txt <-capture.output(descrip,file=NULL) # Print description
+mat <-capture.output(sex_ethnicity_mat,file=NULL) # Print contingency table
+out<-capture.output(sex_ethnicity_prop.test) # Print proportions test result
+cat(txt,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",sep="\n",append=T)
+cat(mat,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",sep="\n",append=T)
+cat(out,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",sep="\n", append=T)
+
+
 
 
 
