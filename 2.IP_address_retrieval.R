@@ -75,7 +75,8 @@ map <- map_data('world')
 str(map)
 ggplot() +
   geom_polygon(data = map, aes(long, lat, group=group), fill="grey50") +
-  geom_point(data = mapdata, aes(x=longitude.m, y=latitude.m, map_id = time_zone, size = latitude.N), col="red")
+  geom_point(data = mapdata, aes(x=longitude.m, y=latitude.m, map_id = time_zone, size = latitude.N), col="red") +
+  labs(title="Bubble Plot", x="Longitude", y="Latitude") +
 ggsave(file="Figures symlink/Bubble_Plot.eps", width=12, height=6)
 
 #----------------------------------------------------------------------------------------
