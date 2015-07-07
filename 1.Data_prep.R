@@ -493,9 +493,9 @@ c("African/African American", "Afroamericano/Africano", "Africana/afro-americana
 
 c("Asian Indian", "Indio asiático", "Asiatische Inder", "Asiático Índico", "Indien d’Asie", "印度裔 ", "भारतीय/एशियाई", "هندى أسيوى", "Индиец", "Hint Asyalı", "アジア系インド人") = 3; 
 
-c("Caucasian (European)", "قوقازى (أوروبى)", "白种人（欧洲）", "Caucasien (Européen)", "Kaukasic/Europäer", "श्वेतजाति  (यूरोपीय)", "白人（ヨーロッパ系）", "Caucasiano (Europeu)", "Европеоид (Европа)", "Caucásico (europeo)", "Avrupalı") = 4; 
+c("Caucasian (European)", "قوقازى (أوروبى)", "白种人（欧洲）", "Caucasien (Européen)", "Kaukasic/Europäer", "श्वेतजाति  (यूरोपीय)", "श्वेतजाति (मध्यपूर्व)", "白人（ヨーロッパ系）", "Caucasiano (Europeu)", "Европеоид (Европа)", "Caucásico (europeo)", "Avrupalı") = 4; 
 
-c("Caucasian (Middle East)", "قوقازى (شرق أوسطى)", "白种人（中东）", "Caucasien (Moyen-Orient)", "श्वेतजाति  (मध्यपूर्व)", "白人（中東系)", "Caucasiano (Oriente Médio)", "Европеоид (Ближний Восток)", "Caucásico (medio oriente)", "Orta Doğulu") = 5; 
+c("Caucasian (Middle East)", "قوقازى (شرق أوسطى)", "白种人（中东）", "Caucasien (Moyen-Orient)", "Kaukasisch ( Middle East )", "श्वेतजाति  (मध्यपूर्व)", "白人（中東系)", "Caucasiano (Oriente Médio)", "Европеоид (Ближний Восток)", "Caucásico (medio oriente)", "Orta Doğulu") = 5; 
 
 c("Hispanic, Latino or Spanish", "هسبانى أو لاتينى أو اسبانى", "西班牙，拉美裔 ", "Hispanique, Latino", "Hispanic, Latino oder Spanish", "हिस्पैनिकलातीनोयास्पेनिश", "ヒスパニック、ラテン系またはスペイン人", "Hispânico, latino ou espanhol", "Латиноамериканец или испанец", "Hispano, latinoamericano o español", "Hispanik, Latin veya İspanyol") = 6; 
 
@@ -693,7 +693,7 @@ levels(data$religion_type)
 data$religion_type <- recode(data$religion_type,
 'c("Christian - Protestant/Anglican", "مسيحى – بروتوستانتى/إنجيلى", "基督教-新教/英国 国教", "Chrétien - Protestant/Anglican", "Christlich – evangelische/anglikanisch", "ईसाई- प्रोटेस्टेंट / अँग्रेज़ी", "キリスト教—プロテスタント／英国国教会派", "Cristão Protestante/Anglicano", "Христианство - протестантство/англиканство", "Cristianismo (protestante/anglicano)", "Hristiyan Protestan/Anglikan") = 1;
 
-c("Christian - Catholic", "مسيحى – كاثوليكى", "基督教-天主教", "Chrétien - Catholique", "Christlich – Katholisch", "ईसाई- कैथोलिक", "キリスト教—カトリック教会", "Cristão – Católico", "Христианство - католичество", "Cristianismo (católico)", "Hristiyan Katolik") = 2;
+c("Christian - Catholic", "مسيحى – كاثوليكى", "基督教-天主教", "Chrétien - Catholique", "Christlich – Katholisch", "ईसाई- कैथोलिक", "ईसाई- कैथोिलक", "キリスト教—カトリック教会", "Cristão – Católico", "Христианство - католичество", "Cristianismo (católico)", "Hristiyan Katolik") = 2;
 
 c("Christian - Other", "مسيحى – أخرى", "基督教-其他", "Chrétien - Autre", "Christlich – andere", "ईसाई- अन्य", "キリスト教—その他", "Cristão - Outro", "Христианство - прочее", "Cristianismo (otra)", "Hristiyan Diğer") = 3;
 
