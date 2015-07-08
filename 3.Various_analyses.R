@@ -372,7 +372,7 @@ file.remove("Results symlink/sex_ethnicity_prop.test_CaucasianVsAsian.txt")
 descrip <- "Proportions test comparing Males and Females in combined Caucasian (4)+(5) and Asian (9)+(11) samples. Sample estimates represent the proportions of females. Row 1 = Caucasian, Row 2 = Asian"
 txt <-capture.output(descrip,file=NULL) # Print description
 mat <-capture.output(sex_ethnicity_mat,file=NULL) # Print contingency table
-out<-capture.output(sex_ethnicity_prop.test) # Print proportions test result
+out <-capture.output(sex_ethnicity_prop.test) # Print proportions test result
 cat(txt,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsAsian.txt",sep="\n",append=T)
 cat(mat,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsAsian.txt",sep="\n",append=T)
 cat(out,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsAsian.txt",sep="\n", append=T)
@@ -411,11 +411,69 @@ file.remove("Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt")
 descrip <- "Proportions test comparing Males and Females in combined Caucasian (4)+(5) and Chinese (11) samples. Sample estimates represent the proportions of females. Row 1 = Caucasian, Row 2 = Chinese"
 txt <-capture.output(descrip,file=NULL) # Print description
 mat <-capture.output(sex_ethnicity_mat,file=NULL) # Print contingency table
-out<-capture.output(sex_ethnicity_prop.test) # Print proportions test result
+out <-capture.output(sex_ethnicity_prop.test) # Print proportions test result
 cat(txt,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",sep="\n",append=T)
 cat(mat,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",sep="\n",append=T)
 cat(out,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",sep="\n", append=T)
 
+
+# AGE DIFFS CAUCASIAN AND ASIAN
+age_stat <- data.frame(age=all$age, group=all$ethnicity)
+age_stat <- subset(age_stat, group == 4 | group == 5 | group == 9 | group == 11)
+# Recode
+age_stat$group <- recode(age_stat$group,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"9" = "Asian";
+"11" = "Asian"')
+levels(age_stat$group)
+# t-test for diffs in age between groups
+age_ethnicity_ttest_CaucasianVsAsian <- t.test(age ~ group, data = age_stat)
+# Exclude those below 19 years
+age_stat <- subset(age_stat, age > 18)
+age_ethnicity_ttest_CaucasianVsAsian19 <- t.test(age ~ group, data = age_stat)
+# Remove old file
+file.remove("Results symlink/age_ethnicity_t.test_CaucasianVsAsian.txt")
+# Write results
+descrip <- "t-test comparing age in combined Caucasian (4)+(5) and Asian (9)+(11) samples."
+txt <-capture.output(descrip,file=NULL) # Print description
+out <-capture.output(age_ethnicity_ttest_CaucasianVsAsian) # Print test result
+cat(txt,file="Results symlink/age_ethnicity_t.test_CaucasianVsAsian.txt",sep="\n",append=T)
+cat(out,file="Results symlink/age_ethnicity_t.test_CaucasianVsAsian.txt",sep="\n", append=T)
+descrip2 <- "t-test comparing age (those aged 19+) in combined Caucasian (4)+(5) and Asian (9)+(11) samples."
+txt2 <-capture.output(descrip2,file=NULL) # Print description
+out2 <-capture.output(age_ethnicity_ttest_CaucasianVsAsian19) # Print test result
+cat(txt2,file="Results symlink/age_ethnicity_t.test_CaucasianVsAsian.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/age_ethnicity_t.test_CaucasianVsAsian.txt",sep="\n", append=T)
+
+
+# AGE DIFFS CAUCASIAN AND CHINESE
+age_stat <- data.frame(age=all$age, group=all$ethnicity)
+age_stat <- subset(age_stat, group == 4 | group == 5 | group == 11)
+# Recode
+age_stat$group <- recode(age_stat$group,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"11" = "Chinese"')
+levels(age_stat$group)
+# t-test for diffs in age between groups
+age_ethnicity_ttest_CaucasianVsChinese <- t.test(age ~ group, data = age_stat)
+# Exclude those below 19 years
+age_stat <- subset(age_stat, age > 18)
+age_ethnicity_ttest_CaucasianVsChinese19 <- t.test(age ~ group, data = age_stat)
+# Remove old file
+file.remove("Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt")
+# Write results
+descrip <- "t-test comparing age in combined Caucasian (4)+(5) and Chinese (11) samples."
+txt <-capture.output(descrip,file=NULL) # Print description
+out <-capture.output(age_ethnicity_ttest_CaucasianVsChinese) # Print test result
+cat(txt,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep="\n",append=T)
+cat(out,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep="\n", append=T)
+descrip2 <- "t-test comparing age (those aged 19+) in combined Caucasian (4)+(5) and Chinese (11) samples."
+txt2 <-capture.output(descrip2,file=NULL) # Print description
+out2 <-capture.output(age_ethnicity_ttest_CaucasianVsChinese19) # Print test result
+cat(txt2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep="\n", append=T)
 
 
 
