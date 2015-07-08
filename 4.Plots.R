@@ -2,6 +2,7 @@
 
 library(plyr)
 library(likert)
+library(car) # Recode variables
 library(ggplot2) # Plots
 
 ## Need to create a "Figures symlink" folder in the WD to save plots to.
@@ -68,6 +69,25 @@ ggplot(age_stat, aes(x=group, y=age)) +
   labs(title="Boxplots of Age by Ethnicity",x="Ethnicity", y="Age") + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave(file="Figures symlink/Boxplot_Age*Ethnicity.eps", width=12, height=8)
+
+
+# BOXPLOTS OF AGE (CAUCASIAN VS ASIAN)
+
+age_stat <- data.frame(age=all$age, group=all$ethnicity)
+age_stat <- subset(age_stat, group == 4 | group == 5 | group == 9 | group == 11)
+# Recode
+age_stat$group <- recode(age_stat$group,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"9" = "Asian";
+"11" = "Asian"')
+levels(age_stat$group)
+
+ggplot(age_stat, aes(x=group, y=age)) + 
+  geom_boxplot() + 
+  scale_y_continuous(breaks=seq(10,100,10),labels=seq(10,100,10)) + 
+  labs(title="Boxplots of Age - Caucasian vs Asian",x="Ethnicity", y="Age")
+ggsave(file="Figures symlink/Boxplot_Age*CaucasianVsAsian.eps", width=12, height=8)
 
 
 #----------------------------------------------------------------------------------------
