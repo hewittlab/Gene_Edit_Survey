@@ -6,6 +6,18 @@ library(doBy) # Group summary stats
 
 ## Need to create a "Results symlink" folder in the WD to save results files to.
 
+#UNIQUE_IP-----------------------------------------------------------------------------------------------
+
+#Total number of IPs
+length(all$ip)
+
+#Number of unique IPs
+length(unique(all$ip))
+
+#Multiples
+mult_ip <- all$ip[which(duplicated(all$ip))]
+table(mult_ip)
+
 
 #ATTRITION-----------------------------------------------------------------------------------------------
 
@@ -478,6 +490,15 @@ cat(out2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep=
 
 
 
+
+
+
+
+
+
+
+
+
 # 4) comparisons 
 # a) between ethnicity 
 # - Caucasian vs Non-Caucasian 
@@ -490,11 +511,4 @@ cat(out2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep=
 # e) Religion 
 # f) Country 
 # g) Inherited disease
-
-
-
-
-
-
-
 
