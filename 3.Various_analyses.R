@@ -3,6 +3,9 @@
 library(plyr) # Various
 library(car) # Recode variables
 library(doBy) # Group summary stats
+library(MASS) # OLR
+library(ordinal) # OLR
+library(lmtest)
 
 ## Need to create a "Results symlink" folder in the WD to save results files to.
 
@@ -488,27 +491,702 @@ cat(txt2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep=
 cat(out2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep="\n", append=T)
 
 
+#ORDINAL_REGRESSION---------------------------------------------------------------------------------------
+
+
+# ORDINAL LOGISTIC REGRESSION
+
+# # Using polr from the MASS package
+# # Duplicate main dataset before collapsing likert levels
+# all_LR <- all
+# # Recode (collapse 6 levels to 3)
+# all_LR$kids_cure_life <- recode(all_LR$kids_cure_life,
+# '"1" = "1(agree)";
+# "2" = "1(agree)";
+# "3" = "2(neutral)";
+# "4" = "3(disagree)";
+# "5" = "3(disagree)";
+# "6" = "2(neutral)";')
+# levels(all_LR$kids_cure_life)
+# fit <- polr(kids_cure_life ~ sex + age + ethnicity, data = all_LR, Hess=TRUE)
+# summary(fit)
+# # store table
+# (ctable <- coef(summary(fit)))
+# # calculate and store p values
+# p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
+# # combined table
+# (ctable <- cbind(ctable, "p value" = p))
+# # CIs
+# (ci <- confint(fit))
+# # Calculate ORs
+# exp(cbind(OR = coef(fit), ci))
+
+
+
+# Using clm from the Ordinal package - I think this output is better
+
+# KIDS_CURE_LIFE
+# Duplicate main dataset before collapsing likert levels
+all_LR <- all
+# Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
+all_LR <- all_LR[c(8,10:14,16:17,21:22)]
+all_LR <- na.omit(all_LR)
+# Recode dependent variable (collapse 6 levels to 3)
+all_LR$kids_cure_life <- recode(all_LR$kids_cure_life,
+'"1" = "1(agree)";
+"2" = "1(agree)";
+"3" = "2(neutral)";
+"4" = "3(disagree)";
+"5" = "3(disagree)";
+"6" = "2(neutral)";')
+levels(all_LR$kids_cure_life)
+# Recode ethnicity and set Caucasian as the comparison category
+all_LR$ethnicity <- recode(all_LR$ethnicity,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"9" = "Asian";
+"11" = "Asian";
+NA = NA;
+else = "Other"')
+levels(all_LR$ethnicity)
+all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = NA;
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
+# Recode education and set None as the comparison category
+all_LR$edu_level <- recode(all_LR$edu_level,
+'"1" = "None";
+"2" = "School";
+"3" = "School";
+"4" = "School";
+NA = NA;
+else = "Tertiary"')
+levels(all_LR$edu_level)
+all_LR$edu_level <- relevel(all_LR$edu_level, "None")
+# Recode wealth and set Below as the comparison category
+all_LR$wealth <- recode(all_LR$wealth,
+'"1" = "Below";
+"2" = "Average";
+"3" = "Above"')
+levels(all_LR$wealth)
+all_LR$wealth <- relevel(all_LR$wealth, "Below")
+# Recode heard_about and set Never as the comparison category
+all_LR$heard_about <- recode(all_LR$heard_about,
+'"1" = "Never";
+"2" = "Little";
+"3" = "Lot"')
+levels(all_LR$heard_about)
+all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
+
+# Fit and compare models
+fit <- clm(kids_cure_life ~ 1, data = all_LR) # Intercept only
+fit2 <- clm(kids_cure_life ~ sex, data = all_LR)
+fit3 <- clm(kids_cure_life ~ sex + age, data = all_LR)
+fit4 <- clm(kids_cure_life ~ sex + age + ethnicity, data = all_LR)
+fit5 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about, data = all_LR)
+fit6 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+fit7 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+fit8 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit9 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit10 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# Compare
+(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# CIs and ORs of model with lowest AIC
+(best_mod_sum <- summary(fit7))
+(ci <- confint(fit7))
+OR <- coef(fit7)
+OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+(best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# Remove old file
+file.remove("Results symlink/OrdReg_kidscurelife.txt")
+# Write results
+newline <- "----------------------------------------------------------------------------------------"
+sep <-capture.output(newline,file=NULL) # Print description
+
+descrip <- "Likelihood ratio tests comparing different models"
+txt <-capture.output(descrip,file=NULL) # Print description
+out <-capture.output(best_mod) # Print test result
+cat(txt,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
+cat(out,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
+
+descrip2 <- "Summary of model with lowest AIC"
+txt2 <-capture.output(descrip2,file=NULL) # Print description
+out2 <-capture.output(best_mod_sum) # Print test result
+cat(txt2,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
+
+descrip3 <- "Corresponding ORs"
+txt3 <-capture.output(descrip3,file=NULL) # Print description
+out3 <-capture.output(best_mod_sumORs) # Print test result
+cat(txt3,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
+
+
+
+# KIDS_CURE_DEBIL
+# Duplicate main dataset before collapsing likert levels
+all_LR <- all
+# Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
+all_LR <- all_LR[c(8,10:14,16:17,21,23)]
+all_LR <- na.omit(all_LR)
+# Recode dependent variable (collapse 6 levels to 3)
+all_LR$kids_cure_debil <- recode(all_LR$kids_cure_debil,
+'"1" = "1(agree)";
+"2" = "1(agree)";
+"3" = "2(neutral)";
+"4" = "3(disagree)";
+"5" = "3(disagree)";
+"6" = "2(neutral)";')
+levels(all_LR$kids_cure_debil)
+# Recode ethnicity and set Caucasian as the comparison category
+all_LR$ethnicity <- recode(all_LR$ethnicity,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"9" = "Asian";
+"11" = "Asian";
+NA = NA;
+else = "Other"')
+levels(all_LR$ethnicity)
+all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = NA;
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
+# Recode education and set None as the comparison category
+all_LR$edu_level <- recode(all_LR$edu_level,
+'"1" = "None";
+"2" = "School";
+"3" = "School";
+"4" = "School";
+NA = NA;
+else = "Tertiary"')
+levels(all_LR$edu_level)
+all_LR$edu_level <- relevel(all_LR$edu_level, "None")
+# Recode wealth and set Below as the comparison category
+all_LR$wealth <- recode(all_LR$wealth,
+'"1" = "Below";
+"2" = "Average";
+"3" = "Above"')
+levels(all_LR$wealth)
+all_LR$wealth <- relevel(all_LR$wealth, "Below")
+# Recode heard_about and set Never as the comparison category
+all_LR$heard_about <- recode(all_LR$heard_about,
+'"1" = "Never";
+"2" = "Little";
+"3" = "Lot"')
+levels(all_LR$heard_about)
+all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
+
+# Fit and compare models
+fit <- clm(kids_cure_debil ~ 1, data = all_LR) # Intercept only
+fit2 <- clm(kids_cure_debil ~ sex, data = all_LR)
+fit3 <- clm(kids_cure_debil ~ sex + age, data = all_LR)
+fit4 <- clm(kids_cure_debil ~ sex + age + ethnicity, data = all_LR)
+fit5 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about, data = all_LR)
+fit6 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+fit7 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+fit8 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit9 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit10 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# Compare
+(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# CIs and ORs of model with lowest AIC
+(best_mod_sum <- summary(fit8))
+(ci <- confint(fit8))
+OR <- coef(fit8)
+OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+(best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# Remove old file
+file.remove("Results symlink/OrdReg_kidscuredebil.txt")
+# Write results
+newline <- "----------------------------------------------------------------------------------------"
+sep <-capture.output(newline,file=NULL) # Print description
+
+descrip <- "Likelihood ratio tests comparing different models"
+txt <-capture.output(descrip,file=NULL) # Print description
+out <-capture.output(best_mod) # Print test result
+cat(txt,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
+cat(out,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
+
+descrip2 <- "Summary of model with lowest AIC"
+txt2 <-capture.output(descrip2,file=NULL) # Print description
+out2 <-capture.output(best_mod_sum) # Print test result
+cat(txt2,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
+
+descrip3 <- "Corresponding ORs"
+txt3 <-capture.output(descrip3,file=NULL) # Print description
+out3 <-capture.output(best_mod_sumORs) # Print test result
+cat(txt3,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
+
+
+
+# EMBR_PREV_LIFE
+# Duplicate main dataset before collapsing likert levels
+all_LR <- all
+# Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
+all_LR <- all_LR[c(8,10:14,16:17,21,24)]
+all_LR <- na.omit(all_LR)
+# Recode dependent variable (collapse 6 levels to 3)
+all_LR$embr_prev_life <- recode(all_LR$embr_prev_life,
+'"1" = "1(agree)";
+"2" = "1(agree)";
+"3" = "2(neutral)";
+"4" = "3(disagree)";
+"5" = "3(disagree)";
+"6" = "2(neutral)";')
+levels(all_LR$embr_prev_life)
+# Recode ethnicity and set Caucasian as the comparison category
+all_LR$ethnicity <- recode(all_LR$ethnicity,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"9" = "Asian";
+"11" = "Asian";
+NA = NA;
+else = "Other"')
+levels(all_LR$ethnicity)
+all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = NA;
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
+# Recode education and set None as the comparison category
+all_LR$edu_level <- recode(all_LR$edu_level,
+'"1" = "None";
+"2" = "School";
+"3" = "School";
+"4" = "School";
+NA = NA;
+else = "Tertiary"')
+levels(all_LR$edu_level)
+all_LR$edu_level <- relevel(all_LR$edu_level, "None")
+# Recode wealth and set Below as the comparison category
+all_LR$wealth <- recode(all_LR$wealth,
+'"1" = "Below";
+"2" = "Average";
+"3" = "Above"')
+levels(all_LR$wealth)
+all_LR$wealth <- relevel(all_LR$wealth, "Below")
+# Recode heard_about and set Never as the comparison category
+all_LR$heard_about <- recode(all_LR$heard_about,
+'"1" = "Never";
+"2" = "Little";
+"3" = "Lot"')
+levels(all_LR$heard_about)
+all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
+
+# Fit and compare models
+fit <- clm(embr_prev_life ~ 1, data = all_LR) # Intercept only
+fit2 <- clm(embr_prev_life ~ sex, data = all_LR)
+fit3 <- clm(embr_prev_life ~ sex + age, data = all_LR)
+fit4 <- clm(embr_prev_life ~ sex + age + ethnicity, data = all_LR)
+fit5 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about, data = all_LR)
+fit6 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+fit7 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+fit8 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit9 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit10 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# Compare
+(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# CIs and ORs of model with lowest AIC
+(best_mod_sum <- summary(fit5))
+(ci <- confint(fit5))
+OR <- coef(fit5)
+OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+(best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# Remove old file
+file.remove("Results symlink/OrdReg_embrprevlife.txt")
+# Write results
+newline <- "----------------------------------------------------------------------------------------"
+sep <-capture.output(newline,file=NULL) # Print description
+
+descrip <- "Likelihood ratio tests comparing different models"
+txt <-capture.output(descrip,file=NULL) # Print description
+out <-capture.output(best_mod) # Print test result
+cat(txt,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
+cat(out,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
+
+descrip2 <- "Summary of model with lowest AIC"
+txt2 <-capture.output(descrip2,file=NULL) # Print description
+out2 <-capture.output(best_mod_sum) # Print test result
+cat(txt2,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
+
+descrip3 <- "Corresponding ORs"
+txt3 <-capture.output(descrip3,file=NULL) # Print description
+out3 <-capture.output(best_mod_sumORs) # Print test result
+cat(txt3,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
+
+
+
+# EMBR_PREV_DEBIL
+# Duplicate main dataset before collapsing likert levels
+all_LR <- all
+# Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
+all_LR <- all_LR[c(8,10:14,16:17,21,25)]
+all_LR <- na.omit(all_LR)
+# Recode dependent variable (collapse 6 levels to 3)
+all_LR$embr_prev_debil <- recode(all_LR$embr_prev_debil,
+'"1" = "1(agree)";
+"2" = "1(agree)";
+"3" = "2(neutral)";
+"4" = "3(disagree)";
+"5" = "3(disagree)";
+"6" = "2(neutral)";')
+levels(all_LR$embr_prev_debil)
+# Recode ethnicity and set Caucasian as the comparison category
+all_LR$ethnicity <- recode(all_LR$ethnicity,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"9" = "Asian";
+"11" = "Asian";
+NA = NA;
+else = "Other"')
+levels(all_LR$ethnicity)
+all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = NA;
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
+# Recode education and set None as the comparison category
+all_LR$edu_level <- recode(all_LR$edu_level,
+'"1" = "None";
+"2" = "School";
+"3" = "School";
+"4" = "School";
+NA = NA;
+else = "Tertiary"')
+levels(all_LR$edu_level)
+all_LR$edu_level <- relevel(all_LR$edu_level, "None")
+# Recode wealth and set Below as the comparison category
+all_LR$wealth <- recode(all_LR$wealth,
+'"1" = "Below";
+"2" = "Average";
+"3" = "Above"')
+levels(all_LR$wealth)
+all_LR$wealth <- relevel(all_LR$wealth, "Below")
+# Recode heard_about and set Never as the comparison category
+all_LR$heard_about <- recode(all_LR$heard_about,
+'"1" = "Never";
+"2" = "Little";
+"3" = "Lot"')
+levels(all_LR$heard_about)
+all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
+
+# Fit and compare models
+fit <- clm(embr_prev_debil ~ 1, data = all_LR) # Intercept only
+fit2 <- clm(embr_prev_debil ~ sex, data = all_LR)
+fit3 <- clm(embr_prev_debil ~ sex + age, data = all_LR)
+fit4 <- clm(embr_prev_debil ~ sex + age + ethnicity, data = all_LR)
+fit5 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about, data = all_LR)
+fit6 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+fit7 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+fit8 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit9 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit10 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# Compare
+(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# CIs and ORs of model with lowest AIC
+(best_mod_sum <- summary(fit5))
+(ci <- confint(fit5))
+OR <- coef(fit5)
+OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+(best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# Remove old file
+file.remove("Results symlink/OrdReg_embrprevdebil.txt")
+# Write results
+newline <- "----------------------------------------------------------------------------------------"
+sep <-capture.output(newline,file=NULL) # Print description
+
+descrip <- "Likelihood ratio tests comparing different models"
+txt <-capture.output(descrip,file=NULL) # Print description
+out <-capture.output(best_mod) # Print test result
+cat(txt,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
+cat(out,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
+
+descrip2 <- "Summary of model with lowest AIC"
+txt2 <-capture.output(descrip2,file=NULL) # Print description
+out2 <-capture.output(best_mod_sum) # Print test result
+cat(txt2,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
+
+descrip3 <- "Corresponding ORs"
+txt3 <-capture.output(descrip3,file=NULL) # Print description
+out3 <-capture.output(best_mod_sumORs) # Print test result
+cat(txt3,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
+
+
+
+# EDIT_FOR_NONDIS
+# Duplicate main dataset before collapsing likert levels
+all_LR <- all
+# Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
+all_LR <- all_LR[c(8,10:14,16:17,21,26)]
+all_LR <- na.omit(all_LR)
+# Recode dependent variable (collapse 6 levels to 3)
+all_LR$edit_for_nondis <- recode(all_LR$edit_for_nondis,
+'"1" = "1(agree)";
+"2" = "1(agree)";
+"3" = "2(neutral)";
+"4" = "3(disagree)";
+"5" = "3(disagree)";
+"6" = "2(neutral)";')
+levels(all_LR$edit_for_nondis)
+# Recode ethnicity and set Caucasian as the comparison category
+all_LR$ethnicity <- recode(all_LR$ethnicity,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"9" = "Asian";
+"11" = "Asian";
+NA = NA;
+else = "Other"')
+levels(all_LR$ethnicity)
+all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = NA;
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
+# Recode education and set None as the comparison category
+all_LR$edu_level <- recode(all_LR$edu_level,
+'"1" = "None";
+"2" = "School";
+"3" = "School";
+"4" = "School";
+NA = NA;
+else = "Tertiary"')
+levels(all_LR$edu_level)
+all_LR$edu_level <- relevel(all_LR$edu_level, "None")
+# Recode wealth and set Below as the comparison category
+all_LR$wealth <- recode(all_LR$wealth,
+'"1" = "Below";
+"2" = "Average";
+"3" = "Above"')
+levels(all_LR$wealth)
+all_LR$wealth <- relevel(all_LR$wealth, "Below")
+# Recode heard_about and set Never as the comparison category
+all_LR$heard_about <- recode(all_LR$heard_about,
+'"1" = "Never";
+"2" = "Little";
+"3" = "Lot"')
+levels(all_LR$heard_about)
+all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
+
+# Fit and compare models
+fit <- clm(edit_for_nondis ~ 1, data = all_LR) # Intercept only
+fit2 <- clm(edit_for_nondis ~ sex, data = all_LR)
+fit3 <- clm(edit_for_nondis ~ sex + age, data = all_LR)
+fit4 <- clm(edit_for_nondis ~ sex + age + ethnicity, data = all_LR)
+fit5 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about, data = all_LR)
+fit6 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+fit7 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+fit8 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit9 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit10 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# Compare
+(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# CIs and ORs of model with lowest AIC
+(best_mod_sum <- summary(fit7))
+(ci <- confint(fit7))
+OR <- coef(fit7)
+OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+(best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# Remove old file
+file.remove("Results symlink/OrdReg_editfornondis.txt")
+# Write results
+newline <- "----------------------------------------------------------------------------------------"
+sep <-capture.output(newline,file=NULL) # Print description
+
+descrip <- "Likelihood ratio tests comparing different models"
+txt <-capture.output(descrip,file=NULL) # Print description
+out <-capture.output(best_mod) # Print test result
+cat(txt,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
+cat(out,file="Results symlink/OrdReg_editfornondis.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
+
+descrip2 <- "Summary of model with lowest AIC"
+txt2 <-capture.output(descrip2,file=NULL) # Print description
+out2 <-capture.output(best_mod_sum) # Print test result
+cat(txt2,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/OrdReg_editfornondis.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
+
+descrip3 <- "Corresponding ORs"
+txt3 <-capture.output(descrip3,file=NULL) # Print description
+out3 <-capture.output(best_mod_sumORs) # Print test result
+cat(txt3,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/OrdReg_editfornondis.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
+
+
+
+# GEN_MOD_FOOD
+# Duplicate main dataset before collapsing likert levels
+all_LR <- all
+# Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
+all_LR <- all_LR[c(8,10:14,16:17,21,30)]
+all_LR <- na.omit(all_LR)
+# Recode dependent variable (collapse 6 levels to 3)
+all_LR$gen_mod_food <- recode(all_LR$gen_mod_food,
+'"1" = "1(agree)";
+"2" = "1(agree)";
+"3" = "2(neutral)";
+"4" = "3(disagree)";
+"5" = "3(disagree)";
+"6" = "2(neutral)";')
+levels(all_LR$gen_mod_food)
+# Recode ethnicity and set Caucasian as the comparison category
+all_LR$ethnicity <- recode(all_LR$ethnicity,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"9" = "Asian";
+"11" = "Asian";
+NA = NA;
+else = "Other"')
+levels(all_LR$ethnicity)
+all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = NA;
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
+# Recode education and set None as the comparison category
+all_LR$edu_level <- recode(all_LR$edu_level,
+'"1" = "None";
+"2" = "School";
+"3" = "School";
+"4" = "School";
+NA = NA;
+else = "Tertiary"')
+levels(all_LR$edu_level)
+all_LR$edu_level <- relevel(all_LR$edu_level, "None")
+# Recode wealth and set Below as the comparison category
+all_LR$wealth <- recode(all_LR$wealth,
+'"1" = "Below";
+"2" = "Average";
+"3" = "Above"')
+levels(all_LR$wealth)
+all_LR$wealth <- relevel(all_LR$wealth, "Below")
+# Recode heard_about and set Never as the comparison category
+all_LR$heard_about <- recode(all_LR$heard_about,
+'"1" = "Never";
+"2" = "Little";
+"3" = "Lot"')
+levels(all_LR$heard_about)
+all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
+
+# Fit and compare models
+fit <- clm(gen_mod_food ~ 1, data = all_LR) # Intercept only
+fit2 <- clm(gen_mod_food ~ sex, data = all_LR)
+fit3 <- clm(gen_mod_food ~ sex + age, data = all_LR)
+fit4 <- clm(gen_mod_food ~ sex + age + ethnicity, data = all_LR)
+fit5 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about, data = all_LR)
+fit6 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+fit7 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+fit8 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit9 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit10 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# Compare
+(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# CIs and ORs of model with lowest AIC
+(best_mod_sum <- summary(fit9))
+(ci <- confint(fit9))
+OR <- coef(fit9)
+OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+(best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# Remove old file
+file.remove("Results symlink/OrdReg_genmodfood.txt")
+# Write results
+newline <- "----------------------------------------------------------------------------------------"
+sep <-capture.output(newline,file=NULL) # Print description
+
+descrip <- "Likelihood ratio tests comparing different models"
+txt <-capture.output(descrip,file=NULL) # Print description
+out <-capture.output(best_mod) # Print test result
+cat(txt,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
+cat(out,file="Results symlink/OrdReg_genmodfood.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
+
+descrip2 <- "Summary of model with lowest AIC"
+txt2 <-capture.output(descrip2,file=NULL) # Print description
+out2 <-capture.output(best_mod_sum) # Print test result
+cat(txt2,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/OrdReg_genmodfood.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
+
+descrip3 <- "Corresponding ORs"
+txt3 <-capture.output(descrip3,file=NULL) # Print description
+out3 <-capture.output(best_mod_sumORs) # Print test result
+cat(txt3,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/OrdReg_genmodfood.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
 
 
 
 
 
+# Predict probabilities
+predict_fit <- clm(kids_cure_life ~ sex + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+newData <- expand.grid(sex=levels(all_LR$sex), ethnicity=levels(all_LR$ethnicity), heard_about=levels(all_LR$heard_about), edu_level=levels(all_LR$edu_level), religion_type=levels(all_LR$religion_type))
+cbind(newData, predict(predict_fit, newdata=newData)$fit)
 
 
-
-
-
-
-# 4) comparisons 
-# a) between ethnicity 
-# - Caucasian vs Non-Caucasian 
-# - Chinese vs Caucasian 
-# b) sex 
-# c) age - prob need to also do a subgroup analysis on those over the 
-# age of 19 (as this is the estimated readability of the hardest 
-#            question). 
-# d) Medical Background 
-# e) Religion 
-# f) Country 
-# g) Inherited disease
-
+# Actual proportions from the data
+kids_table <- table(all_LR$kids_cure_life)
+(kids_prop <- round(prop.table(kids_table)*100,2))
