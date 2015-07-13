@@ -5,7 +5,8 @@ library(car) # Recode variables
 library(doBy) # Group summary stats
 library(MASS) # OLR
 library(ordinal) # OLR
-library(lmtest)
+library(lmtest) # OLR
+library(VGAM) # OLR
 
 ## Need to create a "Results symlink" folder in the WD to save results files to.
 
@@ -539,6 +540,7 @@ all_LR$kids_cure_life <- recode(all_LR$kids_cure_life,
 "4" = "3(disagree)";
 "5" = "3(disagree)";
 "6" = "2(neutral)";')
+all_LR$kids_cure_life <- ordered(all_LR$kids_cure_life)
 levels(all_LR$kids_cure_life)
 # Recode ethnicity and set Caucasian as the comparison category
 all_LR$ethnicity <- recode(all_LR$ethnicity,
@@ -598,12 +600,31 @@ fit9 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + r
 fit10 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+
+# NEED TO CHANGE MODEL NUMBER
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit7))
-(ci <- confint(fit7))
-OR <- coef(fit7)
+(best_mod_sum <- summary(fit6))
+(ci <- confint(fit6))
+OR <- coef(fit6)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# # NEED TO CHANGE MODEL NUMBER
+# # Proportional Odds Assumption
+# # Comparison of all IVs assumed to have parallel slopes vs all allowed to vary
+# fit6a <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=TRUE))
+# fit6b <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=FALSE))
+# lrtest(fit6a,fit6b)
+# 
+# # Comparison of all IVs assumed to have parallel slopes vs only heard_about allowed to vary
+# fit6a <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=TRUE))
+# fit6b <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=FALSE~heard_about))
+# lrtest(fit6a,fit6b)
+# 
+# # Same thing using the clm package - only heard_about allowed to vary
+# fit6a <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+# fit6b <- clm(kids_cure_life ~ sex + age + ethnicity + edu_level, nominal=~heard_about, data = all_LR)
+# anova(fit6a,fit6b)
 
 # Remove old file
 file.remove("Results symlink/OrdReg_kidscurelife.txt")
@@ -648,6 +669,7 @@ all_LR$kids_cure_debil <- recode(all_LR$kids_cure_debil,
 "4" = "3(disagree)";
 "5" = "3(disagree)";
 "6" = "2(neutral)";')
+all_LR$kids_cure_debil <- ordered(all_LR$kids_cure_debil)
 levels(all_LR$kids_cure_debil)
 # Recode ethnicity and set Caucasian as the comparison category
 all_LR$ethnicity <- recode(all_LR$ethnicity,
@@ -707,12 +729,18 @@ fit9 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + 
 fit10 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit8))
-(ci <- confint(fit8))
-OR <- coef(fit8)
+(best_mod_sum <- summary(fit6))
+(ci <- confint(fit6))
+OR <- coef(fit6)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# # Proportional Odds Assumption
+# fit6a <- vglm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=TRUE))
+# fit6b <- vglm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=FALSE))
+# lrtest(fit6a,fit6b)
 
 # Remove old file
 file.remove("Results symlink/OrdReg_kidscuredebil.txt")
@@ -757,6 +785,7 @@ all_LR$embr_prev_life <- recode(all_LR$embr_prev_life,
 "4" = "3(disagree)";
 "5" = "3(disagree)";
 "6" = "2(neutral)";')
+all_LR$embr_prev_life <- ordered(all_LR$embr_prev_life)
 levels(all_LR$embr_prev_life)
 # Recode ethnicity and set Caucasian as the comparison category
 all_LR$ethnicity <- recode(all_LR$ethnicity,
@@ -816,12 +845,18 @@ fit9 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + r
 fit10 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+
 # CIs and ORs of model with lowest AIC
 (best_mod_sum <- summary(fit5))
 (ci <- confint(fit5))
 OR <- coef(fit5)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# # Proportional Odds Assumption
+# fit5a <- vglm(embr_prev_life ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=TRUE))
+# fit5b <- vglm(embr_prev_life ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=FALSE))
+# lrtest(fit5a,fit5b)
 
 # Remove old file
 file.remove("Results symlink/OrdReg_embrprevlife.txt")
@@ -866,6 +901,7 @@ all_LR$embr_prev_debil <- recode(all_LR$embr_prev_debil,
 "4" = "3(disagree)";
 "5" = "3(disagree)";
 "6" = "2(neutral)";')
+all_LR$embr_prev_debil <- ordered(all_LR$embr_prev_debil)
 levels(all_LR$embr_prev_debil)
 # Recode ethnicity and set Caucasian as the comparison category
 all_LR$ethnicity <- recode(all_LR$ethnicity,
@@ -925,12 +961,18 @@ fit9 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + 
 fit10 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+
 # CIs and ORs of model with lowest AIC
 (best_mod_sum <- summary(fit5))
 (ci <- confint(fit5))
 OR <- coef(fit5)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# # Proportional Odds Assumption
+# fit5a <- vglm(embr_prev_debil ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=TRUE))
+# fit5b <- vglm(embr_prev_debil ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=FALSE))
+# lrtest(fit5a,fit5b)
 
 # Remove old file
 file.remove("Results symlink/OrdReg_embrprevdebil.txt")
@@ -975,6 +1017,7 @@ all_LR$edit_for_nondis <- recode(all_LR$edit_for_nondis,
 "4" = "3(disagree)";
 "5" = "3(disagree)";
 "6" = "2(neutral)";')
+all_LR$edit_for_nondis <- ordered(all_LR$edit_for_nondis)
 levels(all_LR$edit_for_nondis)
 # Recode ethnicity and set Caucasian as the comparison category
 all_LR$ethnicity <- recode(all_LR$ethnicity,
@@ -1034,12 +1077,18 @@ fit9 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + 
 fit10 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+
 # CIs and ORs of model with lowest AIC
 (best_mod_sum <- summary(fit7))
 (ci <- confint(fit7))
 OR <- coef(fit7)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# # Proportional Odds Assumption
+# fit7a <- vglm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR, family=cumulative(parallel=TRUE))
+# fit7b <- vglm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR, family=cumulative(parallel=FALSE))
+# lrtest(fit7a,fit7b)
 
 # Remove old file
 file.remove("Results symlink/OrdReg_editfornondis.txt")
@@ -1084,6 +1133,7 @@ all_LR$gen_mod_food <- recode(all_LR$gen_mod_food,
 "4" = "3(disagree)";
 "5" = "3(disagree)";
 "6" = "2(neutral)";')
+all_LR$gen_mod_food <- ordered(all_LR$gen_mod_food)
 levels(all_LR$gen_mod_food)
 # Recode ethnicity and set Caucasian as the comparison category
 all_LR$ethnicity <- recode(all_LR$ethnicity,
@@ -1143,12 +1193,18 @@ fit9 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + rel
 fit10 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+
 # CIs and ORs of model with lowest AIC
 (best_mod_sum <- summary(fit9))
 (ci <- confint(fit9))
 OR <- coef(fit9)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
+
+# # Proportional Odds Assumption
+# fit9a <- vglm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR, family=cumulative(parallel=TRUE))
+# fit9b <- vglm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR, family=cumulative(parallel=FALSE))
+# lrtest(fit9a,fit9b)
 
 # Remove old file
 file.remove("Results symlink/OrdReg_genmodfood.txt")
@@ -1190,3 +1246,5 @@ cbind(newData, predict(predict_fit, newdata=newData)$fit)
 # Actual proportions from the data
 kids_table <- table(all_LR$kids_cure_life)
 (kids_prop <- round(prop.table(kids_table)*100,2))
+
+
