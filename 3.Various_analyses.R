@@ -530,7 +530,19 @@ cat(out2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep=
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,21:22)]
+all_LR <- all_LR[c(8,10:14,16:17,20:22)]
+# Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
+all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = "None";
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$kids_cure_life <- recode(all_LR$kids_cure_life,
@@ -552,16 +564,6 @@ NA = NA;
 else = "Other"')
 levels(all_LR$ethnicity)
 all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
-# Recode religion and set Christian as the comparison category
-all_LR$religion_type <- recode(all_LR$religion_type,
-'"1" = "Christian";
-"2" = "Christian";
-"3" = "Christian";
-"4" = "Muslim";
-NA = NA;
-else = "Other"')
-levels(all_LR$religion_type)
-all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
 # Recode education and set None as the comparison category
 all_LR$edu_level <- recode(all_LR$edu_level,
 '"1" = "None";
@@ -659,7 +661,19 @@ cat(sep,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,21,23)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,23)]
+# Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
+all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = "None";
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$kids_cure_debil <- recode(all_LR$kids_cure_debil,
@@ -681,16 +695,6 @@ NA = NA;
 else = "Other"')
 levels(all_LR$ethnicity)
 all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
-# Recode religion and set Christian as the comparison category
-all_LR$religion_type <- recode(all_LR$religion_type,
-'"1" = "Christian";
-"2" = "Christian";
-"3" = "Christian";
-"4" = "Muslim";
-NA = NA;
-else = "Other"')
-levels(all_LR$religion_type)
-all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
 # Recode education and set None as the comparison category
 all_LR$edu_level <- recode(all_LR$edu_level,
 '"1" = "None";
@@ -775,7 +779,19 @@ cat(sep,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,21,24)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,24)]
+# Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
+all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = "None";
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$embr_prev_life <- recode(all_LR$embr_prev_life,
@@ -797,16 +813,6 @@ NA = NA;
 else = "Other"')
 levels(all_LR$ethnicity)
 all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
-# Recode religion and set Christian as the comparison category
-all_LR$religion_type <- recode(all_LR$religion_type,
-'"1" = "Christian";
-"2" = "Christian";
-"3" = "Christian";
-"4" = "Muslim";
-NA = NA;
-else = "Other"')
-levels(all_LR$religion_type)
-all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
 # Recode education and set None as the comparison category
 all_LR$edu_level <- recode(all_LR$edu_level,
 '"1" = "None";
@@ -847,9 +853,9 @@ fit10 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + 
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit5))
-(ci <- confint(fit5))
-OR <- coef(fit5)
+(best_mod_sum <- summary(fit7))
+(ci <- confint(fit7))
+OR <- coef(fit7)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
 
@@ -891,7 +897,19 @@ cat(sep,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,21,25)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,25)]
+# Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
+all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = "None";
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$embr_prev_debil <- recode(all_LR$embr_prev_debil,
@@ -913,16 +931,6 @@ NA = NA;
 else = "Other"')
 levels(all_LR$ethnicity)
 all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
-# Recode religion and set Christian as the comparison category
-all_LR$religion_type <- recode(all_LR$religion_type,
-'"1" = "Christian";
-"2" = "Christian";
-"3" = "Christian";
-"4" = "Muslim";
-NA = NA;
-else = "Other"')
-levels(all_LR$religion_type)
-all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
 # Recode education and set None as the comparison category
 all_LR$edu_level <- recode(all_LR$edu_level,
 '"1" = "None";
@@ -963,9 +971,9 @@ fit10 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level +
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit5))
-(ci <- confint(fit5))
-OR <- coef(fit5)
+(best_mod_sum <- summary(fit7))
+(ci <- confint(fit7))
+OR <- coef(fit7)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
 
@@ -1007,7 +1015,19 @@ cat(sep,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,21,26)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,26)]
+# Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
+all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = "None";
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$edit_for_nondis <- recode(all_LR$edit_for_nondis,
@@ -1029,16 +1049,6 @@ NA = NA;
 else = "Other"')
 levels(all_LR$ethnicity)
 all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
-# Recode religion and set Christian as the comparison category
-all_LR$religion_type <- recode(all_LR$religion_type,
-'"1" = "Christian";
-"2" = "Christian";
-"3" = "Christian";
-"4" = "Muslim";
-NA = NA;
-else = "Other"')
-levels(all_LR$religion_type)
-all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
 # Recode education and set None as the comparison category
 all_LR$edu_level <- recode(all_LR$edu_level,
 '"1" = "None";
@@ -1123,7 +1133,19 @@ cat(sep,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,21,30)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,30)]
+# Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
+all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
+# Recode religion and set Christian as the comparison category
+all_LR$religion_type <- recode(all_LR$religion_type,
+'"1" = "Christian";
+"2" = "Christian";
+"3" = "Christian";
+"4" = "Muslim";
+NA = "None";
+else = "Other"')
+levels(all_LR$religion_type)
+all_LR$religion_type <- relevel(all_LR$religion_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$gen_mod_food <- recode(all_LR$gen_mod_food,
@@ -1145,16 +1167,6 @@ NA = NA;
 else = "Other"')
 levels(all_LR$ethnicity)
 all_LR$ethnicity <- relevel(all_LR$ethnicity, "Caucasian")
-# Recode religion and set Christian as the comparison category
-all_LR$religion_type <- recode(all_LR$religion_type,
-'"1" = "Christian";
-"2" = "Christian";
-"3" = "Christian";
-"4" = "Muslim";
-NA = NA;
-else = "Other"')
-levels(all_LR$religion_type)
-all_LR$religion_type <- relevel(all_LR$religion_type, "Christian")
 # Recode education and set None as the comparison category
 all_LR$edu_level <- recode(all_LR$edu_level,
 '"1" = "None";
@@ -1195,9 +1207,9 @@ fit10 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + re
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit9))
-(ci <- confint(fit9))
-OR <- coef(fit9)
+(best_mod_sum <- summary(fit8))
+(ci <- confint(fit8))
+OR <- coef(fit8)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
 
@@ -1246,5 +1258,12 @@ cbind(newData, predict(predict_fit, newdata=newData)$fit)
 # Actual proportions from the data
 kids_table <- table(all_LR$kids_cure_life)
 (kids_prop <- round(prop.table(kids_table)*100,2))
+
+
+
+
+
+
+
 
 
