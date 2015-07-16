@@ -878,8 +878,8 @@ data$deter_phys_appear <- as.factor(data$deter_phys_appear)
 levels(data$deter_phys_appear)
 # Recode
 data$deter_phys_appear <- recode(data$deter_phys_appear,
-'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
-c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+'c("No", "لا", "无", "否", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
+c("Yes", "نعم", "有", "是", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
 levels(data$deter_phys_appear)
 
 
@@ -891,8 +891,8 @@ data$deter_intell <- as.factor(data$deter_intell)
 levels(data$deter_intell)
 # Recode
 data$deter_intell <- recode(data$deter_intell,
-'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
-c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+'c("No", "لا", "无", "否", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
+c("Yes", "نعم", "有", "是", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
 levels(data$deter_intell)
 
 
@@ -904,8 +904,8 @@ data$deter_strength <- as.factor(data$deter_strength)
 levels(data$deter_strength)
 # Recode
 data$deter_strength <- recode(data$deter_strength,
-'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
-c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+'c("No", "لا", "无", "否", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
+c("Yes", "نعم", "有", "是", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
 levels(data$deter_strength)
 
 
