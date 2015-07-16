@@ -436,7 +436,7 @@ levels(wechat$deter_strength)
 
 # Delete observations that we filled in as a test
 # Creates dataframe containing observations with the string "delete" - identify which to delete and add below
-del <- data[grep("delete", c(data$question_25,data$question_23, data$question_101)),]
+#del <- data[grep("delete", c(data$question_25,data$question_23, data$question_101)),]
 # Delete specific observations that contain the following string matches - too difficult to remove all in one go that contain "delete' as some people have used this word in their responses
 data <- data[- grep("Test test delete", c(data$question_25)),]
 data <- data[- grep("delete - Paul test", c(data$question_25)),]
@@ -467,11 +467,10 @@ rm(time_end)
 data$client <- data$objectId <- NULL
 
 # Delete free text variables
-data$other_traits_alter <- data$question_25 <- data$question_100 <- data$question_101 <- data$question_102 <- NULL
+# data$other_traits_alter <- data$question_25 <- data$question_100 <- data$question_101 <- data$question_102 <- NULL
 
 # Reorder
-data <- data[c("createdAt", "updatedAt", "time_to_do", "cohort", "ip", "language", "country", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "religion", "religion_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "gen_mod_food")]
-
+data <- data[c("createdAt", "updatedAt", "time_to_do", "cohort", "ip", "language", "country", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "religion", "religion_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "gen_mod_food", "other_traits_alter", "question_25", "question_100", "question_101", "question_102")]
 
 # RECODE VARIABLES AS NOMINAL/ORDINAL
 
@@ -920,6 +919,11 @@ PrintLvls <- function(x)
 
 PrintLvls(wechat)
 PrintLvls(data)
+
+data_with_free_text <- data
+
+#remove free text fields from data
+data$question_25 <- data$question_100 <- data$question_101 <- data$question_102 <- data$other_traits_alter <- NULL
 
 #MERGE----------------------------------------------------------------------------------------
 
