@@ -515,7 +515,7 @@ levels(data$ethnicity)
 data$ethnicity <- recode(data$ethnicity,
 'c("Mixed Race", "Karışık (Melez)", "Raza mixta", "Смешанная раса", "Raça mista", "Gemischte Rasse", "Métis", "混血", "عرقية مختلطة", "मिश्र जाति") = 1; 
 
-c("African/African American", "Afroamericano/Africano", "Africana/afro-americana", "Africain/Afro-américain", "Afro/Afro-Amerikanisch", "Африканец/Афроамериканец", "Afrikalı", "非裔美籍 ", "アフリカ人／アフリカ系アメリカ人 ", "أفريقى/ أمريكى أفريقى", "अफ्रीकी / अफ्रीकी अमेरिकी") = 2; 
+c("African/African American", "Afroamericano/Africano", "Africana/afro-americana", "Africain/Afro-américain", "Afro/Afro-Amerikanisch", "Африканец/Афроамериканец", "Afrikalı", "非裔美籍 ", "アフリカ人／アフリカ系アメリカ人", "أفريقى/ أمريكى أفريقى", "अफ्रीकी / अफ्रीकी अमेरिकी") = 2; 
 
 c("Asian Indian", "Indio asiático", "Asiatische Inder", "Asiático Índico", "Indien d’Asie", "印度裔 ", "भारतीय/एशियाई", "هندى أسيوى", "Индиец", "Hint Asyalı", "アジア系インド人") = 3; 
 
@@ -527,7 +527,7 @@ c("Hispanic, Latino or Spanish", "هسبانى أو لاتينى أو اسبان
 
 c("Indigenous Australian", "أسترالى أصلى", "澳大利亚土著人 ", "Indigène australien", "Einheimischer Australier", "मूलऑस्ट्रेलियाई", "原住民オーストラリア人", "Indígena Australiano", "Австралийский абориген", "Indígena australiano", "Avusturalya Yerlisi") = 7;
 
-c("Native American", "أمريكى أصلى", "美国人 ", "Indien d’Amérique", "Einheimischer Amerikaner (Indianer)", "मूलअमेरिकी", "アメリカ先住民 ", "Americano Nativo", "Коренной американец", "Nativo americano", "Amerika Yerlisi") = 8;
+c("Native American", "أمريكى أصلى", "美国人 ", "Indien d’Amérique", "Einheimischer Amerikaner (Indianer)", "मूलअमेरिकी", "アメリカ先住民", "Americano Nativo", "Коренной американец", "Nativo americano", "Amerika Yerlisi") = 8;
 
 c("North East Asian (Mongol, Tibetan, Korean, Japanese, etc)", "شمال شرق آسيا (منغولى، تبتى، كورى، يابانى، إلخ)", "东北亚裔（蒙古，西藏，韩国，日本等）", "Asiatique du nord-est (Mongol, Tibétaine, Coréen, Japonais, etc...)", "Nordöstliche Asiaten (mongolisch, tibetisch, koreanisch, japanisch etc.)", "उत्तर-पूर्वएशियाई (मंगोल, तिब्बती, कोरियाई, जापानी, आदि)", "北東アジア（モンゴル人、チベット族、韓国人、日本人、など）", "Norte Leste Asiático (mongol, tibetano, coreano, japonês, etc.)", "Северо-восточный азиат (монгол, тибетец, кореец, японец и т.п.)", "Del noreste asiático (mongol, tibetano, coreano, japonés, etc.)", "Kuzey Doğu Asyalı (Moğol, Tibet, Koreli, Japon, vs)") = 9;
 
@@ -562,17 +562,17 @@ data$edu_level <- as.factor(data$edu_level)
 levels(data$edu_level)
 # Recode
 data$edu_level <- recode(data$edu_level,
-'c("No formal schooling", "تعليم غير رسمى", "未上过正规学校", "Aucune éducation scolaire", "keine Schulausbildung", "कोईऔपचारिकस्कूलीशिक्षानहीं", "学校教育なし", "Sem escolaridade formal", "Нет официального образования", "Sin escolaridad formal", "Herhangi bir resmi eğitimim yok") = 1;
+'c("No formal schooling", "تعليم غير رسمى", "未上过正规学校", "Aucune éducation scolaire", "keine Schulausbildung", "कोईऔपचारिकस्कूलीशिक्षानहीं", "学校教育なし", "Sem escolaridade formal", "Нет официального образования", "Sin escolaridad formal", "Herhangi bir resmi eğitimim yok") = 1;
 
-c("Finished primary school", "أنهيت المرحلة الابتدائية", "小学毕业", "École primaire", "Grunds hulabschluss", "प्राथमिकविद्यालयपूरीकी", "小学校を卒業", "Primário completo", "Начальное", "Escuela primaria concluida", "İlkokul veya ortaokul mezunuyum") = 2;
+c("Finished primary school", "أنهيت المرحلة الابتدائية", "小学毕业", "École primaire", "Grunds hulabschluss", "प्राथमिकविद्यालयपूरीकी", "小学校を卒業", "Primário completo", "Начальное", "Escuela primaria concluida", "İlkokul veya ortaokul mezunuyum") = 2;
 
-c("Finished high school", "أنهيت المرحلة الثانوية", "高中毕业", "Lycée", "Abitur", "उच्चविद्यालयपूरीकी", "高校を卒業", "Ensino médio completo", "Среднее", "Escuela secundaria concluida", "Lise veya dengi mezunuyum") = 3;
+c("Finished high school", "أنهيت المرحلة الثانوية", "高中毕业", "Lycée", "Abitur", "उच्चविद्यालयपूरीकी", "高校を卒業", "Ensino médio completo", "Среднее", "Escuela secundaria concluida", "Lise veya dengi mezunuyum") = 3;
 
-c("Finished a course following school", "أنهيت دورة بعد المرحلة المدرسة", "仅完成学校学业", "Cours en dehors de l’école", "Kurs nach der Schule", "स्कूलकेबादएककोर्ससमाप्तकिया", "学校卒業に続くコースを終了", "Completou um curso após a escola", "Среднее специальное", "Concluí un curso después de la educación básica", "Okulu müteakip bir kurs bitirdim") = 4;
+c("Finished a course following school", "أنهيت دورة بعد المرحلة المدرسة", "仅完成学校学业", "Cours en dehors de l’école", "Kurs nach der Schule", "स्कूलकेबादएककोर्ससमाप्तकिया", "学校卒業に続くコースを終了", "Completou um curso após a escola", "Среднее специальное", "Concluí un curso después de la educación básica", "Okulu müteakip bir kurs bitirdim") = 4;
 
-c("Finished undergraduate university degree", "أنهيت التعليم الجامعى", "大学毕业", "Licence", "Bachelor‐Abschluss", "विश्वविद्यालयकेस्नातक(undergraguate)कीडिग्रीली", "年制大学を卒業", "Formação universitária de graduação completa", "Бакалавр", "Escolaridad a nivel licenciatura concluida", "Yüksekokul ya da fakülte mezunuyum") = 5;
+c("Finished undergraduate university degree", "أنهيت التعليم الجامعى", "大学毕业", "Licence", "Bachelor‐Abschluss", "विश्वविद्यालयकेस्नातक(undergraguate)कीडिग्रीली", "年制大学を卒業", "Formação universitária de graduação completa", "Бакалавр", "Escolaridad a nivel licenciatura concluida", "Yüksekokul ya da fakülte mezunuyum") = 5;
 
-c("Finished postgraduate university degree", "أنهيت الراسات العليا", "研究生毕业", "Master", "Doctorat", "Diplom‐Abschluss", "स्नातकोत्तर(postgraduate)विश्वविद्यालयकीडिग्रीली", "大学院を卒業", "Formação universitária de pós-graduação completa", "Магистр", "Escolaridad a nivel de posgrado concluida", "Yüksek lisans mezunuyum") = 6;
+c("Finished postgraduate university degree", "أنهيت الراسات العليا", "研究生毕业", "Master", "Doctorat", "Diplom‐Abschluss", "स्नातकोत्तर(postgraduate)विश्वविद्यालयकीडिग्रीली", "大学院を卒業", "Formação universitária de pós-graduação completa", "Магистр", "Escolaridad a nivel de posgrado concluida", "Yüksek lisans mezunuyum") = 6;
 
 "" = NA')
 levels(data$edu_level)
@@ -588,7 +588,7 @@ levels(data$worked_health)
 # Recode
 data$worked_health <- recode(data$worked_health,
 'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
-c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "да", "Sí", "Evet") = "Y"')
 levels(data$worked_health)
                       
 
@@ -623,11 +623,11 @@ levels(data$heard_about)
 # Recode
 # There is a problem here with the string matching for the Hindi response = 2. In the raw text ouput there are 2 levels displayed that appear exactly the same - one of them will match using recode and the other won't (I can't figure this out - a Boolean even says they're the same). So I have needed to recode twice, coercing the non-matching string in an 'else' statement. 
 data$heard_about <- recode(data$heard_about,
-'c("I have never heard of it", "لم أسمع بها من قبل", "从未听说过", "Je n’en ai jamais entendu parler", "Ich habe nie etwas darüber gehört", "मैंनेइसकेबारेमेंकभीनहींसुना|", "聞いたことがない", "Nunca ouvi falar sobre isso", "никогда не слышал об этом", "Jamás he escuchado al respecto", "Hiç duymadım") = 1;
+'c("I have never heard of it", "أسمع بها من قبل", "从未听说过", "Je n’en ai jamais entendu parler", "Ich habe nie etwas darüber gehört", "मैंनेइसकेबारेमेंकभीनहींसुना|", "聞いたことがない", "Nunca ouvi falar sobre isso", "никогда не слышал об этом", "Jamás he escuchado al respecto", "Hiç duymadım") = 1;
 
-c("I have heard a little about it", "سمعت القليل عنها", "听说过一点点", "J’en ai un peu entendu parler", "Ich eine ein wenig darüber gehört", "मैंने  इसकेबारेमेंथोड़ासासुनाहै|", "少しだけなら聞いたことがある", "Ouvi um pouco sobre isso", "немного слышал об этом", "He escuchado un poco al respecto", "Biraz fikrim var") = 2;
+c("I have heard a little about it", "سمعت القليل عنها", "听说过一点点", "J’en ai un peu entendu parler", "Ich eine ein wenig darüber gehört", "मैंने  इसकेबारेमेंथोड़ासासुनाहै|", "少しだけなら聞いたことがある", "Ouvi um pouco sobre isso", "Я немного слышал об этом", "He escuchado un poco al respecto", "Biraz fikrim var") = 2;
 
-c("I have heard a lot about it", "سمعت الكثير عنها", "很了解", "J’en ai beaucoup entendu parler", "Ich habe viel davon gehört", "मैंनेइसकेबारेमेंकाफीसुनाहै|", "たくさん聞いたことがある", "Ouvi muito sobre isso", "много слышал об этом", "He escuchado mucho al respecto", "Hakkında çok şey duydum") = 3') 
+c("I have heard a lot about it", "سمعت الكثير عنها", "很了解", "J’en ai beaucoup entendu parler", "Ich habe viel davon gehört", "मैंनेइसकेबारेमेंकाफीसुनाहै|", "たくさん聞いたことがある", "Ouvi muito sobre isso", "Я много слышал об этом", "He escuchado mucho al respecto", "Hakkında çok şey duydum") = 3') 
 levels(data$heard_about)
 ####
 #Run to here and check that only "मैंने  इसकेबारेमेंथोड़ासासुनाहै|" isn't recoded, before forcing this string to be recoded as 2.
@@ -646,7 +646,7 @@ levels(data$genetic_cond)
 # Recode
 data$genetic_cond <- recode(data$genetic_cond,
 'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
-c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "да", "Sí", "Evet") = "Y"')
 levels(data$genetic_cond)
 
 
@@ -660,9 +660,9 @@ levels(data$genetic_cond_affected)
 data$genetic_cond_affected <- recode(data$genetic_cond_affected,
 'c("Me", "أنا", "我", "Moi", "Ich", "मैं", "自分", "Eu", "Я", "Yo", "Ben") = 1;
 
-c("Another family member(s)", "فرد)أفراد( آخر فى الأسرة)", "其他家庭成员", "Un autre membre de ma famille", "Ein Familienzugehöriger", "परिवार का अन्य सदस्य", "自分以外の家族メンバー（複数)", "Outro membro (s) da família", "Другой(-ие) член(-ы) семьи", "Otro(s) miembro(s) de mi familia", "Diğer aile üyesi veya üyeleri") = 2;
+c("Another family member(s)", "فرد(أفراد) آخر فى الأسرة", "其他家庭成员", "Un autre membre de ma famille", "Ein Familienzugehöriger", "परिवार का अन्य सदस्य", "自分以外の家族メンバー（複数)", "Outro membro (s) da família", "Другой(-ие) член(-ы) семьи", "Otro(s) miembro(s) de mi familia", "Diğer aile üyesi veya üyeleri") = 2;
 
-c("Me and a family member(s)", "أنا وفرد )أفراد( آخر فى الأسرة)", "我和另外的家庭成员", "Moi et un membre de ma famille", "Ich und meine Familie", "मैं और परिवार का एक सदस्य", "自分と家族（複数）　 病症は何ですか", "自分と家族（複数）　 病", "Eu e um membro (s) da família ", "u e um membro (s) da família", "Я и член(-ы) семьи", "Yo y un (otros) miembro(s) de mi familia", "Ben ve diğer bir aile üyesi/üyeleri") = 3')
+c("Me and a family member(s)", "أنا وفرد (أفراد) آخر فى الأسرة", "我和另外的家庭成员", "Moi et un membre de ma famille", "Ich und meine Familie", "मैं और परिवार का एक सदस्य", "自分と家族（複数）　 病症は何ですか", "自分と家族（複数）　 病", "Eu e um membro (s) da família ", "u e um membro (s) da família", "Я и член(-ы) семьи", "Yo y un (otros) miembro(s) de mi familia", "Ben ve diğer bir aile üyesi/üyeleri") = 3')
 levels(data$genetic_cond_affected)
 
 
@@ -674,23 +674,23 @@ data$genetic_cond_type <- as.factor(data$genetic_cond_type)
 levels(data$genetic_cond_type)
 # Recode
 data$genetic_cond_type <- recode(data$genetic_cond_type,
-'c("Cystic Fibrosis", "تليف كيسى", "囊胞性纤维症", "Mucoviscidose", "Mukoviszidose", "सिस्टिकफाइब्रोसिस", "嚢胞性繊維証", "Fibrose Cística", "Муковисцидоз", "Fibrosis quística", "Kistik Fibroz") = 1;
+'c("Cystic Fibrosis", "تليف كيسى", "囊胞性纤维症", "Mucoviscidose", "Mukoviszidose", "सिस्टिकफाइब्रोसिस", "嚢胞性繊維証", "Fibrose Cística", "Муковисцидоз", "Fibrosis quística", "Kistik Fibroz") = 1;
 
 c("Huntington’s Disease", "مرض هونتيغتون", "亨廷顿病", "Maladie de Huntington", "Huntigton‐Kranhkheit", "हनटिंग्टनरोग", "ハンティントン病", "Doença de Huntington", "Enfermedad de Huntington", "Huntington Hastalığı") = 2;
 
-c("Muscular Dystrophy", "ضمور العضلات", "肌肉萎缩症", "Dystrophie musculaire", "Muskeldystrophie", "मांसपेशीयदुर्विकास (Muscular Dystrophy)", "筋ジストロフィー", "Distrofia", "Мышечная дистрофия", "Distrofia muscular", "Kas Distrofisi") = 3;
+c("Muscular Dystrophy", "ضمور العضلات", "肌肉萎缩症", "Dystrophie musculaire", "Muskeldystrophie", "मांसपेशीयदुर्विकास (Muscular Dystrophy)", "筋ジストロフィー", "Distrofia", "Мышечная дистрофия", "Distrofia muscular", "Kas Distrofisi") = 3;
 
 c("Sickle Cell Anaemia", "أنيميا الخلايا المنجلية", "镰状细胞贫血", "Hydroxyurée", "Sichzellenänemie", "रक्तकीलालकोशिकाओंकीकमी (Sickle Cell Ananemia)", "鎌状赤血球貧血", "Anemia Falciforme", "Серповидно-клеточная анемия", "Anemia de células falciformes", "Orak Hücre Anemisi") = 4;
 
 c("Beta Thalassemia", "ثلاسيمية بيتا", "地中海贫血", "Cardiomyopathie par surcharge en fer", "Beta Thalässamie", "बीटाथैलेसीमिया", "地中海性貧血", "Beta Talassemia", "Бета-талассемия ", "Talasemia beta", "Akdeniz Anemisi") = 5;
 
-c("Haemophilia", "سيولة الدم", "血友病", "Hémophilie", "Hämophilie", "हीमोफीलिया", "血友病", "Hemofilia", "Гемофилия", "Hemofilia", "Hemofili") = 6;
+c("Haemophilia", "سيولة الدم", "血友病", "Hémophilie", "Hämophilie", "हीमोफीलिया", "血友病", "Hemofilia", "Гемофилия", "Hemofilia", "Hemofili") = 6;
 
 c("Tay Sachs Disease", "شحام سفينغولى )تاى ساكس(", "泰-萨克斯病", "Hyperacousie", "Tay-Sachs-Syndrom", "टेसेक्सबीमारी", "テイ•サックス病", "Doença de Tay Sachs", "Болезнь Тея-Сакса", "Enfermedad de Tay Sachs", "Tay Sachs Hastalığı") = 7;
 
 c("Fragile X Syndrome", "متلازمة كروموزوم اكس الهش", "X染色体易损综合征", "Syndrome de l’X fragile", "Fragiles-X-Syndrom", "कमजोरएक्सलक्षण ( Fragile X Syndrome)", "脆弱X症候群", "Síndrome Frágil X", "Синдром Мартина-Белл", "Síndrome X frágil", "Frajil X Sendromu") = 8;
 
-c("Down’s Syndrome, Edward’s Syndrome, Patau Syndrome", "متلازمة داون، متلازمة إدوارد، متلازمة باتو", "唐氏综合症,爱德华综 合症,三体综合征", "Syndrome de Down, Syndrome d’Edward, Syndrome de Patau", "Down Syndrom,  Edwards Syndrom,  Pätau Syndrom", "डाउनसिंड्रोम, एडवर्ड\'ससिंड्रोम, पतौसिंड्रोम", "ダウン症候群、エドワード症候群、パトー症候群", "Síndrome de Down, Síndrome de Edward, Síndrome de Patau", "Синдром Дауна, Синдром Эдвардса, Синдром Патау", "Síndrome de Down, síndrome de Edward, síndrome de Patau", "Down Sendromu, Edward Sendromu, Patau Sendromu") = 9;
+c("Down’s Syndrome, Edward’s Syndrome, Patau Syndrome", "متلازمة داون، متلازمة إدوارد، متلازمة باتو", "唐氏综合症,爱德华综 合症,三体综合征", "Syndrome de Down, Syndrome d’Edward, Syndrome de Patau", "Down Syndrom,  Edwards Syndrom,  Pätau Syndrom", "डाउनसिंड्रोम, एडवर्ड\'ससिंड्रोम, पतौसिंड्रोम", "ダウン症候群、エドワード症候群、パトー症候群", "Síndrome de Down, Síndrome de Edward, Síndrome de Patau", "Синдром Дауна, Синдром Эдвардса, Синдром Патау", "Síndrome de Down, síndrome de Edward, síndrome de Patau", "Down Sendromu, Edward Sendromu, Patau Sendromu") = 9;
 
 c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他", "Outras", "Другое", "Otro", "Diğer") = 10')
 levels(data$genetic_cond_type)
@@ -705,7 +705,7 @@ levels(data$religion)
 # Recode
 data$religion <- recode(data$religion,
 'c("No", "لا", "无", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
-c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+c("Yes", "نعم", "有", "Oui", "Ja", "हां", "はい", "Sim", "да", "Sí", "Evet") = "Y"')
 levels(data$religion)                   
                         
 
@@ -717,11 +717,11 @@ data$religion_type <- as.factor(data$religion_type)
 levels(data$religion_type)
 # Recode
 data$religion_type <- recode(data$religion_type,
-'c("Christian - Protestant/Anglican", "مسيحى – بروتوستانتى/إنجيلى", "基督教-新教/英国 国教", "Chrétien - Protestant/Anglican", "Christlich – evangelische/anglikanisch", "ईसाई- प्रोटेस्टेंट / अँग्रेज़ी", "キリスト教—プロテスタント／英国国教会派", "Cristão Protestante/Anglicano", "Христианство - протестантство/англиканство", "Cristianismo (protestante/anglicano)", "Hristiyan Protestan/Anglikan") = 1;
+'c("Christian - Protestant/Anglican", "مسيحى – بروتوستانتى/إنجيلى", "基督教-新教/英国国教", "Chrétien - Protestant/Anglican", "Christlich – evangelische/anglikanisch", "ईसाई- प्रोटेस्टेंट / अँग्रेज़ी", "キリスト教—プロテスタント／英国国教会派", "Cristão Protestante/Anglicano", "Христианство - протестантство/англиканство", "Cristianismo (protestante/anglicano)", "Hristiyan Protestan/Anglikan") = 1;
 
-c("Christian - Catholic", "مسيحى – كاثوليكى", "基督教-天主教", "Chrétien - Catholique", "Christlich – Katholisch", "ईसाई- कैथोलिक", "ईसाई- कैथोिलक", "キリスト教—カトリック教会", "Cristão – Católico", "Христианство - католичество", "Cristianismo (católico)", "Hristiyan Katolik") = 2;
+c("Christian - Catholic", "مسيحى – كاثوليكى", "基督教-天主教", "Chrétien - Catholique", "Christlich – Katholisch", "ईसाई- कैथोलिक", "ईसाई- कैथोिलक", "キリスト教—カトリック教会", "Cristão – Católico", "Христианство - католичество", "Cristianismo (católico)", "Hristiyan Katolik") = 2;
 
-c("Christian - Other", "مسيحى – أخرى", "基督教-其他", "Chrétien - Autre", "Christlich – andere", "ईसाई- अन्य", "キリスト教—その他", "Cristão - Outro", "Христианство - прочее", "Cristianismo (otra)", "Hristiyan Diğer") = 3;
+c("Christian - Other", "مسيحى – أخرى", "基督教-其他", "Chrétien - Autre", "Christlich – andere", "ईसाई- अन्य", "キリスト教—その他", "Cristão - Outro", "Христианство - прочее", "Cristianismo (otra)", "Hristiyan Diğer") = 3;
 
 c("Muslim", "مسلم", "穆斯林", "Musulman", "Muslim", "मुस्लिम", "イスラム教", "Muçulmano", "Ислам", "Islamismo", "Müslüman") = 4;
 
@@ -744,7 +744,7 @@ c("Jainism", "يانى", "耆那教", "Djaïniste", "Janis", "जैनधर्
 c("Druze", "درزى", "德鲁兹教派", "Druze", "Drusen", "ड्रूज़", "ドルーズ教", "Druso", "Друзы", "Druso", "Dürzi")
 = 13;
 
-c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他", "Outras", "Другое ", "Otra", "Diğer") = 14;
+c("Other", "أخرى", "其他", "Autre", "andere", "अन्य", "その他", "Outras", "Другое", "Otra", "Diğer") = 14;
 
 "मुि\u1b6dलम" = NA')
 levels(data$religion_type)
@@ -758,17 +758,17 @@ data$kids_cure_life <- as.factor(data$kids_cure_life)
 levels(data$kids_cure_life)
 # Recode
 data$kids_cure_life <- recode(data$kids_cure_life,
-'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
 
 c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
 
 c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
 
-c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
 
-c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
 
-c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
 levels(data$kids_cure_life)
 data$kids_cure_life <- ordered(data$kids_cure_life)
 
@@ -781,17 +781,17 @@ data$kids_cure_debil <- as.factor(data$kids_cure_debil)
 levels(data$kids_cure_debil)
 # Recode
 data$kids_cure_debil <- recode(data$kids_cure_debil,
-'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
 
 c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
 
 c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
 
-c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
 
-c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
 
-c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
 levels(data$kids_cure_debil)
 data$kids_cure_debil <- ordered(data$kids_cure_debil)
 
@@ -804,17 +804,17 @@ data$embr_prev_life <- as.factor(data$embr_prev_life)
 levels(data$embr_prev_life)
 # Recode
 data$embr_prev_life <- recode(data$embr_prev_life,
-'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
 
 c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
 
 c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
 
-c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
 
-c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
 
-c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
 levels(data$embr_prev_life)
 data$embr_prev_life <- ordered(data$embr_prev_life)
 
@@ -827,17 +827,17 @@ data$embr_prev_debil <- as.factor(data$embr_prev_debil)
 levels(data$embr_prev_debil)
 # Recode
 data$embr_prev_debil <- recode(data$embr_prev_debil,
-'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
 
 c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
 
 c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
 
-c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
 
-c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
 
-c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
 levels(data$embr_prev_debil)
 data$embr_prev_debil <- ordered(data$embr_prev_debil)
 
@@ -850,17 +850,17 @@ data$edit_for_nondis <- as.factor(data$edit_for_nondis)
 levels(data$edit_for_nondis)
 # Recode
 data$edit_for_nondis <- recode(data$edit_for_nondis,
-'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
 
 c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
 
 c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
 
-c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
 
-c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
 
-c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
 levels(data$edit_for_nondis)
 data$edit_for_nondis <- ordered(data$edit_for_nondis)
 
@@ -873,17 +873,17 @@ data$gen_mod_food <- as.factor(data$gen_mod_food)
 levels(data$gen_mod_food)
 # Recode
 data$gen_mod_food <- recode(data$gen_mod_food,
-'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
+'c("Strongly Agree", "أوافق بشدة", "非常同意", "Entièrement d’accord", "Stimme sehr zu", "दृढ़तापूर्वकसहमत", "強く同意", "Concordo totalmente", "Полностью согласен", "Estoy completamente de acuerdo", "Kesinlikle Katılıyorum") = 1;
 
 c("Agree", "أوافق", "同意", "D’accord", "Stimme zu", "सहमत", "同意", "Concordo", "Согласен", "Estoy de acuerdo", "Katılıyorum") = 2;
 
 c("Neutral", "محايد", "中立", "Neutre", "Neutral", "तटस्थ", "中立", "Neutro", "Равнодушен", "Mi opinión es neutral", "Kararsızım") = 3;
 
-c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
+c("Disagree", "لا أوافق", "不同意", "En désaccord", "Stimme nicht zu", "असहमत", "反対", "Discordo", "Несогласен", "Estoy en desacuerdo", "Katılmıyorum") = 4;
 
-c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
+c("Strongly Disagree", "لا أوافق بشدة", "坚决反对", "Particulièrement en désaccord", "Stimme überhaupt nicht zu", "दृढ़तापूर्वकअसहमत", "強く反対", "Discordo totalmente", "Совершенно несогласен", "Estoy completamente en desacuerdo", "Kesinlikle Katılmıyorum") = 5;
 
-c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
+c("I don’t Know", "لا أعلم", "不知道", "Je ne sais pas", "Ich weiß nicht", "मुझेनहींपता", "分からない", "Não sei", "Не знаю", "No lo sé", "Bilmiyorum") = 6')
 levels(data$gen_mod_food)
 data$gen_mod_food <- ordered(data$gen_mod_food)
 
@@ -897,7 +897,7 @@ levels(data$deter_phys_appear)
 # Recode
 data$deter_phys_appear <- recode(data$deter_phys_appear,
 'c("No", "لا", "无", "否", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
-c("Yes", "نعم", "有", "是", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+c("Yes", "نعم", "有", "是", "Oui", "Ja", "हां", "はい", "Sim", "да", "Sí", "Evet") = "Y"')
 levels(data$deter_phys_appear)
 
 
@@ -910,7 +910,7 @@ levels(data$deter_intell)
 # Recode
 data$deter_intell <- recode(data$deter_intell,
 'c("No", "لا", "无", "否", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
-c("Yes", "نعم", "有", "是", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+c("Yes", "نعم", "有", "是", "Oui", "Ja", "हां", "はい", "Sim", "да", "Sí", "Evet") = "Y"')
 levels(data$deter_intell)
 
 
@@ -923,7 +923,7 @@ levels(data$deter_strength)
 # Recode
 data$deter_strength <- recode(data$deter_strength,
 'c("No", "لا", "无", "否", "Non", "Nein", "नहीं", "いいえ", "Não", "Нет", "No", "Hayır") = "N";
-c("Yes", "نعم", "有", "是", "Oui", "Ja", "हां", "はい", "Sim", "Да", "Sí", "Evet") = "Y"')
+c("Yes", "نعم", "有", "是", "Oui", "Ja", "हां", "はい", "Sim", "да", "Sí", "Evet") = "Y"')
 levels(data$deter_strength)
 
 
