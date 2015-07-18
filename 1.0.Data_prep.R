@@ -955,5 +955,11 @@ all <- all[which(all$age > 9 & all$age < 91), ]
 
 #----------------------------------------------------------------------------------------
 
+# allq <- all[complete.cases(all$gen_mod_food),] # selecting those with all Quesitons completed
+# all <- allq # YES YES ALEX BEING LAZY
+#
+# allEDU <- all[complete.cases(all$edu_level),] # selecting those with education level completed
+# allEDUq <- allEDU[complete.cases(allEDU$gen_mod_food),] # selecting those with education level completed + all Quesitons
+# all <- allEDUq # YES YES ALEX BEING LAZY
 
 
