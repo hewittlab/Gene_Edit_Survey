@@ -92,6 +92,25 @@ ggsave(file="Figures symlink/Boxplot_Age*CaucasianVsAsian.eps", width=12, height
 
 #----------------------------------------------------------------------------------------
 
+#DENSITY_PLOTS----------------------------------------------------------------------------------------
+
+all$Date <- as.Date(all$createdAt, "%m/%d/%Y")
+str(all$Date)
+
+# DENSITY PLOT OF COUNTRY & DATE
+qplot(Date, data=all, geom="density", fill=country, alpha=I(.5), 
+      main="Responses from each country", xlab="Date", 
+      ylab="Density")
+# ?? Could breakdown into top 5 countries?
+
+# DENSITY PLOT OF LANGUAGE & DATE
+qplot(Date, data=all, geom="density", fill=language, alpha=I(.5), 
+      main="Responses from each country", xlab="Date", 
+      ylab="Density")
+
+
+
+#----------------------------------------------------------------------------------------
 
 
 
