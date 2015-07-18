@@ -680,7 +680,7 @@ c("Huntington’s Disease", "مرض هونتيغتون", "亨廷顿病", "Malad
 
 c("Muscular Dystrophy", "ضمور العضلات", "肌肉萎缩症", "Dystrophie musculaire", "Muskeldystrophie", "मांसपेशीयदुर्विकास (Muscular Dystrophy)", "筋ジストロフィー", "Distrofia", "Мышечная дистрофия", "Distrofia muscular", "Kas Distrofisi") = 3;
 
-c("Sickle Cell Anaemia", "أنيميا الخلايا المنجلية", "镰状细胞贫血", "Hydroxyurée", "Sichzellenänemie", "रक्तकीलालकोशिकाओंकीकमी (Sickle Cell Ananemia)", "鎌状赤血球貧血", "Anemia Falciforme", "Серповидно-клеточная анемия", "Anemia de células falciformes", "Orak Hücre Anemisi") = 4;
+c("أنيميا الخلايا المنجلية","Sickle Cell Anaemia", "أنيميا الخلايا المنجلية", "镰状细胞贫血", "Hydroxyurée", "Sichzellenänemie", "रक्तकीलालकोशिकाओंकीकमी (Sickle Cell Ananemia)", "鎌状赤血球貧血", "Anemia Falciforme", "Серповидно-клеточная анемия", "Anemia de células falciformes", "Orak Hücre Anemisi") = 4;
 
 c("Beta Thalassemia", "ثلاسيمية بيتا", "地中海贫血", "Cardiomyopathie par surcharge en fer", "Beta Thalässamie", "बीटाथैलेसीमिया", "地中海性貧血", "Beta Talassemia", "Бета-талассемия ", "Talasemia beta", "Akdeniz Anemisi") = 5;
 
