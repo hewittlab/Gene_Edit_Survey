@@ -442,10 +442,28 @@ data <- data[- grep("Test test delete", c(data$question_25)),]
 data <- data[- grep("delete - Paul test", c(data$question_25)),]
 data <- data[- grep("delete", c(data$question_23)),]
 
-
 # RENAME AND REORDER VARIABLES
 
 data<-rename(data, c("question_1"="sex", "question_2"="YOB", "question_3"="country", "question_4"="ethnicity", "question_5"="religion", "question_6"="religion_type", "question_7"="edu_level", "question_8"="worked_health", "question_9"="worked_health_type", "question_10"="heard_about", "question_11"="wealth", "question_12"="genetic_cond", "question_13"="genetic_cond_affected", "question_14"="genetic_cond_type", "question_15"="kids_cure_life", "question_16"="kids_cure_debil", "question_17"="embr_prev_life", "question_18"="embr_prev_debil", "question_19"="edit_for_nondis", "question_20"="deter_phys_appear", "question_21"="deter_intell", "question_22"="deter_strength", "question_23"="other_traits_alter","question_24"="gen_mod_food"))
+
+# Fix Arabic and Russian country translations
+Countries_combined <- read.csv("Countries_combined.csv", header=FALSE, stringsAsFactors = FALSE)
+
+for(i in 1:nrow(data)) {
+  if(data$country[i] %in% Countries_combined$V2) {
+    data$tmp[i]<-as.character(Countries_combined$V1[match(data$country[i], Countries_combined$V2)[1]])
+  } 
+  if(data$country[i] %in% Countries_combined$V3) {
+    data$tmp[i]<-as.character(Countries_combined$V1[match(data$country[i], Countries_combined$V3)[1]])
+  } 
+  if(data$country[i] %in% Countries_combined$V1) {
+    data$tmp[i]<-data$country[i]
+  }
+}
+data$country <- data$tmp
+data$tmp <- NULL
+rm(Countries_combined)
+rm(i)
 
 # Generate age and cohort variables
 data$YOB <- as.numeric(data$YOB)
