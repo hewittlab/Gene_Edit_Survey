@@ -90,8 +90,6 @@ ggplot(age_stat, aes(x=group, y=age)) +
 ggsave(file="Figures symlink/Boxplot_Age*CaucasianVsAsian.eps", width=12, height=8)
 
 
-#----------------------------------------------------------------------------------------
-
 #DENSITY_PLOTS----------------------------------------------------------------------------------------
 
 all$Date <- as.Date(all$createdAt, "%m/%d/%Y")
@@ -101,13 +99,27 @@ str(all$Date)
 qplot(Date, data=all, geom="density", fill=country, alpha=I(.5), 
       main="Responses from each country", xlab="Date", 
       ylab="Density")
-# ?? Could breakdown into top 5 countries?
+
+# DENSITY PLOT OF TOP X COUNTRIES
+all$country_trim <- NA 
+all$country_trim[all$country=="United States of America"] <- 1
+all$country_trim[all$country=="China"] <- 2
+all$country_trim[all$country=="Australia"] <- 3
+all$country_trim[all$country=="South Africa"] <- 4
+all$country_trim[all$country=="Japan"] <- 5
+all$country_trim[all$country=="United Kingdom"] <- 6
+
+all$country_trim <- recode(all$country_trim, '"1" = "United States of America"; "2" = "China"; "3" = "Australia"; "4" = "South Africa"; "5" = "Japan"; "6" = "United Kingdom"')
+
+qplot(Date, data=all, geom="density", fill=country_trim, alpha=I(.5), 
+      main="Responses from each country", xlab="Date", 
+      ylab="Density")
+
 
 # DENSITY PLOT OF LANGUAGE & DATE
 qplot(Date, data=all, geom="density", fill=language, alpha=I(.5), 
       main="Responses based on language", xlab="Date", 
       ylab="Density")
-
 
 
 #----------------------------------------------------------------------------------------
