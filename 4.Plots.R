@@ -105,7 +105,7 @@ qplot(Date, data=all, geom="density", fill=country, alpha=I(.5),
 
 # DENSITY PLOT OF LANGUAGE & DATE
 qplot(Date, data=all, geom="density", fill=language, alpha=I(.5), 
-      main="Responses from each country", xlab="Date", 
+      main="Responses based on language", xlab="Date", 
       ylab="Density")
 
 
