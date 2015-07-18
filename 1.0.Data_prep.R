@@ -436,7 +436,7 @@ levels(wechat$deter_strength)
 
 # Delete observations that we filled in as a test
 # Creates dataframe containing observations with the string "delete" - identify which to delete and add below
-#del <- data[grep("delete", c(data$question_25,data$question_23, data$question_101)),]
+del <- data[grep("delete", c(data$question_25,data$question_23, data$question_101)),]
 # Delete specific observations that contain the following string matches - too difficult to remove all in one go that contain "delete' as some people have used this word in their responses
 data <- data[- grep("Test test delete", c(data$question_25)),]
 data <- data[- grep("delete - Paul test", c(data$question_25)),]
@@ -513,7 +513,7 @@ c("Native American", "أمريكى أصلى", "美国人 ", "Indien d’Amériqu
 
 c("North East Asian (Mongol, Tibetan, Korean, Japanese, etc)", "شمال شرق آسيا (منغولى، تبتى، كورى، يابانى، إلخ)", "东北亚裔（蒙古，西藏，韩国，日本等）", "Asiatique du nord-est (Mongol, Tibétaine, Coréen, Japonais, etc...)", "Nordöstliche Asiaten (mongolisch, tibetisch, koreanisch, japanisch etc.)", "उत्तर-पूर्वएशियाई (मंगोल, तिब्बती, कोरियाई, जापानी, आदि)", "北東アジア（モンゴル人、チベット族、韓国人、日本人、など）", "Norte Leste Asiático (mongol, tibetano, coreano, japonês, etc.)", "Северо-восточный азиат (монгол, тибетец, кореец, японец и т.п.)", "Del noreste asiático (mongol, tibetano, coreano, japonés, etc.)", "Kuzey Doğu Asyalı (Moğol, Tibet, Koreli, Japon, vs)") = 9;
 
-c("Pacific (Polynesian, micronesian, etc)", "المحيط الهادى (بولونيزى، ميكرونيزى، إلخ)", "太平洋(波利尼西亚, 密克罗尼西亚等) ", "Pacifique (Polynésien, Micronésien, etc...)", "Pazifische (Polynesisch etc.)", "प्रशांत (पॉलिनीषियन, माइक्रोनेशियन, आदि)", "大西洋（ポリネシア人、ミクロネシア人、など）", "Pacífico (etc. da Micronésia, Polinésia,)", "Тихоокеанец (полинезиец, микронезиец и т.п.)", "Del Pacífico (polinesio, micronesio, etc.)", "Pasifik (Polinezyalı, Mikronezyalı, vs)") = 10;
+c("Pacific (Polynesian, micronesian, etc)", "المحيط الهادى (بولونيزى، ميكرونيزى، إلخ)", "太平洋(波利尼西亚, 密克罗尼西亚等) ", "Pacifique (Polynésien, Micronésien, etc...)", "Pazifische (Polynesisch etc.)", "प्रशांत (पॉलिनीषियन, माइक्रोनेशियन, आदि)", "大西洋（ポリネシア人、ミクロネシア人、など)", "Pacífico (etc. da Micronésia, Polinésia,)", "Тихоокеанец (полинезиец, микронезиец и т.п.)", "Del Pacífico (polinesio, micronesio, etc.)", "Pasifik (Polinezyalı, Mikronezyalı, vs)") = 10;
 
 c("South East Asian (Chinese, Thai, Malay, Filipino, etc)", "جنوب شرق آسيا (صينى، تايلاندى، ماليزى، فليبينى، إلخ)", "东南亚裔（中国，泰国，马来，菲律宾等）", "Asiatique du sud-est -Chinois, Thaï, Malaisienne, Philippine, etc...)", "Südöstliche Asiaten (chinesisch, thai,  malaysisch, Filipino etc.)", "दक्षिणपूर्वएशियाई (चीनी, थाई, मलय, फिलिपिनो,आदि)", "南東アジア（中国人、タイ人、マレーシア人、フィリピン人、など）", "Do Sudeste Asiático (chinês, tailandês, malaio, filipino, etc)", "Юго-восточный азиат (китаец, таец, малаец, филиппинец и т.п.)", "Del sudeste asiático (chino, tailandés, malayo, filipino, etc.)", "Güney Doğu Asyalı (Çinli, Tay, Malezyalı, Filipinli, vs)") = 11')
 levels(data$ethnicity) 
