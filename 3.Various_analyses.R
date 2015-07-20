@@ -604,10 +604,11 @@ fit10 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + 
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
 # NEED TO CHANGE MODEL NUMBER
+best_mod_kids_cure_life <- fit10
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit6))
-(ci <- confint(fit6))
-OR <- coef(fit6)
+(best_mod_sum <- summary(best_mod_kids_cure_life))
+(ci <- confint(best_mod_kids_cure_life))
+OR <- coef(best_mod_kids_cure_life)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
 
@@ -734,10 +735,12 @@ fit10 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level +
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
+# NEED TO CHANGE MODEL NUMBER
+best_mod_kids_cure_debil <- fit7
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit6))
-(ci <- confint(fit6))
-OR <- coef(fit6)
+(best_mod_sum <- summary(best_mod_kids_cure_debil))
+(ci <- confint(best_mod_kids_cure_debil))
+OR <- coef(best_mod_kids_cure_debil)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
 
@@ -852,10 +855,12 @@ fit10 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + 
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
+# NEED TO CHANGE MODEL NUMBER
+best_mod_embr_prev_life <- fit10
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit7))
-(ci <- confint(fit7))
-OR <- coef(fit7)
+(best_mod_sum <- summary(best_mod_embr_prev_life))
+(ci <- confint(best_mod_embr_prev_life))
+OR <- coef(best_mod_embr_prev_life)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
 
@@ -970,10 +975,12 @@ fit10 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level +
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
+# NEED TO CHANGE MODEL NUMBER
+best_mod_embr_prev_debil <- fit7
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit7))
-(ci <- confint(fit7))
-OR <- coef(fit7)
+(best_mod_sum <- summary(best_mod_embr_prev_debil))
+(ci <- confint(best_mod_embr_prev_debil))
+OR <- coef(best_mod_embr_prev_debil)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
 
@@ -1088,10 +1095,12 @@ fit10 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level +
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
+# NEED TO CHANGE MODEL NUMBER
+best_mod_edit_for_nondis <- fit7
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit7))
-(ci <- confint(fit7))
-OR <- coef(fit7)
+(best_mod_sum <- summary(best_mod_edit_for_nondis))
+(ci <- confint(best_mod_edit_for_nondis))
+OR <- coef(best_mod_edit_for_nondis)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
 
@@ -1206,10 +1215,12 @@ fit10 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + re
 # Compare
 (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
+# NEED TO CHANGE MODEL NUMBER
+best_mod_gen_mod_food <- fit8
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(fit8))
-(ci <- confint(fit8))
-OR <- coef(fit8)
+(best_mod_sum <- summary(best_mod_gen_mod_food))
+(ci <- confint(best_mod_gen_mod_food))
+OR <- coef(best_mod_gen_mod_food)
 OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
 (best_mod_sumORs <- exp(cbind(OR, ci)))
 
