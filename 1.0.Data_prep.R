@@ -620,14 +620,25 @@ data$heard_about <- str_trim(data$heard_about, side = "both")
 # Make as Factor
 data$heard_about <- as.factor(data$heard_about)
 levels(data$heard_about)
+
+# Hack-y solution to get the two distinct (but similar) Hindi entries for the heard about column. Exploits the fact that the ones we are interested in are the only ones with spaces in them.
+tmp <- data[data$language=="HINDI",]
+tmp <- tmp[grepl(" ",tmp$heard_about), ]
+hindi_little_levels <- levels(as.factor(as.character(tmp$heard_about)))
+
 # Recode
 # There is a problem here with the string matching for the Hindi response = 2. In the raw text ouput there are 2 levels displayed that appear exactly the same - one of them will match using recode and the other won't (I can't figure this out - a Boolean even says they're the same). So I have needed to recode twice, coercing the non-matching string in an 'else' statement. 
-data$heard_about <- recode(data$heard_about,
-'c("I have never heard of it", "أسمع بها من قبل", "从未听说过", "Je n’en ai jamais entendu parler", "Ich habe nie etwas darüber gehört", "मैंनेइसकेबारेमेंकभीनहींसुना|", "聞いたことがない", "Nunca ouvi falar sobre isso", "Я никогда не слышал об этом", "Jamás he escuchado al respecto", "Hiç duymadım") = 1;
+never <- c("I have never heard of it", "أسمع بها من قبل", "从未听说过", "Je n’en ai jamais entendu parler", "Ich habe nie etwas darüber gehört", "मैंनेइसकेबारेमेंकभीनहींसुना|", "聞いたことがない", "Nunca ouvi falar sobre isso", "Я никогда не слышал об этом", "Jamás he escuchado al respecto", "Hiç duymadım")
+little <- c("I have heard a little about it", "سمعت القليل عنها", "听说过一点点", "J’en ai un peu entendu parler", "Ich eine ein wenig darüber gehört", hindi_little_levels, "少しだけなら聞いたことがある", "Ouvi um pouco sobre isso", "Я немного слышал об этом", "He escuchado un poco al respecto", "Biraz fikrim var")
+alot <- c("I have heard a lot about it", "سمعت الكثير عنها", "很了解", "J’en ai beaucoup entendu parler", "Ich habe viel davon gehört", "मैंनेइसकेबारेमेंकाफीसुनाहै|", "たくさん聞いたことがある", "Ouvi muito sobre isso", "Я много слышал об этом", "He escuchado mucho al respecto", "Hakkında çok şey duydum")
+data$heard_about <- recode(data$heard_about, 'never = 1; little = 2; alot = 3;')
+#Hacky Cleanup
+rm(tmp)
+rm(hindi_little_levels)
+rm(alot)
+rm(little)
+rm(never)
 
-c("I have heard a little about it", "سمعت القليل عنها", "听说过一点点", "J’en ai un peu entendu parler", "Ich eine ein wenig darüber gehört", "मैंने  इसकेबारेमेंथोड़ासासुनाहै|", "少しだけなら聞いたことがある", "Ouvi um pouco sobre isso", "Я немного слышал об этом", "He escuchado un poco al respecto", "Biraz fikrim var") = 2;
-
-c("I have heard a lot about it", "سمعت الكثير عنها", "很了解", "J’en ai beaucoup entendu parler", "Ich habe viel davon gehört", "मैंनेइसकेबारेमेंकाफीसुनाहै|", "たくさん聞いたことがある", "Ouvi muito sobre isso", "Я много слышал об этом", "He escuchado mucho al respecto", "Hakkında çok şey duydum") = 3') 
 levels(data$heard_about)
 ####
 #Run to here and check that only "मैंने  इसकेबारेमेंथोड़ासासुनाहै|" isn't recoded, before forcing this string to be recoded as 2.
