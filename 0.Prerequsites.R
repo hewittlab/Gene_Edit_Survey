@@ -3,3 +3,4 @@ print(packages)
 for(i in 1:length(packages)) {
   install.packages(packages[i])
 }
+rm(list=ls())
