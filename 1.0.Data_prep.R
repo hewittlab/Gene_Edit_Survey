@@ -434,13 +434,14 @@ levels(wechat$deter_strength)
 
 # IMPORT AND PREPARE MAIN DATA
 
+# THESE HAVE HOPEFULLY NOW BEEN DELETED IN THE PARSE FILE - MAY NEED TO CHECK
 # Delete observations that we filled in as a test
 # Creates dataframe containing observations with the string "delete" - identify which to delete and add below
-del <- data[grep("delete", c(data$question_25,data$question_23, data$question_101)),]
+# del <- data[grep("delete", c(data$question_25,data$question_23, data$question_101)),]
 # Delete specific observations that contain the following string matches - too difficult to remove all in one go that contain "delete' as some people have used this word in their responses
-data <- data[- grep("Test test delete", c(data$question_25)),]
-data <- data[- grep("delete - Paul test", c(data$question_25)),]
-data <- data[- grep("delete", c(data$question_23)),]
+# data <- data[- grep("Test test delete", c(data$question_25)),]
+# data <- data[- grep("delete - Paul test", c(data$question_25)),]
+# data <- data[- grep("delete", c(data$question_23)),]
 
 # RENAME AND REORDER VARIABLES
 
