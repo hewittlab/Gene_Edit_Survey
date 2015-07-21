@@ -519,9 +519,9 @@ c("African/African American", "Afroamericano/Africano", "Africana/afro-americana
 
 c("Asian Indian", "Indio asiático", "Asiatische Inder", "Asiático Índico", "Indien d’Asie", "印度裔 ", "भारतीय/एशियाई", "هندى أسيوى", "Индиец", "Hint Asyalı", "アジア系インド人") = 3; 
 
-c("Caucasian (European)", "قوقازى (أوروبى)", "白种人（欧洲）", "Caucasien (Européen)", "Kaukasic/Europäer", "श्वेतजाति  (यूरोपीय)", "श्वेतजाति (मध्यपूर्व)", "白人（ヨーロッパ系）", "Caucasiano (Europeu)", "Европеоид (Европа)", "Caucásico (europeo)", "Avrupalı") = 4; 
+c("Caucasian (European)", "قوقازى (أوروبى)", "白种人（欧洲）", "Caucasien (Européen)", "Kaukasic/Europäer", "तजाित (यूरोपीय)", "白人（ヨーロッパ系）", "Caucasiano (Europeu)", "Европеоид (Европа)", "Caucásico (europeo)", "Avrupalı") = 4; 
 
-c("Caucasian (Middle East)", "قوقازى (شرق أوسطى)", "白种人（中东）", "Caucasien (Moyen-Orient)", "Kaukasisch ( Middle East )", "श्वेतजाति  (मध्यपूर्व)", "白人（中東系)", "Caucasiano (Oriente Médio)", "Европеоид (Ближний Восток)", "Caucásico (medio oriente)", "Orta Doğulu") = 5; 
+c("Caucasian (Middle East)", "قوقازى (شرق أوسطى)", "白种人（中东）", "Caucasien (Moyen-Orient)", "Kaukasisch ( Middle East )", "श्वेतजाति (मध्यपूर्व)", "白人（中東系)", "Caucasiano (Oriente Médio)", "Европеоид (Ближний Восток)", "Caucásico (medio oriente)", "Orta Doğulu") = 5; 
 
 c("Hispanic, Latino or Spanish", "هسبانى أو لاتينى أو اسبانى", "西班牙，拉美裔 ", "Hispanique, Latino", "Hispanic, Latino oder Spanish", "हिस्पैनिकलातीनोयास्पेनिश", "ヒスパニック、ラテン系またはスペイン人", "Hispânico, latino ou espanhol", "Латиноамериканец или испанец", "Hispano, latinoamericano o español", "Hispanik, Latin veya İspanyol") = 6; 
 
