@@ -436,7 +436,7 @@ cat(out,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",se
 
 
 # SEX DIFFS BY MOST FREQUENT 8 COUNTRIES
-top_countries <- as.character(country_stat$country[1:8]) # Need to run country_stat above (this selects top 6)
+top_countries <- as.character(country_stat$country[1:8]) # Need to run country_stat above (this selects top 8)
 country_vec <- all$country
 sex_country_table <- table(country_vec,all$sex)
 # Save table rownames in a vector
@@ -462,7 +462,6 @@ rownames(sex_country_mat) <- rnames
 (sex_country_chi <- chisq.test(sex_country_mat))
 # Post hoc pairwise comparisons
 (sex_country_chi_pairwise <- chisq.post.hoc(sex_country_mat))
-
 # Remove old file
 file.remove("Results symlink/sex_country_chi.test.txt")
 # Write results
@@ -536,7 +535,45 @@ cat(txt2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep=
 cat(out2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep="\n", append=T)
 
 
-#ORDINAL_REGRESSION---------------------------------------------------------------------------------------
+# AGE DIFFS BY MOST FREQUENT 8 COUNTRIES
+top_countries <- as.character(country_stat$country[1:8]) # Need to run country_stat above (this selects top 8)
+# Create dataframe of most frequent countries
+age_country <- data.frame(age=all$age, group=all$country)
+(age_country <- subset(age_country, group == top_countries[1] | group == top_countries[2] | group == top_countries[3] | group == top_countries[4] | group == top_countries[5] | group == top_countries[6] | group == top_countries[7] | group == top_countries[8]))
+# Change group to character to remove redundant factor levels
+age_country$group <- as.character(age_country$group)
+# Mean and SDs
+(age_country_mean <- tapply(age_country$age, age_country$group, mean))
+(age_country_sd <- tapply(age_country$age, age_country$group, sd))
+# Anova
+age_country_anova <- aov(age_country$age ~ age_country$group)
+(age_country_anova_sum <- summary(age_country_anova))
+# Post hoc pairwise comparisons
+(age_country_anova_pairwise <- pairwise.t.test(age_country$age, age_country$group, p.adj = "bonferroni"))
+# Remove old file
+file.remove("Results symlink/age_country_anova.txt")
+# Write results
+descrip <- "Anova comparing males and females in the most responsive countries. Pairwise comparisons follow main result."
+txt <-capture.output(descrip,file=NULL) # Print description
+out <-capture.output(age_country_anova_sum) # Print test result
+out2 <-capture.output(age_country_anova_pairwise) # Print pairwise results
+cat(txt,file="Results symlink/age_country_anova.txt",sep="\n",append=T)
+cat(out,file="Results symlink/age_country_anova.txt",sep="\n", append=T)
+cat(out2,file="Results symlink/age_country_anova.txt",sep="\n", append=T)
+descrip2 <- "Means"
+txt2 <-capture.output(descrip2,file=NULL)
+out3 <-capture.output(age_country_mean) 
+descrip3 <- "Standard Deviations"
+txt3 <-capture.output(descrip3,file=NULL)
+out4 <-capture.output(age_country_sd)
+cat(txt2,file="Results symlink/age_country_anova.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/age_country_anova.txt",sep="\n", append=T)
+cat(txt3,file="Results symlink/age_country_anova.txt",sep="\n",append=T)
+cat(out4,file="Results symlink/age_country_anova.txt",sep="\n", append=T)
+
+
+
+#MULTINOMIAL_REGRESSION---------------------------------------------------------------------------------------
 
 
 # KIDS_CURE_LIFE
@@ -1282,8 +1319,6 @@ best_mod_disagree <- as.data.frame(best_mod_disagree)
 best_mod_disagree <- cbind(pred_names, best_mod_disagree)
 (best_mod_disagree_coef <- best_mod_disagree[,c(1:4,8)])
 (best_mod_disagree_OR <- best_mod_disagree[,c(1,5:8)])
-
-
 
 # Remove old file
 file.remove("Results symlink/MultReg_genmodfood.txt")
