@@ -502,7 +502,7 @@ levels(data$sex)
 # Recode
 data$sex <- recode(data$sex,
 'c("Male", "Homme", "ذكر", "男", "Männlich", "पुरुषों", "男性", "Masculino", "Мужской", "Erkek") = "M";
-c("Female", "Femme", "أنثى", "女", "Weiblich", "मिहला", "女性", "Feminino", "Женский", "Femenino", "Kadın") = "F"')
+c("Female", "Femme", "أنثى", "女", "Weiblich", "मिहला", "महिला", "女性", "Feminino", "Женский", "Femenino", "Kadın") = "F"')
 levels(data$sex)
 
 
