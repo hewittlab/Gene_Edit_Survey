@@ -156,6 +156,23 @@ ggplot(age_stat, aes(x=group, y=age)) +
 ggsave(file="Figures symlink/Boxplot_Age*CaucasianVsAsian.eps", width=12, height=8)
 
 
+# BOXPLOTS OF AGE BY MOST FREQUENT 8 COUNTRIES
+
+top_countries <- as.character(country_stat$country[1:8]) # Need to run country_stat in script 3
+# Create dataframe of most frequent countries
+age_country <- data.frame(age=all$age, group=all$country)
+(age_country <- subset(age_country, group == top_countries[1] | group == top_countries[2] | group == top_countries[3] | group == top_countries[4] | group == top_countries[5] | group == top_countries[6] | group == top_countries[7] | group == top_countries[8]))
+# Change group to character to remove redundant factor levels
+age_country$group <- as.character(age_country$group)
+
+ggplot(age_country, aes(x=group, y=age)) + 
+  geom_boxplot() + 
+  scale_y_continuous(breaks=seq(10,100,10),labels=seq(10,100,10)) + 
+  labs(title="Boxplots of Age by Country",x="Country", y="Age") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(file="Figures symlink/Boxplot_Age*Country.eps", width=12, height=8)
+
+
 #DENSITY_PLOTS----------------------------------------------------------------------------------------
 
 all$Date <- as.Date(all$createdAt, "%m/%d/%Y")
