@@ -974,4 +974,8 @@ all <- all[which(all$age > 9 & all$age < 91), ]
 # allEDUq <- allEDU[complete.cases(allEDU$gen_mod_food),] # selecting those with education level completed + all Quesitons
 # all <- allEDUq # YES YES ALEX BEING LAZY
 
-
+#--------------------------------------------------------------------------------------------------
+# WRITE JSON FILE TO PUT INTO 1.1
+# Currently only the humanediting data, and not wechat as I haven't un-removed the free text columns.
+data_with_free_text$time_to_do <- as.numeric(data_with_free_text$time_to_do)
+write(toJSON(data_with_free_text, pretty = TRUE), file="data_with_free_text.json")
