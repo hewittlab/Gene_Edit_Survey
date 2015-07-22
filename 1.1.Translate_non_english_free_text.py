@@ -1,35 +1,59 @@
-import csv
+
+# coding: utf-8
+
+# #Translator
+# 
+# This notebook is used to translate the other language free text entries into english via the Python module [Goslate](https://pypi.python.org/pypi/goslate).
+# 
+# You should install this module via pip before running this notebook.
+# 
+# *Note: This has only been tested on Python 3.4*
+
+# In[25]:
+
+import json
 import sys
 import string
-from translate import translator
+import goslate
 
-data = {} 
+
+# ####Used to convert the language encodings from the input file into ones that the Goslate module understands.
+
+# In[26]:
 
 langs = {"ENGLISH": "en", "FRENCH":"fr", "CHINESE":"zh-TW", "ARABIC":"ar", "RUSSIAN":"ru", "GERMAN":"de", "HINDI":"hi", "JAPANESE":"ja", "PORTUGUESE":"pt", "SPANISH":"es", "TURKISH":"tr" }
 
-with open(sys.argv[1], "r") as f:
-    reader = csv.reader(f)
-    temp_data = [row for row in reader][1:]
-    for lang in langs:
-        data[lang] = [row for row in temp_data if row[6] == lang]
 
-for key in data:
-    print(key, len(data[key]))
+# ####Change to your input file
 
-print("")
+# In[36]:
 
-for lang in data:
-    print(lang, langs[lang])
+with open("../data/data_with_free_text.json") as f:
+    answers = json.load(f)
 
-for lang in [key for key in data if key is not "ENGLISH"]:
-    print(lang)
-    for row in data[lang]:
-        for col in [-1]:
-            if "NA" not in row[col] and row[col] is not "":
-                result = translator(langs[lang], "en", row[col])
-                print("Translating: ", row[col])
-                print(result)
-                if isinstance(result[0], list): 
-                    translation = "\n".join([res[0].strip() for res in result[0]])
-                    print(translation)
+
+# ####Actual Translation
+# Works by calling the Goslate library on the free text boxes that need translating. Filters out the non-english and blank answers to not waste time.
+# 
+# I added the `timeout=100` to the constructor of Goslate as I was getting a timeout error a few minutes in to processing. You may or may not need to tweak this. YMMV.
+
+# In[44]:
+
+gs = goslate.Goslate(timeout=100)
+
+free_text_questions = ['question_25', 'other_traits_alter']
+for answer in [answer for answer in answers if answer['language'] != "ENGLISH"]:
+    for question in free_text_questions:
+        if question in answer:
+            if answer[question] != "":
+                result = gs.translate(answer[question], "en")
+                answer[question] = result
+
+
+# ####Write translated data to file
+
+# In[ ]:
+
+with open("../data/data_with_free_text_translated.json", "w") as f:
+    json.dump(answers, f, indent=4)
 
