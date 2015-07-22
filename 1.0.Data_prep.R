@@ -969,6 +969,8 @@ GDP_Country <- read.csv("GDP_Country.csv", header=TRUE, stringsAsFactors = FALSE
 for(i in 1:nrow(all)) {
   if(as.character(all$country[i]) %in% GDP_Country$Country) {
     all$tmp[i]<-as.numeric(GDP_Country$GDP_per_capita_USD[match(all$country[i], GDP_Country$Country)])
+  } else {
+    all$tmp[i] <- as.numeric(NA)
   }
 }
 
