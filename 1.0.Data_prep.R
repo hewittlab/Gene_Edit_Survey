@@ -977,8 +977,6 @@ for(i in 1:nrow(all)) {
 all$GDP <- all$tmp
 all$tmp <- NULL
 
-# Reorder
-all <- all[c("createdAt", "updatedAt", "time_to_do", "cohort", "ip", "language", "country", "GDP", "sex", "YOB", "age", "ethnicity", "wealth", "edu_level", "worked_health", "worked_health_type", "heard_about", "genetic_cond", "genetic_cond_affected", "genetic_cond_type", "religion", "religion_type", "kids_cure_life", "kids_cure_debil", "embr_prev_life", "embr_prev_debil", "edit_for_nondis", "deter_phys_appear", "deter_intell", "deter_strength", "gen_mod_food")]
 
 #----------------------------------------------------------------------------------------
 
