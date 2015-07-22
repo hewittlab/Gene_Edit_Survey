@@ -8,6 +8,7 @@ library(ordinal) # OLR
 library(lmtest) # OLR
 library(VGAM) # OLR
 library(nnet) # Multinomial LR
+library(fifer) # Posthoc chi-square
 
 ## Need to create a "Results symlink" folder in the WD to save results files to.
 
@@ -434,6 +435,48 @@ cat(mat,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",se
 cat(out,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",sep="\n", append=T)
 
 
+# SEX DIFFS BY MOST FREQUENT 8 COUNTRIES
+top_countries <- as.character(country_stat$country[1:8]) # Need to run country_stat above (this selects top 6)
+country_vec <- all$country
+sex_country_table <- table(country_vec,all$sex)
+# Save table rownames in a vector
+sex_country_rn <- rownames(sex_country_table)
+# Now set to NULL so they aren't duplicated when the table is converted to a df.
+rownames(sex_country_table) <- NULL
+# Convert table to df
+sex_country_df <- as.data.frame.matrix(sex_country_table)
+# Add rownames back in
+sex_country_df <- cbind(sex_country_rn, sex_country_df)
+# Rename first column (i.e. rownames)
+colnames(sex_country_df)[1]="country"
+sex_country_df
+# Create dataframe of most frequent countries
+sex_country_df <- sex_country_df[which(sex_country_df$country == top_countries[1] | sex_country_df$country == top_countries[2] | sex_country_df$country == top_countries[3] | sex_country_df$country == top_countries[4] | sex_country_df$country == top_countries[5] | sex_country_df$country == top_countries[6] | sex_country_df$country == top_countries[7] | sex_country_df$country == top_countries[8]), ]
+sex_country_df
+# Convert to matrix
+sex_country_mat <- cbind(sex_country_df[,2], sex_country_df[,3])
+rnames <- as.character(sex_country_df[,1])
+cnames <- c("F", "M")
+colnames(sex_country_mat) <- cnames
+rownames(sex_country_mat) <- rnames
+(sex_country_chi <- chisq.test(sex_country_mat))
+# Post hoc pairwise comparisons
+(sex_country_chi_pairwise <- chisq.post.hoc(sex_country_mat))
+
+# Remove old file
+file.remove("Results symlink/sex_country_chi.test.txt")
+# Write results
+descrip <- "Chi-square test comparing males and females in the most responsive countries. Pairwise comparisons follow main result."
+txt <-capture.output(descrip,file=NULL) # Print description
+mat <-capture.output(sex_country_mat,file=NULL) # Print contingency table
+out <-capture.output(sex_country_chi) # Print chi test result
+out2 <-capture.output(sex_country_chi_pairwise) # Print pairwise results
+cat(txt,file="Results symlink/sex_country_chi.test.txt",sep="\n",append=T)
+cat(mat,file="Results symlink/sex_country_chi.test.txt",sep="\n",append=T)
+cat(out,file="Results symlink/sex_country_chi.test.txt",sep="\n", append=T)
+cat(out2,file="Results symlink/sex_country_chi.test.txt",sep="\n", append=T)
+
+
 # AGE DIFFS CAUCASIAN AND ASIAN
 age_stat <- data.frame(age=all$age, group=all$ethnicity)
 age_stat <- subset(age_stat, group == 4 | group == 5 | group == 9 | group == 11)
@@ -495,37 +538,6 @@ cat(out2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep=
 
 #ORDINAL_REGRESSION---------------------------------------------------------------------------------------
 
-
-# ORDINAL LOGISTIC REGRESSION
-
-# # Using polr from the MASS package
-# # Duplicate main dataset before collapsing likert levels
-# all_LR <- all
-# # Recode (collapse 6 levels to 3)
-# all_LR$kids_cure_life <- recode(all_LR$kids_cure_life,
-# '"1" = "1(agree)";
-# "2" = "1(agree)";
-# "3" = "2(neutral)";
-# "4" = "3(disagree)";
-# "5" = "3(disagree)";
-# "6" = "2(neutral)";')
-# levels(all_LR$kids_cure_life)
-# fit <- polr(kids_cure_life ~ sex + age + ethnicity, data = all_LR, Hess=TRUE)
-# summary(fit)
-# # store table
-# (ctable <- coef(summary(fit)))
-# # calculate and store p values
-# p <- pnorm(abs(ctable[, "t value"]), lower.tail = FALSE) * 2
-# # combined table
-# (ctable <- cbind(ctable, "p value" = p))
-# # CIs
-# (ci <- confint(fit))
-# # Calculate ORs
-# exp(cbind(OR = coef(fit), ci))
-
-
-
-# Using clm from the Ordinal package - I think this output is better
 
 # KIDS_CURE_LIFE
 # Duplicate main dataset before collapsing likert levels
@@ -1227,13 +1239,13 @@ best_mod <- cbind(best_mod, AIC)
 # Change model number here
 best_mod_gen_mod_food <- fit10
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(best_mod_gen_mod_food))
-(coef <- coef(best_mod_gen_mod_food))
-(coef_ci <- confint(best_mod_gen_mod_food))
-(OR <- exp(coef))
-(OR_ci <- exp(coef_ci))
+best_mod_sum <- summary(best_mod_gen_mod_food)
+coef <- coef(best_mod_gen_mod_food)
+coef_ci <- confint(best_mod_gen_mod_food)
+OR <- exp(coef)
+OR_ci <- exp(coef_ci)
 z <- summary(best_mod_gen_mod_food)$coefficients/summary(best_mod_gen_mod_food)$standard.errors
-(p <- (1 - pnorm(abs(z), 0, 1)) * 2)
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
 
 # Sequence vectors to recreate coef and OR tables
 # Coefficients
@@ -1263,13 +1275,13 @@ pred_names <- colnames(coef)
 best_mod_neutral <- cbind(coef_neutral, coef_neutral_025, coef_neutral_975, OR_neutral, OR_neutral_025, OR_neutral_975, p_neutral)
 best_mod_neutral <- as.data.frame(best_mod_neutral)
 best_mod_neutral <- cbind(pred_names, best_mod_neutral)
-best_mod_neutral_coef <- best_mod_neutral[,c(1:4,8)]
-best_mod_neutral_OR <- best_mod_neutral[,c(1,5:8)]
+(best_mod_neutral_coef <- best_mod_neutral[,c(1:4,8)])
+(best_mod_neutral_OR <- best_mod_neutral[,c(1,5:8)])
 best_mod_disagree <- cbind(coef_disagree, coef_disagree_025, coef_disagree_975, OR_disagree, OR_disagree_025, OR_disagree_975, p_disagree)
 best_mod_disagree <- as.data.frame(best_mod_disagree)
 best_mod_disagree <- cbind(pred_names, best_mod_disagree)
-best_mod_disagree_coef <- best_mod_disagree[,c(1:4,8)]
-best_mod_disagree_OR <- best_mod_disagree[,c(1,5:8)]
+(best_mod_disagree_coef <- best_mod_disagree[,c(1:4,8)])
+(best_mod_disagree_OR <- best_mod_disagree[,c(1,5:8)])
 
 
 
