@@ -7,6 +7,7 @@ library(MASS) # OLR
 library(ordinal) # OLR
 library(lmtest) # OLR
 library(VGAM) # OLR
+library(nnet) # Multinomial LR
 
 ## Need to create a "Results symlink" folder in the WD to save results files to.
 
@@ -1201,36 +1202,79 @@ all_LR$heard_about <- recode(all_LR$heard_about,
 levels(all_LR$heard_about)
 all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
 
-# Fit and compare models
-fit <- clm(gen_mod_food ~ 1, data = all_LR) # Intercept only
-fit2 <- clm(gen_mod_food ~ sex, data = all_LR)
-fit3 <- clm(gen_mod_food ~ sex + age, data = all_LR)
-fit4 <- clm(gen_mod_food ~ sex + age + ethnicity, data = all_LR)
-fit5 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about, data = all_LR)
-fit6 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
-fit7 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
-fit8 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit9 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit10 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
-# Compare
-(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
 
-# NEED TO CHANGE MODEL NUMBER
-best_mod_gen_mod_food <- fit8
+# Multinomial Model
+# Fit and compare models
+fit <- multinom(gen_mod_food ~ 1, data = all_LR) # Intercept only
+fit2 <- multinom(gen_mod_food ~ sex, data = all_LR)
+fit3 <- multinom(gen_mod_food ~ sex + age, data = all_LR)
+fit4 <- multinom(gen_mod_food ~ sex + age + ethnicity, data = all_LR)
+fit5 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about, data = all_LR)
+fit6 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+fit7 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+fit8 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit9 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit10 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+
+# Compare
+best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10)
+
+# Create vector of AIC values
+AIC <- c(fit$AIC,fit2$AIC,fit3$AIC,fit4$AIC,fit5$AIC,fit6$AIC,fit7$AIC,fit8$AIC,fit9$AIC,fit10$AIC)
+best_mod <- cbind(best_mod, AIC)
+(best_mod <- best_mod[c("Model", "Resid. df", "Resid. Dev", "AIC", "Test", "   Df", "LR stat.", "Pr(Chi)")])
+
+# Change model number here
+best_mod_gen_mod_food <- fit10
 # CIs and ORs of model with lowest AIC
 (best_mod_sum <- summary(best_mod_gen_mod_food))
-(ci <- confint(best_mod_gen_mod_food))
-OR <- coef(best_mod_gen_mod_food)
-OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
-(best_mod_sumORs <- exp(cbind(OR, ci)))
+(coef <- coef(best_mod_gen_mod_food))
+(coef_ci <- confint(best_mod_gen_mod_food))
+(OR <- exp(coef))
+(OR_ci <- exp(coef_ci))
+z <- summary(best_mod_gen_mod_food)$coefficients/summary(best_mod_gen_mod_food)$standard.errors
+(p <- (1 - pnorm(abs(z), 0, 1)) * 2)
 
-# # Proportional Odds Assumption
-# fit9a <- vglm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR, family=cumulative(parallel=TRUE))
-# fit9b <- vglm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR, family=cumulative(parallel=FALSE))
-# lrtest(fit9a,fit9b)
+# Sequence vectors to recreate coef and OR tables
+# Coefficients
+coef_neutral_seq <- seq(1,length(coef),2)
+coef_neutral <- coef[coef_neutral_seq]
+coef_disagree_seq <- seq(2,length(coef),2)
+coef_disagree <- coef[coef_disagree_seq]
+coef_neutral_025 <- coef_ci[1:(length(coef_ci)/4)]
+coef_neutral_975 <- coef_ci[(length(coef_ci)/4)+1:(length(coef_ci)/4)]
+coef_disagree_025 <- coef_ci[(length(coef_ci)/2)+1:(length(coef_ci)/4)]
+coef_disagree_975 <- coef_ci[((length(coef_ci)/4)*3)+1:(length(coef_ci)/4)]
+# Odds Ratios
+OR_neutral_seq <- seq(1,length(OR),2)
+OR_neutral <- OR[OR_neutral_seq]
+OR_disagree_seq <- seq(2,length(OR),2)
+OR_disagree <- OR[OR_disagree_seq]
+OR_neutral_025 <- OR_ci[1:(length(OR_ci)/4)]
+OR_neutral_975 <- OR_ci[(length(OR_ci)/4)+1:(length(OR_ci)/4)]
+OR_disagree_025 <- OR_ci[(length(OR_ci)/2)+1:(length(OR_ci)/4)]
+OR_disagree_975 <- OR_ci[((length(OR_ci)/4)*3)+1:(length(OR_ci)/4)]
+# p values
+p_neutral <- p[coef_neutral_seq]
+p_disagree <- p[coef_disagree_seq]
+
+# Assemble dataframes of coefficients and odds ratios for neutral and disagree categories
+pred_names <- colnames(coef)
+best_mod_neutral <- cbind(coef_neutral, coef_neutral_025, coef_neutral_975, OR_neutral, OR_neutral_025, OR_neutral_975, p_neutral)
+best_mod_neutral <- as.data.frame(best_mod_neutral)
+best_mod_neutral <- cbind(pred_names, best_mod_neutral)
+best_mod_neutral_coef <- best_mod_neutral[,c(1:4,8)]
+best_mod_neutral_OR <- best_mod_neutral[,c(1,5:8)]
+best_mod_disagree <- cbind(coef_disagree, coef_disagree_025, coef_disagree_975, OR_disagree, OR_disagree_025, OR_disagree_975, p_disagree)
+best_mod_disagree <- as.data.frame(best_mod_disagree)
+best_mod_disagree <- cbind(pred_names, best_mod_disagree)
+best_mod_disagree_coef <- best_mod_disagree[,c(1:4,8)]
+best_mod_disagree_OR <- best_mod_disagree[,c(1,5:8)]
+
+
 
 # Remove old file
-file.remove("Results symlink/OrdReg_genmodfood.txt")
+file.remove("Results symlink/MultReg_genmodfood.txt")
 # Write results
 newline <- "----------------------------------------------------------------------------------------"
 sep <-capture.output(newline,file=NULL) # Print description
@@ -1238,26 +1282,67 @@ sep <-capture.output(newline,file=NULL) # Print description
 descrip <- "Likelihood ratio tests comparing different models"
 txt <-capture.output(descrip,file=NULL) # Print description
 out <-capture.output(best_mod) # Print test result
-cat(txt,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
-cat(out,file="Results symlink/OrdReg_genmodfood.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
+cat(txt,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
+cat(out,file="Results symlink/MultReg_genmodfood.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
 
-descrip2 <- "Summary of model with lowest AIC"
+descrip2 <- "Coefficients - Summary of model with lowest AIC - Agree -> Neutral"
 txt2 <-capture.output(descrip2,file=NULL) # Print description
-out2 <-capture.output(best_mod_sum) # Print test result
-cat(txt2,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
-cat(out2,file="Results symlink/OrdReg_genmodfood.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
+out2 <-capture.output(best_mod_neutral_coef) # Print test result
+cat(txt2,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/MultReg_genmodfood.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
 
-descrip3 <- "Corresponding ORs"
+descrip3 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Neutral"
 txt3 <-capture.output(descrip3,file=NULL) # Print description
-out3 <-capture.output(best_mod_sumORs) # Print test result
-cat(txt3,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
-cat(out3,file="Results symlink/OrdReg_genmodfood.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_genmodfood.txt",sep="\n",append=T)
+out3 <-capture.output(best_mod_neutral_OR) # Print test result
+cat(txt3,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/MultReg_genmodfood.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
+
+descrip4 <- "Coefficients - Summary of model with lowest AIC - Agree -> Disagree"
+txt4 <-capture.output(descrip4,file=NULL) # Print description
+out4 <-capture.output(best_mod_disagree_coef) # Print test result
+cat(txt4,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
+cat(out4,file="Results symlink/MultReg_genmodfood.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
+
+descrip5 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Disagree"
+txt5 <-capture.output(descrip5,file=NULL) # Print description
+out5 <-capture.output(best_mod_disagree_OR) # Print test result
+cat(txt5,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
+cat(out5,file="Results symlink/MultReg_genmodfood.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
 
 
+# # Ordinal Model
+# # Fit and compare models
+# fit <- clm(gen_mod_food ~ 1, data = all_LR) # Intercept only
+# fit2 <- clm(gen_mod_food ~ sex, data = all_LR)
+# fit3 <- clm(gen_mod_food ~ sex + age, data = all_LR)
+# fit4 <- clm(gen_mod_food ~ sex + age + ethnicity, data = all_LR)
+# fit5 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about, data = all_LR)
+# fit6 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+# fit7 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+# fit8 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+# fit9 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+# fit10 <- clm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# # Compare
+# (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# 
+# # NEED TO CHANGE MODEL NUMBER
+# best_mod_gen_mod_food <- fit8
+# # CIs and ORs of model with lowest AIC
+# (best_mod_sum <- summary(best_mod_gen_mod_food))
+# (ci <- confint(best_mod_gen_mod_food))
+# OR <- coef(best_mod_gen_mod_food)
+# OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+# (best_mod_sumORs <- exp(cbind(OR, ci)))
 
+# # Proportional Odds Assumption
+# fit8a <- vglm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR, family=cumulative(parallel=TRUE))
+# fit8b <- vglm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR, family=cumulative(parallel=FALSE))
+# lrtest(fit8a,fit8b)
 
 
 # Predict probabilities
