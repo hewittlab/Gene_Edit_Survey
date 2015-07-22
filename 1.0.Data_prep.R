@@ -963,7 +963,7 @@ all <- rbind(data, wechat)
 
 all <- all[which(all$age > 9 & all$age < 91), ]
 
-#Add GDP Data. Note there are some NAs in the column as the country name in the csv doesn't match whats from Answers.json
+#Add GDP Data.
 GDP_Country <- read.csv("GDP_Country.csv", header=TRUE, stringsAsFactors = FALSE)
 
 for(i in 1:nrow(all)) {
