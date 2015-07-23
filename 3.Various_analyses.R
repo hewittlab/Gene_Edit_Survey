@@ -436,7 +436,15 @@ cat(out,file="Results symlink/sex_ethnicity_prop.test_CaucasianVsChinese.txt",se
 
 
 # SEX DIFFS BY MOST FREQUENT 8 COUNTRIES
-top_countries <- as.character(country_stat$country[1:8]) # Need to run country_stat above (this selects top 8)
+country_table <- table(all$country)
+country_prop <- round(prop.table(country_table)*100,2)
+country_stat <- data.frame(country_table, country_prop)
+country_stat <- country_stat[,c(1,2,4)]
+country_stat <- rename(country_stat,c("Var1"="country","Freq"="freq","Freq.1"="%"))
+# Sort
+country_stat <- country_stat[order(-country_stat$freq),] 
+country_stat
+top_countries <- as.character(country_stat$country[1:8]) #Selects top 8
 country_vec <- all$country
 sex_country_table <- table(country_vec,all$sex)
 # Save table rownames in a vector
@@ -536,7 +544,15 @@ cat(out2,file="Results symlink/age_ethnicity_t.test_CaucasianVsChinese.txt",sep=
 
 
 # AGE DIFFS BY MOST FREQUENT 8 COUNTRIES
-top_countries <- as.character(country_stat$country[1:8]) # Need to run country_stat above (this selects top 8)
+country_table <- table(all$country)
+country_prop <- round(prop.table(country_table)*100,2)
+country_stat <- data.frame(country_table, country_prop)
+country_stat <- country_stat[,c(1,2,4)]
+country_stat <- rename(country_stat,c("Var1"="country","Freq"="freq","Freq.1"="%"))
+# Sort
+country_stat <- country_stat[order(-country_stat$freq),] 
+country_stat
+top_countries <- as.character(country_stat$country[1:8]) #Selects top 8
 # Create dataframe of most frequent countries
 age_country <- data.frame(age=all$age, group=all$country)
 (age_country <- subset(age_country, group == top_countries[1] | group == top_countries[2] | group == top_countries[3] | group == top_countries[4] | group == top_countries[5] | group == top_countries[6] | group == top_countries[7] | group == top_countries[8]))
@@ -575,12 +591,15 @@ cat(out4,file="Results symlink/age_country_anova.txt",sep="\n", append=T)
 
 #MULTINOMIAL_REGRESSION---------------------------------------------------------------------------------------
 
+# Rescale GDP (a 1 unit change in GDP = $1000)
+all$GDP <- all$GDP/1000
+
 
 # KIDS_CURE_LIFE
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:22)]
+all_LR <- all_LR[c(8,10:14,16:17,20:22,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -639,48 +658,79 @@ all_LR$heard_about <- recode(all_LR$heard_about,
 levels(all_LR$heard_about)
 all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
 
+# Multinomial Model
 # Fit and compare models
-fit <- clm(kids_cure_life ~ 1, data = all_LR) # Intercept only
-fit2 <- clm(kids_cure_life ~ sex, data = all_LR)
-fit3 <- clm(kids_cure_life ~ sex + age, data = all_LR)
-fit4 <- clm(kids_cure_life ~ sex + age + ethnicity, data = all_LR)
-fit5 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about, data = all_LR)
-fit6 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
-fit7 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
-fit8 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit9 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit10 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit <- multinom(kids_cure_life ~ 1, data = all_LR) # Intercept only
+fit2 <- multinom(kids_cure_life ~ sex, data = all_LR)
+fit3 <- multinom(kids_cure_life ~ sex + age, data = all_LR)
+fit4 <- multinom(kids_cure_life ~ sex + age + ethnicity, data = all_LR)
+fit5 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP, data = all_LR)
+fit6 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about, data = all_LR)
+fit7 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
+fit8 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
+fit9 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit10 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit11 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+
 # Compare
-(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
 
-# NEED TO CHANGE MODEL NUMBER
-best_mod_kids_cure_life <- fit10
+# Create vector of AIC values
+AIC <- c(fit$AIC,fit2$AIC,fit3$AIC,fit4$AIC,fit5$AIC,fit6$AIC,fit7$AIC,fit8$AIC,fit9$AIC,fit10$AIC,fit11$AIC)
+best_mod <- cbind(best_mod, AIC)
+(best_mod <- best_mod[c("Model", "Resid. df", "Resid. Dev", "AIC", "Test", "   Df", "LR stat.", "Pr(Chi)")])
+
+# Find model with lowest AIC and automatically assign
+nametmp <- paste("fit",which.min(AIC),sep="")
+nametmp <- eval(parse(text = nametmp))
+best_mod_kids_cure_life <- nametmp
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(best_mod_kids_cure_life))
-(ci <- confint(best_mod_kids_cure_life))
-OR <- coef(best_mod_kids_cure_life)
-OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
-(best_mod_sumORs <- exp(cbind(OR, ci)))
+best_mod_sum <- summary(best_mod_kids_cure_life)
+coef <- coef(best_mod_kids_cure_life)
+coef_ci <- confint(best_mod_kids_cure_life)
+OR <- exp(coef)
+OR_ci <- exp(coef_ci)
+z <- summary(best_mod_kids_cure_life)$coefficients/summary(best_mod_kids_cure_life)$standard.errors
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
 
-# # NEED TO CHANGE MODEL NUMBER
-# # Proportional Odds Assumption
-# # Comparison of all IVs assumed to have parallel slopes vs all allowed to vary
-# fit6a <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=TRUE))
-# fit6b <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=FALSE))
-# lrtest(fit6a,fit6b)
-# 
-# # Comparison of all IVs assumed to have parallel slopes vs only heard_about allowed to vary
-# fit6a <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=TRUE))
-# fit6b <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=FALSE~heard_about))
-# lrtest(fit6a,fit6b)
-# 
-# # Same thing using the clm package - only heard_about allowed to vary
-# fit6a <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
-# fit6b <- clm(kids_cure_life ~ sex + age + ethnicity + edu_level, nominal=~heard_about, data = all_LR)
-# anova(fit6a,fit6b)
+# Sequence vectors to recreate coef and OR tables
+# Coefficients
+coef_neutral_seq <- seq(1,length(coef),2)
+coef_neutral <- coef[coef_neutral_seq]
+coef_disagree_seq <- seq(2,length(coef),2)
+coef_disagree <- coef[coef_disagree_seq]
+coef_neutral_025 <- coef_ci[1:(length(coef_ci)/4)]
+coef_neutral_975 <- coef_ci[(length(coef_ci)/4)+1:(length(coef_ci)/4)]
+coef_disagree_025 <- coef_ci[(length(coef_ci)/2)+1:(length(coef_ci)/4)]
+coef_disagree_975 <- coef_ci[((length(coef_ci)/4)*3)+1:(length(coef_ci)/4)]
+# Odds Ratios
+OR_neutral_seq <- seq(1,length(OR),2)
+OR_neutral <- OR[OR_neutral_seq]
+OR_disagree_seq <- seq(2,length(OR),2)
+OR_disagree <- OR[OR_disagree_seq]
+OR_neutral_025 <- OR_ci[1:(length(OR_ci)/4)]
+OR_neutral_975 <- OR_ci[(length(OR_ci)/4)+1:(length(OR_ci)/4)]
+OR_disagree_025 <- OR_ci[(length(OR_ci)/2)+1:(length(OR_ci)/4)]
+OR_disagree_975 <- OR_ci[((length(OR_ci)/4)*3)+1:(length(OR_ci)/4)]
+# p values
+p_neutral <- p[coef_neutral_seq]
+p_disagree <- p[coef_disagree_seq]
+
+# Assemble dataframes of coefficients and odds ratios for neutral and disagree categories
+pred_names <- colnames(coef)
+best_mod_neutral <- cbind(coef_neutral, coef_neutral_025, coef_neutral_975, OR_neutral, OR_neutral_025, OR_neutral_975, p_neutral)
+best_mod_neutral <- as.data.frame(best_mod_neutral)
+best_mod_neutral <- cbind(pred_names, best_mod_neutral)
+(best_mod_neutral_coef <- best_mod_neutral[,c(1:4,8)])
+(best_mod_neutral_OR <- best_mod_neutral[,c(1,5:8)])
+best_mod_disagree <- cbind(coef_disagree, coef_disagree_025, coef_disagree_975, OR_disagree, OR_disagree_025, OR_disagree_975, p_disagree)
+best_mod_disagree <- as.data.frame(best_mod_disagree)
+best_mod_disagree <- cbind(pred_names, best_mod_disagree)
+(best_mod_disagree_coef <- best_mod_disagree[,c(1:4,8)])
+(best_mod_disagree_OR <- best_mod_disagree[,c(1,5:8)])
 
 # Remove old file
-file.remove("Results symlink/OrdReg_kidscurelife.txt")
+file.remove("Results symlink/MultReg_kidscurelife.txt")
 # Write results
 newline <- "----------------------------------------------------------------------------------------"
 sep <-capture.output(newline,file=NULL) # Print description
@@ -688,31 +738,85 @@ sep <-capture.output(newline,file=NULL) # Print description
 descrip <- "Likelihood ratio tests comparing different models"
 txt <-capture.output(descrip,file=NULL) # Print description
 out <-capture.output(best_mod) # Print test result
-cat(txt,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
-cat(out,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
+cat(txt,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
+cat(out,file="Results symlink/MultReg_kidscurelife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
 
-descrip2 <- "Summary of model with lowest AIC"
+descrip2 <- "Coefficients - Summary of model with lowest AIC - Agree -> Neutral"
 txt2 <-capture.output(descrip2,file=NULL) # Print description
-out2 <-capture.output(best_mod_sum) # Print test result
-cat(txt2,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
-cat(out2,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
+out2 <-capture.output(best_mod_neutral_coef) # Print test result
+cat(txt2,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/MultReg_kidscurelife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
 
-descrip3 <- "Corresponding ORs"
+descrip3 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Neutral"
 txt3 <-capture.output(descrip3,file=NULL) # Print description
-out3 <-capture.output(best_mod_sumORs) # Print test result
-cat(txt3,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
-cat(out3,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_kidscurelife.txt",sep="\n",append=T)
+out3 <-capture.output(best_mod_neutral_OR) # Print test result
+cat(txt3,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/MultReg_kidscurelife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
 
+descrip4 <- "Coefficients - Summary of model with lowest AIC - Agree -> Disagree"
+txt4 <-capture.output(descrip4,file=NULL) # Print description
+out4 <-capture.output(best_mod_disagree_coef) # Print test result
+cat(txt4,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
+cat(out4,file="Results symlink/MultReg_kidscurelife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
+
+descrip5 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Disagree"
+txt5 <-capture.output(descrip5,file=NULL) # Print description
+out5 <-capture.output(best_mod_disagree_OR) # Print test result
+cat(txt5,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
+cat(out5,file="Results symlink/MultReg_kidscurelife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
+
+# # Ordinal Model
+# # Fit and compare models
+# fit <- clm(kids_cure_life ~ 1, data = all_LR) # Intercept only
+# fit2 <- clm(kids_cure_life ~ sex, data = all_LR)
+# fit3 <- clm(kids_cure_life ~ sex + age, data = all_LR)
+# fit4 <- clm(kids_cure_life ~ sex + age + ethnicity, data = all_LR)
+# fit5 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about, data = all_LR)
+# fit6 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+# fit7 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+# fit8 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+# fit9 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+# fit10 <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# # Compare
+# (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# 
+# # NEED TO CHANGE MODEL NUMBER
+# best_mod_kids_cure_life <- fit10
+# # CIs and ORs of model with lowest AIC
+# (best_mod_sum <- summary(best_mod_kids_cure_life))
+# (ci <- confint(best_mod_kids_cure_life))
+# OR <- coef(best_mod_kids_cure_life)
+# OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+# (best_mod_sumORs <- exp(cbind(OR, ci)))
+# 
+# # # NEED TO CHANGE MODEL NUMBER
+# # # Proportional Odds Assumption
+# # # Comparison of all IVs assumed to have parallel slopes vs all allowed to vary
+# # fit6a <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=TRUE))
+# # fit6b <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=FALSE))
+# # lrtest(fit6a,fit6b)
+# # 
+# # # Comparison of all IVs assumed to have parallel slopes vs only heard_about allowed to vary
+# # fit6a <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=TRUE))
+# # fit6b <- vglm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=FALSE~heard_about))
+# # lrtest(fit6a,fit6b)
+# # 
+# # # Same thing using the clm package - only heard_about allowed to vary
+# # fit6a <- clm(kids_cure_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+# # fit6b <- clm(kids_cure_life ~ sex + age + ethnicity + edu_level, nominal=~heard_about, data = all_LR)
+# # anova(fit6a,fit6b)
 
 
 # KIDS_CURE_DEBIL
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,23)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,23,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -771,36 +875,79 @@ all_LR$heard_about <- recode(all_LR$heard_about,
 levels(all_LR$heard_about)
 all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
 
+# Multinomial Model
 # Fit and compare models
-fit <- clm(kids_cure_debil ~ 1, data = all_LR) # Intercept only
-fit2 <- clm(kids_cure_debil ~ sex, data = all_LR)
-fit3 <- clm(kids_cure_debil ~ sex + age, data = all_LR)
-fit4 <- clm(kids_cure_debil ~ sex + age + ethnicity, data = all_LR)
-fit5 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about, data = all_LR)
-fit6 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
-fit7 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
-fit8 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit9 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit10 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit <- multinom(kids_cure_debil ~ 1, data = all_LR) # Intercept only
+fit2 <- multinom(kids_cure_debil ~ sex, data = all_LR)
+fit3 <- multinom(kids_cure_debil ~ sex + age, data = all_LR)
+fit4 <- multinom(kids_cure_debil ~ sex + age + ethnicity, data = all_LR)
+fit5 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP, data = all_LR)
+fit6 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about, data = all_LR)
+fit7 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
+fit8 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
+fit9 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit10 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit11 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+
 # Compare
-(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
 
-# NEED TO CHANGE MODEL NUMBER
-best_mod_kids_cure_debil <- fit7
+# Create vector of AIC values
+AIC <- c(fit$AIC,fit2$AIC,fit3$AIC,fit4$AIC,fit5$AIC,fit6$AIC,fit7$AIC,fit8$AIC,fit9$AIC,fit10$AIC,fit11$AIC)
+best_mod <- cbind(best_mod, AIC)
+(best_mod <- best_mod[c("Model", "Resid. df", "Resid. Dev", "AIC", "Test", "   Df", "LR stat.", "Pr(Chi)")])
+
+# Find model with lowest AIC and automatically assign
+nametmp <- paste("fit",which.min(AIC),sep="")
+nametmp <- eval(parse(text = nametmp))
+best_mod_kids_cure_debil <- nametmp
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(best_mod_kids_cure_debil))
-(ci <- confint(best_mod_kids_cure_debil))
-OR <- coef(best_mod_kids_cure_debil)
-OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
-(best_mod_sumORs <- exp(cbind(OR, ci)))
+best_mod_sum <- summary(best_mod_kids_cure_debil)
+coef <- coef(best_mod_kids_cure_debil)
+coef_ci <- confint(best_mod_kids_cure_debil)
+OR <- exp(coef)
+OR_ci <- exp(coef_ci)
+z <- summary(best_mod_kids_cure_debil)$coefficients/summary(best_mod_kids_cure_debil)$standard.errors
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
 
-# # Proportional Odds Assumption
-# fit6a <- vglm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=TRUE))
-# fit6b <- vglm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=FALSE))
-# lrtest(fit6a,fit6b)
+# Sequence vectors to recreate coef and OR tables
+# Coefficients
+coef_neutral_seq <- seq(1,length(coef),2)
+coef_neutral <- coef[coef_neutral_seq]
+coef_disagree_seq <- seq(2,length(coef),2)
+coef_disagree <- coef[coef_disagree_seq]
+coef_neutral_025 <- coef_ci[1:(length(coef_ci)/4)]
+coef_neutral_975 <- coef_ci[(length(coef_ci)/4)+1:(length(coef_ci)/4)]
+coef_disagree_025 <- coef_ci[(length(coef_ci)/2)+1:(length(coef_ci)/4)]
+coef_disagree_975 <- coef_ci[((length(coef_ci)/4)*3)+1:(length(coef_ci)/4)]
+# Odds Ratios
+OR_neutral_seq <- seq(1,length(OR),2)
+OR_neutral <- OR[OR_neutral_seq]
+OR_disagree_seq <- seq(2,length(OR),2)
+OR_disagree <- OR[OR_disagree_seq]
+OR_neutral_025 <- OR_ci[1:(length(OR_ci)/4)]
+OR_neutral_975 <- OR_ci[(length(OR_ci)/4)+1:(length(OR_ci)/4)]
+OR_disagree_025 <- OR_ci[(length(OR_ci)/2)+1:(length(OR_ci)/4)]
+OR_disagree_975 <- OR_ci[((length(OR_ci)/4)*3)+1:(length(OR_ci)/4)]
+# p values
+p_neutral <- p[coef_neutral_seq]
+p_disagree <- p[coef_disagree_seq]
+
+# Assemble dataframes of coefficients and odds ratios for neutral and disagree categories
+pred_names <- colnames(coef)
+best_mod_neutral <- cbind(coef_neutral, coef_neutral_025, coef_neutral_975, OR_neutral, OR_neutral_025, OR_neutral_975, p_neutral)
+best_mod_neutral <- as.data.frame(best_mod_neutral)
+best_mod_neutral <- cbind(pred_names, best_mod_neutral)
+(best_mod_neutral_coef <- best_mod_neutral[,c(1:4,8)])
+(best_mod_neutral_OR <- best_mod_neutral[,c(1,5:8)])
+best_mod_disagree <- cbind(coef_disagree, coef_disagree_025, coef_disagree_975, OR_disagree, OR_disagree_025, OR_disagree_975, p_disagree)
+best_mod_disagree <- as.data.frame(best_mod_disagree)
+best_mod_disagree <- cbind(pred_names, best_mod_disagree)
+(best_mod_disagree_coef <- best_mod_disagree[,c(1:4,8)])
+(best_mod_disagree_OR <- best_mod_disagree[,c(1,5:8)])
 
 # Remove old file
-file.remove("Results symlink/OrdReg_kidscuredebil.txt")
+file.remove("Results symlink/MultReg_kidscuredebil.txt")
 # Write results
 newline <- "----------------------------------------------------------------------------------------"
 sep <-capture.output(newline,file=NULL) # Print description
@@ -808,31 +955,73 @@ sep <-capture.output(newline,file=NULL) # Print description
 descrip <- "Likelihood ratio tests comparing different models"
 txt <-capture.output(descrip,file=NULL) # Print description
 out <-capture.output(best_mod) # Print test result
-cat(txt,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
-cat(out,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
+cat(txt,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
+cat(out,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
 
-descrip2 <- "Summary of model with lowest AIC"
+descrip2 <- "Coefficients - Summary of model with lowest AIC - Agree -> Neutral"
 txt2 <-capture.output(descrip2,file=NULL) # Print description
-out2 <-capture.output(best_mod_sum) # Print test result
-cat(txt2,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
-cat(out2,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
+out2 <-capture.output(best_mod_neutral_coef) # Print test result
+cat(txt2,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
 
-descrip3 <- "Corresponding ORs"
+descrip3 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Neutral"
 txt3 <-capture.output(descrip3,file=NULL) # Print description
-out3 <-capture.output(best_mod_sumORs) # Print test result
-cat(txt3,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
-cat(out3,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_kidscuredebil.txt",sep="\n",append=T)
+out3 <-capture.output(best_mod_neutral_OR) # Print test result
+cat(txt3,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
 
+descrip4 <- "Coefficients - Summary of model with lowest AIC - Agree -> Disagree"
+txt4 <-capture.output(descrip4,file=NULL) # Print description
+out4 <-capture.output(best_mod_disagree_coef) # Print test result
+cat(txt4,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
+cat(out4,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
+
+descrip5 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Disagree"
+txt5 <-capture.output(descrip5,file=NULL) # Print description
+out5 <-capture.output(best_mod_disagree_OR) # Print test result
+cat(txt5,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
+cat(out5,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
+
+# # Ordinal Model
+# # Fit and compare models
+# fit <- clm(kids_cure_debil ~ 1, data = all_LR) # Intercept only
+# fit2 <- clm(kids_cure_debil ~ sex, data = all_LR)
+# fit3 <- clm(kids_cure_debil ~ sex + age, data = all_LR)
+# fit4 <- clm(kids_cure_debil ~ sex + age + ethnicity, data = all_LR)
+# fit5 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about, data = all_LR)
+# fit6 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+# fit7 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+# fit8 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+# fit9 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+# fit10 <- clm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# # Compare
+# (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# 
+# # NEED TO CHANGE MODEL NUMBER
+# best_mod_kids_cure_debil <- fit7
+# # CIs and ORs of model with lowest AIC
+# (best_mod_sum <- summary(best_mod_kids_cure_debil))
+# (ci <- confint(best_mod_kids_cure_debil))
+# OR <- coef(best_mod_kids_cure_debil)
+# OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+# (best_mod_sumORs <- exp(cbind(OR, ci)))
+# 
+# # # Proportional Odds Assumption
+# # fit6a <- vglm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=TRUE))
+# # fit6b <- vglm(kids_cure_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR, family=cumulative(parallel=FALSE))
+# # lrtest(fit6a,fit6b)
 
 
 # EMBR_PREV_LIFE
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,24)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,24,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -891,36 +1080,79 @@ all_LR$heard_about <- recode(all_LR$heard_about,
 levels(all_LR$heard_about)
 all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
 
+# Multinomial Model
 # Fit and compare models
-fit <- clm(embr_prev_life ~ 1, data = all_LR) # Intercept only
-fit2 <- clm(embr_prev_life ~ sex, data = all_LR)
-fit3 <- clm(embr_prev_life ~ sex + age, data = all_LR)
-fit4 <- clm(embr_prev_life ~ sex + age + ethnicity, data = all_LR)
-fit5 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about, data = all_LR)
-fit6 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
-fit7 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
-fit8 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit9 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit10 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit <- multinom(embr_prev_life ~ 1, data = all_LR) # Intercept only
+fit2 <- multinom(embr_prev_life ~ sex, data = all_LR)
+fit3 <- multinom(embr_prev_life ~ sex + age, data = all_LR)
+fit4 <- multinom(embr_prev_life ~ sex + age + ethnicity, data = all_LR)
+fit5 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP, data = all_LR)
+fit6 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about, data = all_LR)
+fit7 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
+fit8 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
+fit9 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit10 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit11 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+
 # Compare
-(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
 
-# NEED TO CHANGE MODEL NUMBER
-best_mod_embr_prev_life <- fit10
+# Create vector of AIC values
+AIC <- c(fit$AIC,fit2$AIC,fit3$AIC,fit4$AIC,fit5$AIC,fit6$AIC,fit7$AIC,fit8$AIC,fit9$AIC,fit10$AIC,fit11$AIC)
+best_mod <- cbind(best_mod, AIC)
+(best_mod <- best_mod[c("Model", "Resid. df", "Resid. Dev", "AIC", "Test", "   Df", "LR stat.", "Pr(Chi)")])
+
+# Find model with lowest AIC and automatically assign
+nametmp <- paste("fit",which.min(AIC),sep="")
+nametmp <- eval(parse(text = nametmp))
+best_mod_embr_prev_life <- nametmp
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(best_mod_embr_prev_life))
-(ci <- confint(best_mod_embr_prev_life))
-OR <- coef(best_mod_embr_prev_life)
-OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
-(best_mod_sumORs <- exp(cbind(OR, ci)))
+best_mod_sum <- summary(best_mod_embr_prev_life)
+coef <- coef(best_mod_embr_prev_life)
+coef_ci <- confint(best_mod_embr_prev_life)
+OR <- exp(coef)
+OR_ci <- exp(coef_ci)
+z <- summary(best_mod_embr_prev_life)$coefficients/summary(best_mod_embr_prev_life)$standard.errors
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
 
-# # Proportional Odds Assumption
-# fit5a <- vglm(embr_prev_life ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=TRUE))
-# fit5b <- vglm(embr_prev_life ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=FALSE))
-# lrtest(fit5a,fit5b)
+# Sequence vectors to recreate coef and OR tables
+# Coefficients
+coef_neutral_seq <- seq(1,length(coef),2)
+coef_neutral <- coef[coef_neutral_seq]
+coef_disagree_seq <- seq(2,length(coef),2)
+coef_disagree <- coef[coef_disagree_seq]
+coef_neutral_025 <- coef_ci[1:(length(coef_ci)/4)]
+coef_neutral_975 <- coef_ci[(length(coef_ci)/4)+1:(length(coef_ci)/4)]
+coef_disagree_025 <- coef_ci[(length(coef_ci)/2)+1:(length(coef_ci)/4)]
+coef_disagree_975 <- coef_ci[((length(coef_ci)/4)*3)+1:(length(coef_ci)/4)]
+# Odds Ratios
+OR_neutral_seq <- seq(1,length(OR),2)
+OR_neutral <- OR[OR_neutral_seq]
+OR_disagree_seq <- seq(2,length(OR),2)
+OR_disagree <- OR[OR_disagree_seq]
+OR_neutral_025 <- OR_ci[1:(length(OR_ci)/4)]
+OR_neutral_975 <- OR_ci[(length(OR_ci)/4)+1:(length(OR_ci)/4)]
+OR_disagree_025 <- OR_ci[(length(OR_ci)/2)+1:(length(OR_ci)/4)]
+OR_disagree_975 <- OR_ci[((length(OR_ci)/4)*3)+1:(length(OR_ci)/4)]
+# p values
+p_neutral <- p[coef_neutral_seq]
+p_disagree <- p[coef_disagree_seq]
+
+# Assemble dataframes of coefficients and odds ratios for neutral and disagree categories
+pred_names <- colnames(coef)
+best_mod_neutral <- cbind(coef_neutral, coef_neutral_025, coef_neutral_975, OR_neutral, OR_neutral_025, OR_neutral_975, p_neutral)
+best_mod_neutral <- as.data.frame(best_mod_neutral)
+best_mod_neutral <- cbind(pred_names, best_mod_neutral)
+(best_mod_neutral_coef <- best_mod_neutral[,c(1:4,8)])
+(best_mod_neutral_OR <- best_mod_neutral[,c(1,5:8)])
+best_mod_disagree <- cbind(coef_disagree, coef_disagree_025, coef_disagree_975, OR_disagree, OR_disagree_025, OR_disagree_975, p_disagree)
+best_mod_disagree <- as.data.frame(best_mod_disagree)
+best_mod_disagree <- cbind(pred_names, best_mod_disagree)
+(best_mod_disagree_coef <- best_mod_disagree[,c(1:4,8)])
+(best_mod_disagree_OR <- best_mod_disagree[,c(1,5:8)])
 
 # Remove old file
-file.remove("Results symlink/OrdReg_embrprevlife.txt")
+file.remove("Results symlink/MultReg_embrprevlife.txt")
 # Write results
 newline <- "----------------------------------------------------------------------------------------"
 sep <-capture.output(newline,file=NULL) # Print description
@@ -928,31 +1160,73 @@ sep <-capture.output(newline,file=NULL) # Print description
 descrip <- "Likelihood ratio tests comparing different models"
 txt <-capture.output(descrip,file=NULL) # Print description
 out <-capture.output(best_mod) # Print test result
-cat(txt,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
-cat(out,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
+cat(txt,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
+cat(out,file="Results symlink/MultReg_embrprevlife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
 
-descrip2 <- "Summary of model with lowest AIC"
+descrip2 <- "Coefficients - Summary of model with lowest AIC - Agree -> Neutral"
 txt2 <-capture.output(descrip2,file=NULL) # Print description
-out2 <-capture.output(best_mod_sum) # Print test result
-cat(txt2,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
-cat(out2,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
+out2 <-capture.output(best_mod_neutral_coef) # Print test result
+cat(txt2,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/MultReg_embrprevlife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
 
-descrip3 <- "Corresponding ORs"
+descrip3 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Neutral"
 txt3 <-capture.output(descrip3,file=NULL) # Print description
-out3 <-capture.output(best_mod_sumORs) # Print test result
-cat(txt3,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
-cat(out3,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_embrprevlife.txt",sep="\n",append=T)
+out3 <-capture.output(best_mod_neutral_OR) # Print test result
+cat(txt3,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/MultReg_embrprevlife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
 
+descrip4 <- "Coefficients - Summary of model with lowest AIC - Agree -> Disagree"
+txt4 <-capture.output(descrip4,file=NULL) # Print description
+out4 <-capture.output(best_mod_disagree_coef) # Print test result
+cat(txt4,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
+cat(out4,file="Results symlink/MultReg_embrprevlife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
+
+descrip5 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Disagree"
+txt5 <-capture.output(descrip5,file=NULL) # Print description
+out5 <-capture.output(best_mod_disagree_OR) # Print test result
+cat(txt5,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
+cat(out5,file="Results symlink/MultReg_embrprevlife.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
+
+# # Ordinal Model
+# # Fit and compare models
+# fit <- clm(embr_prev_life ~ 1, data = all_LR) # Intercept only
+# fit2 <- clm(embr_prev_life ~ sex, data = all_LR)
+# fit3 <- clm(embr_prev_life ~ sex + age, data = all_LR)
+# fit4 <- clm(embr_prev_life ~ sex + age + ethnicity, data = all_LR)
+# fit5 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about, data = all_LR)
+# fit6 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+# fit7 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+# fit8 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+# fit9 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+# fit10 <- clm(embr_prev_life ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# # Compare
+# (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# 
+# # NEED TO CHANGE MODEL NUMBER
+# best_mod_embr_prev_life <- fit10
+# # CIs and ORs of model with lowest AIC
+# (best_mod_sum <- summary(best_mod_embr_prev_life))
+# (ci <- confint(best_mod_embr_prev_life))
+# OR <- coef(best_mod_embr_prev_life)
+# OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+# (best_mod_sumORs <- exp(cbind(OR, ci)))
+# 
+# # # Proportional Odds Assumption
+# # fit5a <- vglm(embr_prev_life ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=TRUE))
+# # fit5b <- vglm(embr_prev_life ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=FALSE))
+# # lrtest(fit5a,fit5b)
 
 
 # EMBR_PREV_DEBIL
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,25)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,25,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -1011,36 +1285,79 @@ all_LR$heard_about <- recode(all_LR$heard_about,
 levels(all_LR$heard_about)
 all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
 
+# Multinomial Model
 # Fit and compare models
-fit <- clm(embr_prev_debil ~ 1, data = all_LR) # Intercept only
-fit2 <- clm(embr_prev_debil ~ sex, data = all_LR)
-fit3 <- clm(embr_prev_debil ~ sex + age, data = all_LR)
-fit4 <- clm(embr_prev_debil ~ sex + age + ethnicity, data = all_LR)
-fit5 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about, data = all_LR)
-fit6 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
-fit7 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
-fit8 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit9 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit10 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit <- multinom(embr_prev_debil ~ 1, data = all_LR) # Intercept only
+fit2 <- multinom(embr_prev_debil ~ sex, data = all_LR)
+fit3 <- multinom(embr_prev_debil ~ sex + age, data = all_LR)
+fit4 <- multinom(embr_prev_debil ~ sex + age + ethnicity, data = all_LR)
+fit5 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP, data = all_LR)
+fit6 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about, data = all_LR)
+fit7 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
+fit8 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
+fit9 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit10 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit11 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+
 # Compare
-(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
 
-# NEED TO CHANGE MODEL NUMBER
-best_mod_embr_prev_debil <- fit7
+# Create vector of AIC values
+AIC <- c(fit$AIC,fit2$AIC,fit3$AIC,fit4$AIC,fit5$AIC,fit6$AIC,fit7$AIC,fit8$AIC,fit9$AIC,fit10$AIC,fit11$AIC)
+best_mod <- cbind(best_mod, AIC)
+(best_mod <- best_mod[c("Model", "Resid. df", "Resid. Dev", "AIC", "Test", "   Df", "LR stat.", "Pr(Chi)")])
+
+# Find model with lowest AIC and automatically assign
+nametmp <- paste("fit",which.min(AIC),sep="")
+nametmp <- eval(parse(text = nametmp))
+best_mod_embr_prev_debil <- nametmp
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(best_mod_embr_prev_debil))
-(ci <- confint(best_mod_embr_prev_debil))
-OR <- coef(best_mod_embr_prev_debil)
-OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
-(best_mod_sumORs <- exp(cbind(OR, ci)))
+best_mod_sum <- summary(best_mod_embr_prev_debil)
+coef <- coef(best_mod_embr_prev_debil)
+coef_ci <- confint(best_mod_embr_prev_debil)
+OR <- exp(coef)
+OR_ci <- exp(coef_ci)
+z <- summary(best_mod_embr_prev_debil)$coefficients/summary(best_mod_embr_prev_debil)$standard.errors
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
 
-# # Proportional Odds Assumption
-# fit5a <- vglm(embr_prev_debil ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=TRUE))
-# fit5b <- vglm(embr_prev_debil ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=FALSE))
-# lrtest(fit5a,fit5b)
+# Sequence vectors to recreate coef and OR tables
+# Coefficients
+coef_neutral_seq <- seq(1,length(coef),2)
+coef_neutral <- coef[coef_neutral_seq]
+coef_disagree_seq <- seq(2,length(coef),2)
+coef_disagree <- coef[coef_disagree_seq]
+coef_neutral_025 <- coef_ci[1:(length(coef_ci)/4)]
+coef_neutral_975 <- coef_ci[(length(coef_ci)/4)+1:(length(coef_ci)/4)]
+coef_disagree_025 <- coef_ci[(length(coef_ci)/2)+1:(length(coef_ci)/4)]
+coef_disagree_975 <- coef_ci[((length(coef_ci)/4)*3)+1:(length(coef_ci)/4)]
+# Odds Ratios
+OR_neutral_seq <- seq(1,length(OR),2)
+OR_neutral <- OR[OR_neutral_seq]
+OR_disagree_seq <- seq(2,length(OR),2)
+OR_disagree <- OR[OR_disagree_seq]
+OR_neutral_025 <- OR_ci[1:(length(OR_ci)/4)]
+OR_neutral_975 <- OR_ci[(length(OR_ci)/4)+1:(length(OR_ci)/4)]
+OR_disagree_025 <- OR_ci[(length(OR_ci)/2)+1:(length(OR_ci)/4)]
+OR_disagree_975 <- OR_ci[((length(OR_ci)/4)*3)+1:(length(OR_ci)/4)]
+# p values
+p_neutral <- p[coef_neutral_seq]
+p_disagree <- p[coef_disagree_seq]
+
+# Assemble dataframes of coefficients and odds ratios for neutral and disagree categories
+pred_names <- colnames(coef)
+best_mod_neutral <- cbind(coef_neutral, coef_neutral_025, coef_neutral_975, OR_neutral, OR_neutral_025, OR_neutral_975, p_neutral)
+best_mod_neutral <- as.data.frame(best_mod_neutral)
+best_mod_neutral <- cbind(pred_names, best_mod_neutral)
+(best_mod_neutral_coef <- best_mod_neutral[,c(1:4,8)])
+(best_mod_neutral_OR <- best_mod_neutral[,c(1,5:8)])
+best_mod_disagree <- cbind(coef_disagree, coef_disagree_025, coef_disagree_975, OR_disagree, OR_disagree_025, OR_disagree_975, p_disagree)
+best_mod_disagree <- as.data.frame(best_mod_disagree)
+best_mod_disagree <- cbind(pred_names, best_mod_disagree)
+(best_mod_disagree_coef <- best_mod_disagree[,c(1:4,8)])
+(best_mod_disagree_OR <- best_mod_disagree[,c(1,5:8)])
 
 # Remove old file
-file.remove("Results symlink/OrdReg_embrprevdebil.txt")
+file.remove("Results symlink/MultReg_embrprevdebil.txt")
 # Write results
 newline <- "----------------------------------------------------------------------------------------"
 sep <-capture.output(newline,file=NULL) # Print description
@@ -1048,31 +1365,73 @@ sep <-capture.output(newline,file=NULL) # Print description
 descrip <- "Likelihood ratio tests comparing different models"
 txt <-capture.output(descrip,file=NULL) # Print description
 out <-capture.output(best_mod) # Print test result
-cat(txt,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
-cat(out,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
+cat(txt,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
+cat(out,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
 
-descrip2 <- "Summary of model with lowest AIC"
+descrip2 <- "Coefficients - Summary of model with lowest AIC - Agree -> Neutral"
 txt2 <-capture.output(descrip2,file=NULL) # Print description
-out2 <-capture.output(best_mod_sum) # Print test result
-cat(txt2,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
-cat(out2,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
+out2 <-capture.output(best_mod_neutral_coef) # Print test result
+cat(txt2,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
 
-descrip3 <- "Corresponding ORs"
+descrip3 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Neutral"
 txt3 <-capture.output(descrip3,file=NULL) # Print description
-out3 <-capture.output(best_mod_sumORs) # Print test result
-cat(txt3,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
-cat(out3,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_embrprevdebil.txt",sep="\n",append=T)
+out3 <-capture.output(best_mod_neutral_OR) # Print test result
+cat(txt3,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
 
+descrip4 <- "Coefficients - Summary of model with lowest AIC - Agree -> Disagree"
+txt4 <-capture.output(descrip4,file=NULL) # Print description
+out4 <-capture.output(best_mod_disagree_coef) # Print test result
+cat(txt4,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
+cat(out4,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
+
+descrip5 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Disagree"
+txt5 <-capture.output(descrip5,file=NULL) # Print description
+out5 <-capture.output(best_mod_disagree_OR) # Print test result
+cat(txt5,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
+cat(out5,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
+
+# # Ordinal Model
+# # Fit and compare models
+# fit <- clm(embr_prev_debil ~ 1, data = all_LR) # Intercept only
+# fit2 <- clm(embr_prev_debil ~ sex, data = all_LR)
+# fit3 <- clm(embr_prev_debil ~ sex + age, data = all_LR)
+# fit4 <- clm(embr_prev_debil ~ sex + age + ethnicity, data = all_LR)
+# fit5 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about, data = all_LR)
+# fit6 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+# fit7 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+# fit8 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+# fit9 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+# fit10 <- clm(embr_prev_debil ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# # Compare
+# (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# 
+# # NEED TO CHANGE MODEL NUMBER
+# best_mod_embr_prev_debil <- fit7
+# # CIs and ORs of model with lowest AIC
+# (best_mod_sum <- summary(best_mod_embr_prev_debil))
+# (ci <- confint(best_mod_embr_prev_debil))
+# OR <- coef(best_mod_embr_prev_debil)
+# OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+# (best_mod_sumORs <- exp(cbind(OR, ci)))
+# 
+# # # Proportional Odds Assumption
+# # fit5a <- vglm(embr_prev_debil ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=TRUE))
+# # fit5b <- vglm(embr_prev_debil ~ sex + age + ethnicity + heard_about, data = all_LR, family=cumulative(parallel=FALSE))
+# # lrtest(fit5a,fit5b)
 
 
 # EDIT_FOR_NONDIS
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,26)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,26,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -1131,36 +1490,79 @@ all_LR$heard_about <- recode(all_LR$heard_about,
 levels(all_LR$heard_about)
 all_LR$heard_about <- relevel(all_LR$heard_about, "Never")
 
+# Multinomial Model
 # Fit and compare models
-fit <- clm(edit_for_nondis ~ 1, data = all_LR) # Intercept only
-fit2 <- clm(edit_for_nondis ~ sex, data = all_LR)
-fit3 <- clm(edit_for_nondis ~ sex + age, data = all_LR)
-fit4 <- clm(edit_for_nondis ~ sex + age + ethnicity, data = all_LR)
-fit5 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about, data = all_LR)
-fit6 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
-fit7 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
-fit8 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit9 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit10 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit <- multinom(edit_for_nondis ~ 1, data = all_LR) # Intercept only
+fit2 <- multinom(edit_for_nondis ~ sex, data = all_LR)
+fit3 <- multinom(edit_for_nondis ~ sex + age, data = all_LR)
+fit4 <- multinom(edit_for_nondis ~ sex + age + ethnicity, data = all_LR)
+fit5 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP, data = all_LR)
+fit6 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about, data = all_LR)
+fit7 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
+fit8 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
+fit9 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit10 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit11 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+
 # Compare
-(best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
 
-# NEED TO CHANGE MODEL NUMBER
-best_mod_edit_for_nondis <- fit7
+# Create vector of AIC values
+AIC <- c(fit$AIC,fit2$AIC,fit3$AIC,fit4$AIC,fit5$AIC,fit6$AIC,fit7$AIC,fit8$AIC,fit9$AIC,fit10$AIC,fit11$AIC)
+best_mod <- cbind(best_mod, AIC)
+(best_mod <- best_mod[c("Model", "Resid. df", "Resid. Dev", "AIC", "Test", "   Df", "LR stat.", "Pr(Chi)")])
+
+# Find model with lowest AIC and automatically assign
+nametmp <- paste("fit",which.min(AIC),sep="")
+nametmp <- eval(parse(text = nametmp))
+best_mod_edit_for_nondis <- nametmp
 # CIs and ORs of model with lowest AIC
-(best_mod_sum <- summary(best_mod_edit_for_nondis))
-(ci <- confint(best_mod_edit_for_nondis))
-OR <- coef(best_mod_edit_for_nondis)
-OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
-(best_mod_sumORs <- exp(cbind(OR, ci)))
+best_mod_sum <- summary(best_mod_edit_for_nondis)
+coef <- coef(best_mod_edit_for_nondis)
+coef_ci <- confint(best_mod_edit_for_nondis)
+OR <- exp(coef)
+OR_ci <- exp(coef_ci)
+z <- summary(best_mod_edit_for_nondis)$coefficients/summary(best_mod_edit_for_nondis)$standard.errors
+p <- (1 - pnorm(abs(z), 0, 1)) * 2
 
-# # Proportional Odds Assumption
-# fit7a <- vglm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR, family=cumulative(parallel=TRUE))
-# fit7b <- vglm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR, family=cumulative(parallel=FALSE))
-# lrtest(fit7a,fit7b)
+# Sequence vectors to recreate coef and OR tables
+# Coefficients
+coef_neutral_seq <- seq(1,length(coef),2)
+coef_neutral <- coef[coef_neutral_seq]
+coef_disagree_seq <- seq(2,length(coef),2)
+coef_disagree <- coef[coef_disagree_seq]
+coef_neutral_025 <- coef_ci[1:(length(coef_ci)/4)]
+coef_neutral_975 <- coef_ci[(length(coef_ci)/4)+1:(length(coef_ci)/4)]
+coef_disagree_025 <- coef_ci[(length(coef_ci)/2)+1:(length(coef_ci)/4)]
+coef_disagree_975 <- coef_ci[((length(coef_ci)/4)*3)+1:(length(coef_ci)/4)]
+# Odds Ratios
+OR_neutral_seq <- seq(1,length(OR),2)
+OR_neutral <- OR[OR_neutral_seq]
+OR_disagree_seq <- seq(2,length(OR),2)
+OR_disagree <- OR[OR_disagree_seq]
+OR_neutral_025 <- OR_ci[1:(length(OR_ci)/4)]
+OR_neutral_975 <- OR_ci[(length(OR_ci)/4)+1:(length(OR_ci)/4)]
+OR_disagree_025 <- OR_ci[(length(OR_ci)/2)+1:(length(OR_ci)/4)]
+OR_disagree_975 <- OR_ci[((length(OR_ci)/4)*3)+1:(length(OR_ci)/4)]
+# p values
+p_neutral <- p[coef_neutral_seq]
+p_disagree <- p[coef_disagree_seq]
+
+# Assemble dataframes of coefficients and odds ratios for neutral and disagree categories
+pred_names <- colnames(coef)
+best_mod_neutral <- cbind(coef_neutral, coef_neutral_025, coef_neutral_975, OR_neutral, OR_neutral_025, OR_neutral_975, p_neutral)
+best_mod_neutral <- as.data.frame(best_mod_neutral)
+best_mod_neutral <- cbind(pred_names, best_mod_neutral)
+(best_mod_neutral_coef <- best_mod_neutral[,c(1:4,8)])
+(best_mod_neutral_OR <- best_mod_neutral[,c(1,5:8)])
+best_mod_disagree <- cbind(coef_disagree, coef_disagree_025, coef_disagree_975, OR_disagree, OR_disagree_025, OR_disagree_975, p_disagree)
+best_mod_disagree <- as.data.frame(best_mod_disagree)
+best_mod_disagree <- cbind(pred_names, best_mod_disagree)
+(best_mod_disagree_coef <- best_mod_disagree[,c(1:4,8)])
+(best_mod_disagree_OR <- best_mod_disagree[,c(1,5:8)])
 
 # Remove old file
-file.remove("Results symlink/OrdReg_editfornondis.txt")
+file.remove("Results symlink/MultReg_editfornondis.txt")
 # Write results
 newline <- "----------------------------------------------------------------------------------------"
 sep <-capture.output(newline,file=NULL) # Print description
@@ -1168,23 +1570,66 @@ sep <-capture.output(newline,file=NULL) # Print description
 descrip <- "Likelihood ratio tests comparing different models"
 txt <-capture.output(descrip,file=NULL) # Print description
 out <-capture.output(best_mod) # Print test result
-cat(txt,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
-cat(out,file="Results symlink/OrdReg_editfornondis.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
+cat(txt,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
+cat(out,file="Results symlink/MultReg_editfornondis.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
 
-descrip2 <- "Summary of model with lowest AIC"
+descrip2 <- "Coefficients - Summary of model with lowest AIC - Agree -> Neutral"
 txt2 <-capture.output(descrip2,file=NULL) # Print description
-out2 <-capture.output(best_mod_sum) # Print test result
-cat(txt2,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
-cat(out2,file="Results symlink/OrdReg_editfornondis.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
+out2 <-capture.output(best_mod_neutral_coef) # Print test result
+cat(txt2,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
+cat(out2,file="Results symlink/MultReg_editfornondis.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
 
-descrip3 <- "Corresponding ORs"
+descrip3 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Neutral"
 txt3 <-capture.output(descrip3,file=NULL) # Print description
-out3 <-capture.output(best_mod_sumORs) # Print test result
-cat(txt3,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
-cat(out3,file="Results symlink/OrdReg_editfornondis.txt",sep="\n", append=T)
-cat(sep,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
+out3 <-capture.output(best_mod_neutral_OR) # Print test result
+cat(txt3,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
+cat(out3,file="Results symlink/MultReg_editfornondis.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
+
+descrip4 <- "Coefficients - Summary of model with lowest AIC - Agree -> Disagree"
+txt4 <-capture.output(descrip4,file=NULL) # Print description
+out4 <-capture.output(best_mod_disagree_coef) # Print test result
+cat(txt4,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
+cat(out4,file="Results symlink/MultReg_editfornondis.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
+
+descrip5 <- "Odds Ratios - Summary of model with lowest AIC - Agree -> Disagree"
+txt5 <-capture.output(descrip5,file=NULL) # Print description
+out5 <-capture.output(best_mod_disagree_OR) # Print test result
+cat(txt5,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
+cat(out5,file="Results symlink/MultReg_editfornondis.txt",sep="\n", append=T)
+cat(sep,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
+
+# # Ordinal Model
+# # Fit and compare models
+# fit <- clm(edit_for_nondis ~ 1, data = all_LR) # Intercept only
+# fit2 <- clm(edit_for_nondis ~ sex, data = all_LR)
+# fit3 <- clm(edit_for_nondis ~ sex + age, data = all_LR)
+# fit4 <- clm(edit_for_nondis ~ sex + age + ethnicity, data = all_LR)
+# fit5 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about, data = all_LR)
+# fit6 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
+# fit7 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
+# fit8 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
+# fit9 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+# fit10 <- clm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+# # Compare
+# (best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10))
+# 
+# # NEED TO CHANGE MODEL NUMBER
+# best_mod_edit_for_nondis <- fit7
+# # CIs and ORs of model with lowest AIC
+# (best_mod_sum <- summary(best_mod_edit_for_nondis))
+# (ci <- confint(best_mod_edit_for_nondis))
+# OR <- coef(best_mod_edit_for_nondis)
+# OR <- OR[-1:-2] # Remove first 2 values which are exponentiates thresholds (i.e. agree -> neutral and neutral -> disagree)
+# (best_mod_sumORs <- exp(cbind(OR, ci)))
+# 
+# # # Proportional Odds Assumption
+# # fit7a <- vglm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR, family=cumulative(parallel=TRUE))
+# # fit7b <- vglm(edit_for_nondis ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR, family=cumulative(parallel=FALSE))
+# # lrtest(fit7a,fit7b)
 
 
 
@@ -1192,7 +1637,7 @@ cat(sep,file="Results symlink/OrdReg_editfornondis.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,30)]
+all_LR <- all_LR[c(8,10:14,16:17,20:21,30,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -1258,23 +1703,26 @@ fit <- multinom(gen_mod_food ~ 1, data = all_LR) # Intercept only
 fit2 <- multinom(gen_mod_food ~ sex, data = all_LR)
 fit3 <- multinom(gen_mod_food ~ sex + age, data = all_LR)
 fit4 <- multinom(gen_mod_food ~ sex + age + ethnicity, data = all_LR)
-fit5 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about, data = all_LR)
-fit6 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level, data = all_LR)
-fit7 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type, data = all_LR)
-fit8 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit9 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit10 <- multinom(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit5 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP, data = all_LR)
+fit6 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about, data = all_LR)
+fit7 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
+fit8 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
+fit9 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
+fit10 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
+fit11 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
 
 # Compare
-best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10)
+best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
 
 # Create vector of AIC values
-AIC <- c(fit$AIC,fit2$AIC,fit3$AIC,fit4$AIC,fit5$AIC,fit6$AIC,fit7$AIC,fit8$AIC,fit9$AIC,fit10$AIC)
+AIC <- c(fit$AIC,fit2$AIC,fit3$AIC,fit4$AIC,fit5$AIC,fit6$AIC,fit7$AIC,fit8$AIC,fit9$AIC,fit10$AIC,fit11$AIC)
 best_mod <- cbind(best_mod, AIC)
 (best_mod <- best_mod[c("Model", "Resid. df", "Resid. Dev", "AIC", "Test", "   Df", "LR stat.", "Pr(Chi)")])
 
-# Change model number here
-best_mod_gen_mod_food <- fit10
+# Find model with lowest AIC and automatically assign
+nametmp <- paste("fit",which.min(AIC),sep="")
+nametmp <- eval(parse(text = nametmp))
+best_mod_gen_mod_food <- nametmp
 # CIs and ORs of model with lowest AIC
 best_mod_sum <- summary(best_mod_gen_mod_food)
 coef <- coef(best_mod_gen_mod_food)
@@ -1390,6 +1838,8 @@ cat(sep,file="Results symlink/MultReg_genmodfood.txt",sep="\n",append=T)
 # fit8a <- vglm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR, family=cumulative(parallel=TRUE))
 # fit8b <- vglm(gen_mod_food ~ sex + age + ethnicity + heard_about + edu_level + religion_type + wealth, data = all_LR, family=cumulative(parallel=FALSE))
 # lrtest(fit8a,fit8b)
+
+
 
 
 # Predict probabilities
