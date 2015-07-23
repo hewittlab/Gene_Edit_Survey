@@ -344,38 +344,6 @@ ggsave(file="Figures symlink/Pyramid_Plot.eps", width=12, height=10)
 
 #AGE_BOXPLOTS----------------------------------------------------------------------------------------
 
-# BOXPLOTS OF AGE BY ETHNICITY
-
-ethnic_vec <- all$ethnicity
-ethnic_vec <- factor(ethnic_vec, levels = c(1,2,3,4,5,6,7,8,9,10,11),labels = c("Mixed Race","African/African American","Asian Indian","Caucasian (European)","Caucasian (Middle East)","Hispanic, Latino or Spanish","Indigenous Australian","Native American","North East Asian (Mongol, Tibetan, Korean, Japanese, etc)","Pacific (Polynesian, micronesian, etc)","South East Asian (Chinese, Thai, Malay, Filipino, etc)"))
-age_stat <- data.frame(age=all$age, group=ethnic_vec)
-
-ggplot(age_stat, aes(x=group, y=age)) + 
-  geom_boxplot() + 
-  scale_y_continuous(breaks=seq(10,100,10),labels=seq(10,100,10)) + 
-  labs(title="Boxplots of Age by Ethnicity",x="Ethnicity", y="Age") + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-ggsave(file="Figures symlink/Boxplot_Age*Ethnicity.eps", width=12, height=8)
-
-
-# BOXPLOTS OF AGE (CAUCASIAN VS ASIAN)
-
-age_stat <- data.frame(age=all$age, group=all$ethnicity)
-age_stat <- subset(age_stat, group == 4 | group == 5 | group == 9 | group == 11)
-# Recode
-age_stat$group <- recode(age_stat$group,
-'"4" = "Caucasian";
-"5" = "Caucasian";
-"9" = "Asian";
-"11" = "Asian"')
-levels(age_stat$group)
-
-ggplot(age_stat, aes(x=group, y=age)) + 
-  geom_boxplot() + 
-  scale_y_continuous(breaks=seq(10,100,10),labels=seq(10,100,10)) + 
-  labs(title="Boxplots of Age - Caucasian vs Asian",x="Ethnicity", y="Age")
-ggsave(file="Figures symlink/Boxplot_Age*CaucasianVsAsian.eps", width=12, height=8)
-
 
 # BOXPLOTS OF AGE BY MOST FREQUENT 8 COUNTRIES
 country_table <- table(all$country)
@@ -398,6 +366,37 @@ ggplot(age_country, aes(x=group, y=age)) +
   labs(title="Boxplots of Age by Country",x="Country", y="Age") + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave(file="Figures symlink/Boxplot_Age*Country.eps", width=12, height=8)
+
+
+# BOXPLOTS OF AGE BY ETHNICITY
+ethnic_vec <- all$ethnicity
+ethnic_vec <- factor(ethnic_vec, levels = c(1,2,3,4,5,6,7,8,9,10,11),labels = c("Mixed Race","African/African American","Asian Indian","Caucasian (European)","Caucasian (Middle East)","Hispanic, Latino or Spanish","Indigenous Australian","Native American","North East Asian (Mongol, Tibetan, Korean, Japanese, etc)","Pacific (Polynesian, micronesian, etc)","South East Asian (Chinese, Thai, Malay, Filipino, etc)"))
+age_stat <- data.frame(age=all$age, group=ethnic_vec)
+
+ggplot(age_stat, aes(x=group, y=age)) + 
+  geom_boxplot() + 
+  scale_y_continuous(breaks=seq(10,100,10),labels=seq(10,100,10)) + 
+  labs(title="Boxplots of Age by Ethnicity",x="Ethnicity", y="Age") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(file="Figures symlink/Boxplot_Age*Ethnicity.eps", width=12, height=8)
+
+
+# BOXPLOTS OF AGE (CAUCASIAN VS ASIAN)
+age_stat <- data.frame(age=all$age, group=all$ethnicity)
+age_stat <- subset(age_stat, group == 4 | group == 5 | group == 9 | group == 11)
+# Recode
+age_stat$group <- recode(age_stat$group,
+'"4" = "Caucasian";
+"5" = "Caucasian";
+"9" = "Asian";
+"11" = "Asian"')
+levels(age_stat$group)
+
+ggplot(age_stat, aes(x=group, y=age)) + 
+  geom_boxplot() + 
+  scale_y_continuous(breaks=seq(10,100,10),labels=seq(10,100,10)) + 
+  labs(title="Boxplots of Age - Caucasian vs Asian",x="Ethnicity", y="Age")
+ggsave(file="Figures symlink/Boxplot_Age*CaucasianVsAsian.eps", width=12, height=8)
 
 
 #DENSITY_PLOTS----------------------------------------------------------------------------------------
