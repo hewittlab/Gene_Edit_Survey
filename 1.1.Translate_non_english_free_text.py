@@ -13,7 +13,13 @@
 
 import json
 import goslate
+from progressbar import *
+import argparse
 
+parser = argparse.ArgumentParser(description='Translates non-english free text questions into english')
+parser.add_argument('-i', '--input', help="Input file (json only)", required=True)
+parser.add_argument('-o', '--output', help="Output file (will become json)", required=True)
+args = vars(parser.parse_args())
 
 # ####Used to convert the language encodings from the input file into ones that the Goslate module understands.
 
@@ -26,7 +32,7 @@ langs = {"ENGLISH": "en", "FRENCH":"fr", "CHINESE":"zh-TW", "ARABIC":"ar", "RUSS
 
 # In[3]:
 
-with open("../data/data_with_free_text.json") as f:
+with open(args['input']) as f:
     answers = json.load(f)
 
 
@@ -36,22 +42,27 @@ with open("../data/data_with_free_text.json") as f:
 # I added the `timeout=100` to the constructor of Goslate as I was getting a timeout error a few minutes in to processing. You may or may not need to tweak this. [YMMV](http://dictionary.cambridge.org/dictionary/british/ymmv).
 
 # In[4]:
-
+filtered = [answer for answer in answers if answer['language'] != "ENGLISH"]
 gs = goslate.Goslate(timeout=100)
+widgets = ['Translate Progress: ', Percentage(), ' ', Bar(marker='#',left='[',right=']'), ' ', SimpleProgress()] 
+pbar = ProgressBar(widgets = widgets, maxval = len(filtered)) 
+pbar.start()
 
 free_text_questions = ['question_25', 'other_traits_alter']
-for answer in [answer for answer in answers if answer['language'] != "ENGLISH"]:
+for index, answer in enumerate(filtered):
+    pbar.update(index)
     for question in free_text_questions:
         if question in answer:
             if answer[question] != "":
                 result = gs.translate(answer[question], "en")
                 answer[question] = result
 
+pbar.finish()
 
 # ####Write translated data to file
 
 # In[5]:
 
-with open("../data/data_with_free_text_translated.json", "w") as f:
+with open(args['output'], "w") as f:
     json.dump(answers, f, indent=4)
 
