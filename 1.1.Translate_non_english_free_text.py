@@ -48,7 +48,7 @@ widgets = ['Translate Progress: ', Percentage(), ' ', Bar(marker='#',left='[',ri
 pbar = ProgressBar(widgets = widgets, maxval = len(filtered)) 
 pbar.start()
 
-free_text_questions = ['question_25', 'other_traits_alter']
+free_text_questions = ['reason', 'other_traits_alter']
 for index, answer in enumerate(filtered):
     pbar.update(index)
     for question in free_text_questions:
