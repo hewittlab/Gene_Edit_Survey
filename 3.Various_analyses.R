@@ -52,6 +52,107 @@ write.table(attrition, "Results symlink/attrition.txt", sep="\t")
 
 # DEMOGRAPHIC SUMMARY STATS
 
+# KIDS_CURE_LIFE
+kids_cure_life_table <- table(all$kids_cure_life)
+kids_cure_life_prop <- round(prop.table(kids_cure_life_table)*100,2)
+kids_cure_life_stat <- data.frame(kids_cure_life_table, kids_cure_life_prop)
+kids_cure_life_stat <- kids_cure_life_stat[,c(1,2,4)]
+kids_cure_life_stat <- rename(kids_cure_life_stat,c("Var1"="response","Freq"="freq","Freq.1"="%"))
+# Write results
+write.csv(kids_cure_life_stat, "Results symlink/kids_cure_life_stat.csv")
+write.table(kids_cure_life_stat, "Results symlink/kids_cure_life_stat.txt", sep="\t")
+
+
+# KIDS_CURE_DEBIL
+kids_cure_debil_table <- table(all$kids_cure_debil)
+kids_cure_debil_prop <- round(prop.table(kids_cure_debil_table)*100,2)
+kids_cure_debil_stat <- data.frame(kids_cure_debil_table, kids_cure_debil_prop)
+kids_cure_debil_stat <- kids_cure_debil_stat[,c(1,2,4)]
+kids_cure_debil_stat <- rename(kids_cure_debil_stat,c("Var1"="response","Freq"="freq","Freq.1"="%"))
+# Write results
+write.csv(kids_cure_debil_stat, "Results symlink/kids_cure_debil_stat.csv")
+write.table(kids_cure_debil_stat, "Results symlink/kids_cure_debil_stat.txt", sep="\t")
+
+
+# EMBR_PREV_LIFE
+embr_prev_life_table <- table(all$embr_prev_life)
+embr_prev_life_prop <- round(prop.table(embr_prev_life_table)*100,2)
+embr_prev_life_stat <- data.frame(embr_prev_life_table, embr_prev_life_prop)
+embr_prev_life_stat <- embr_prev_life_stat[,c(1,2,4)]
+embr_prev_life_stat <- rename(embr_prev_life_stat,c("Var1"="response","Freq"="freq","Freq.1"="%"))
+# Write results
+write.csv(embr_prev_life_stat, "Results symlink/embr_prev_life_stat.csv")
+write.table(embr_prev_life_stat, "Results symlink/embr_prev_life_stat.txt", sep="\t")
+
+
+# EMBR_PREV_DEBIL
+embr_prev_debil_table <- table(all$embr_prev_debil)
+embr_prev_debil_prop <- round(prop.table(embr_prev_debil_table)*100,2)
+embr_prev_debil_stat <- data.frame(embr_prev_debil_table, embr_prev_debil_prop)
+embr_prev_debil_stat <- embr_prev_debil_stat[,c(1,2,4)]
+embr_prev_debil_stat <- rename(embr_prev_debil_stat,c("Var1"="response","Freq"="freq","Freq.1"="%"))
+# Write results
+write.csv(embr_prev_debil_stat, "Results symlink/embr_prev_debil_stat.csv")
+write.table(embr_prev_debil_stat, "Results symlink/embr_prev_debil_stat.txt", sep="\t")
+
+
+# EDIT_FOR_NONDIS
+edit_for_nondis_table <- table(all$edit_for_nondis)
+edit_for_nondis_prop <- round(prop.table(edit_for_nondis_table)*100,2)
+edit_for_nondis_stat <- data.frame(edit_for_nondis_table, edit_for_nondis_prop)
+edit_for_nondis_stat <- edit_for_nondis_stat[,c(1,2,4)]
+edit_for_nondis_stat <- rename(edit_for_nondis_stat,c("Var1"="response","Freq"="freq","Freq.1"="%"))
+# Write results
+write.csv(edit_for_nondis_stat, "Results symlink/edit_for_nondis_stat.csv")
+write.table(edit_for_nondis_stat, "Results symlink/edit_for_nondis_stat.txt", sep="\t")
+
+
+# DETER_PHYS_APPEAR
+deter_phys_appear_table <- table(all$deter_phys_appear)
+deter_phys_appear_prop <- round(prop.table(deter_phys_appear_table)*100,2)
+deter_phys_appear_stat <- data.frame(deter_phys_appear_table, deter_phys_appear_prop)
+deter_phys_appear_stat <- deter_phys_appear_stat[,c(1,2,4)]
+deter_phys_appear_stat <- rename(deter_phys_appear_stat,c("Var1"="response","Freq"="freq","Freq.1"="%"))
+# Write results
+write.csv(deter_phys_appear_stat, "Results symlink/deter_phys_appear_stat.csv")
+write.table(deter_phys_appear_stat, "Results symlink/deter_phys_appear_stat.txt", sep="\t")
+
+
+# DETER_INTELL
+deter_intell_table <- table(all$deter_intell)
+deter_intell_prop <- round(prop.table(deter_intell_table)*100,2)
+deter_intell_stat <- data.frame(deter_intell_table, deter_intell_prop)
+deter_intell_stat <- deter_intell_stat[,c(1,2,4)]
+deter_intell_stat <- rename(deter_intell_stat,c("Var1"="response","Freq"="freq","Freq.1"="%"))
+# Write results
+write.csv(deter_intell_stat, "Results symlink/deter_intell_stat.csv")
+write.table(deter_intell_stat, "Results symlink/deter_intell_stat.txt", sep="\t")
+
+
+# DETER_STRENGTH
+deter_strength_table <- table(all$deter_strength)
+deter_strength_prop <- round(prop.table(deter_strength_table)*100,2)
+deter_strength_stat <- data.frame(deter_strength_table, deter_strength_prop)
+deter_strength_stat <- deter_strength_stat[,c(1,2,4)]
+deter_strength_stat <- rename(deter_strength_stat,c("Var1"="response","Freq"="freq","Freq.1"="%"))
+# Write results
+write.csv(deter_strength_stat, "Results symlink/deter_strength_stat.csv")
+write.table(deter_strength_stat, "Results symlink/deter_strength_stat.txt", sep="\t")
+
+
+# GEN_MOD_FOOD
+gen_mod_food_table <- table(all$gen_mod_food)
+gen_mod_food_prop <- round(prop.table(gen_mod_food_table)*100,2)
+gen_mod_food_stat <- data.frame(gen_mod_food_table, gen_mod_food_prop)
+gen_mod_food_stat <- gen_mod_food_stat[,c(1,2,4)]
+gen_mod_food_stat <- rename(gen_mod_food_stat,c("Var1"="response","Freq"="freq","Freq.1"="%"))
+# Write results
+write.csv(gen_mod_food_stat, "Results symlink/gen_mod_food_stat.csv")
+write.table(gen_mod_food_stat, "Results symlink/gen_mod_food_stat.txt", sep="\t")
+
+
+
+
 # COUNTRY
 country_table <- table(all$country)
 country_prop <- round(prop.table(country_table)*100,2)
