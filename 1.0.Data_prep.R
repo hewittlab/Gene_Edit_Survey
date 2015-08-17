@@ -974,6 +974,8 @@ for(i in 1:nrow(all)) {
 
 all$GDP <- all$tmp
 all$tmp <- NULL
+all$other_traits_alter <- NULL
+all$reason <- NULL
 
 
 #----------------------------------------------------------------------------------------

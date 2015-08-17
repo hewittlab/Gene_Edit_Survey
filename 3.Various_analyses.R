@@ -27,6 +27,18 @@ table(mult_ip)
 
 #ATTRITION-----------------------------------------------------------------------------------------------
 
+# Delete rows 7645 and 7992. There is a problem with these observations. Many of the demographic responses are missing but somehow there is a response recording for the gen_mod_food question and it consequently contaminates the 'complete' subset.
+all <- all[c(-7647,-7992),]
+
+# COMPLETE VS INCOMPLETE SUBSET ANALYSES ----- CHANGE HERE
+
+# # Complete (Remove rows based on gen_mod_food = NA)
+# all <- all[!is.na(all[,30]),] 
+# 
+# # Incomplete (Remove rows based on gen_mod_food being completed)
+# all <- all[is.na(all[,30]),] 
+
+
 # CHECK ATTRITION as questions progress - Count NA's
 
 # Demographic variables
@@ -46,6 +58,13 @@ attrition
 # Write results
 write.csv(attrition, "Results symlink/attrition.csv")
 write.table(attrition, "Results symlink/attrition.txt", sep="\t")
+
+
+# #Subset all who agreed
+# all <- all[which((all$kids_cure_life==1 | all$kids_cure_life==2) & (all$kids_cure_debil==1 | all$kids_cure_debil==2) &(all$embr_prev_life==1 | all$embr_prev_life==2) & (all$embr_prev_debil==1 | all$embr_prev_debil==2) & (all$edit_for_nondis==1 | all$edit_for_nondis==2) & (all$gen_mod_food==1 | all$gen_mod_food==2)),]
+# 
+# #Subset all who disagreed
+# all <- all[which((all$kids_cure_life==4 | all$kids_cure_life==5) & (all$kids_cure_debil==4 | all$kids_cure_debil==5) &(all$embr_prev_life==4 | all$embr_prev_life==5) & (all$embr_prev_debil==4 | all$embr_prev_debil==5) & (all$edit_for_nondis==4 | all$edit_for_nondis==5) & (all$gen_mod_food==4 | all$gen_mod_food==5)),]
 
 
 #DEM_SUMMARY_STATS---------------------------------------------------------------------------------------

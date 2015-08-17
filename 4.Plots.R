@@ -336,7 +336,7 @@ ggplot(data=all,aes(x=age,fill=sex)) +
   geom_bar(subset=.(sex=="M"),aes(y=..count..*(-1))) + 
   scale_fill_grey(start = 0.1, end = 0.4, na.value = "grey50") +
   scale_x_continuous(breaks=seq(0,100,10),labels=abs(seq(0,100,10))) +
-  scale_y_continuous(breaks=seq(-1200,1000,80),labels=abs(seq(-1200,1000,80))) +
+  scale_y_continuous(breaks=seq(-2000,1500,80),labels=abs(seq(-2000,1500,80))) +
   labs(title="Population Pyramid", x="Age", y="Frequency") +
   coord_flip()
 ggsave(file="Figures symlink/Pyramid_Plot.eps", width=12, height=10)
