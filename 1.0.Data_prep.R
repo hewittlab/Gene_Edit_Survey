@@ -104,6 +104,7 @@ wechat$country <- recode(wechat$country,
 "澳大利亚" = "Australia";
 "德国" = "Germany";
 "美国" = "United States of America";
+"日本" = "Japan";
 "英国" = "United Kingdom";
 c("其他", "") = "Other"')
 levels(wechat$country)
