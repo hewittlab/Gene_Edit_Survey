@@ -33,10 +33,17 @@ all <- all[c(-7647,-7992),]
 # COMPLETE VS INCOMPLETE SUBSET ANALYSES ----- CHANGE HERE
 
 # # Complete (Remove rows based on gen_mod_food = NA)
-# all <- all[!is.na(all[,30]),] 
+ all <- all[!is.na(all[,30]),] 
 # 
 # # Incomplete (Remove rows based on gen_mod_food being completed)
 # all <- all[is.na(all[,30]),] 
+
+
+# #Subset all who agreed
+# all <- all[which((all$kids_cure_life==1 | all$kids_cure_life==2) & (all$kids_cure_debil==1 | all$kids_cure_debil==2) &(all$embr_prev_life==1 | all$embr_prev_life==2) & (all$embr_prev_debil==1 | all$embr_prev_debil==2) & (all$edit_for_nondis==1 | all$edit_for_nondis==2) & (all$gen_mod_food==1 | all$gen_mod_food==2)),]
+# 
+# #Subset all who disagreed
+# all <- all[which((all$kids_cure_life==4 | all$kids_cure_life==5) & (all$kids_cure_debil==4 | all$kids_cure_debil==5) &(all$embr_prev_life==4 | all$embr_prev_life==5) & (all$embr_prev_debil==4 | all$embr_prev_debil==5) & (all$edit_for_nondis==4 | all$edit_for_nondis==5) & (all$gen_mod_food==4 | all$gen_mod_food==5)),]
 
 
 # CHECK ATTRITION as questions progress - Count NA's
@@ -58,13 +65,6 @@ attrition
 # Write results
 write.csv(attrition, "Results symlink/attrition.csv")
 write.table(attrition, "Results symlink/attrition.txt", sep="\t")
-
-
-# #Subset all who agreed
-# all <- all[which((all$kids_cure_life==1 | all$kids_cure_life==2) & (all$kids_cure_debil==1 | all$kids_cure_debil==2) &(all$embr_prev_life==1 | all$embr_prev_life==2) & (all$embr_prev_debil==1 | all$embr_prev_debil==2) & (all$edit_for_nondis==1 | all$edit_for_nondis==2) & (all$gen_mod_food==1 | all$gen_mod_food==2)),]
-# 
-# #Subset all who disagreed
-# all <- all[which((all$kids_cure_life==4 | all$kids_cure_life==5) & (all$kids_cure_debil==4 | all$kids_cure_debil==5) &(all$embr_prev_life==4 | all$embr_prev_life==5) & (all$embr_prev_debil==4 | all$embr_prev_debil==5) & (all$edit_for_nondis==4 | all$edit_for_nondis==5) & (all$gen_mod_food==4 | all$gen_mod_food==5)),]
 
 
 #DEM_SUMMARY_STATS---------------------------------------------------------------------------------------
@@ -719,7 +719,7 @@ all$GDP <- all$GDP/1000
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:22,31)]
+all_LR <- all_LR[c(8,10:17,20:22,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -732,6 +732,18 @@ NA = "None";
 else = "Other"')
 levels(all_LR$religion_type)
 all_LR$religion_type <- relevel(all_LR$religion_type, "None")
+# Remove NAs from "worked_health" - now all NAs in "worked_health_type" indicate that person has not worked in health.
+all_LR<-subset(all_LR,!(is.na(all_LR["worked_health"])))
+# Recode worked_health and set None as the comparison category
+all_LR$worked_health_type <- recode(all_LR$worked_health_type,
+'"1" = "Doctor";
+"2" = "Researcher";
+"3" = "Nurse";
+"4" = "Allied";
+NA = "None";
+else = "Other"')
+levels(all_LR$worked_health_type)
+all_LR$worked_health_type <- relevel(all_LR$worked_health_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$kids_cure_life <- recode(all_LR$kids_cure_life,
@@ -789,8 +801,8 @@ fit6 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about, dat
 fit7 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
 fit8 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
 fit9 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit10 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit11 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit10 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type, data = all_LR)
+fit11 <- multinom(kids_cure_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type + genetic_cond, data = all_LR)
 
 # Compare
 best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
@@ -936,7 +948,7 @@ cat(sep,file="Results symlink/MultReg_kidscurelife.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,23,31)]
+all_LR <- all_LR[c(8,10:17,20:21,23,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -949,6 +961,18 @@ NA = "None";
 else = "Other"')
 levels(all_LR$religion_type)
 all_LR$religion_type <- relevel(all_LR$religion_type, "None")
+# Remove NAs from "worked_health" - now all NAs in "worked_health_type" indicate that person has not worked in health.
+all_LR<-subset(all_LR,!(is.na(all_LR["worked_health"])))
+# Recode worked_health and set None as the comparison category
+all_LR$worked_health_type <- recode(all_LR$worked_health_type,
+'"1" = "Doctor";
+"2" = "Researcher";
+"3" = "Nurse";
+"4" = "Allied";
+NA = "None";
+else = "Other"')
+levels(all_LR$worked_health_type)
+all_LR$worked_health_type <- relevel(all_LR$worked_health_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$kids_cure_debil <- recode(all_LR$kids_cure_debil,
@@ -1006,8 +1030,8 @@ fit6 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about, da
 fit7 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
 fit8 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
 fit9 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit10 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit11 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit10 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type, data = all_LR)
+fit11 <- multinom(kids_cure_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type + genetic_cond, data = all_LR)
 
 # Compare
 best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
@@ -1141,7 +1165,7 @@ cat(sep,file="Results symlink/MultReg_kidscuredebil.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,24,31)]
+all_LR <- all_LR[c(8,10:17,20:21,24,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -1154,6 +1178,18 @@ NA = "None";
 else = "Other"')
 levels(all_LR$religion_type)
 all_LR$religion_type <- relevel(all_LR$religion_type, "None")
+# Remove NAs from "worked_health" - now all NAs in "worked_health_type" indicate that person has not worked in health.
+all_LR<-subset(all_LR,!(is.na(all_LR["worked_health"])))
+# Recode worked_health and set None as the comparison category
+all_LR$worked_health_type <- recode(all_LR$worked_health_type,
+'"1" = "Doctor";
+"2" = "Researcher";
+"3" = "Nurse";
+"4" = "Allied";
+NA = "None";
+else = "Other"')
+levels(all_LR$worked_health_type)
+all_LR$worked_health_type <- relevel(all_LR$worked_health_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$embr_prev_life <- recode(all_LR$embr_prev_life,
@@ -1211,8 +1247,8 @@ fit6 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about, dat
 fit7 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
 fit8 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
 fit9 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit10 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit11 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit10 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type, data = all_LR)
+fit11 <- multinom(embr_prev_life ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type + genetic_cond, data = all_LR)
 
 # Compare
 best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
@@ -1346,7 +1382,7 @@ cat(sep,file="Results symlink/MultReg_embrprevlife.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,25,31)]
+all_LR <- all_LR[c(8,10:17,20:21,25,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -1359,6 +1395,18 @@ NA = "None";
 else = "Other"')
 levels(all_LR$religion_type)
 all_LR$religion_type <- relevel(all_LR$religion_type, "None")
+# Remove NAs from "worked_health" - now all NAs in "worked_health_type" indicate that person has not worked in health.
+all_LR<-subset(all_LR,!(is.na(all_LR["worked_health"])))
+# Recode worked_health and set None as the comparison category
+all_LR$worked_health_type <- recode(all_LR$worked_health_type,
+'"1" = "Doctor";
+"2" = "Researcher";
+"3" = "Nurse";
+"4" = "Allied";
+NA = "None";
+else = "Other"')
+levels(all_LR$worked_health_type)
+all_LR$worked_health_type <- relevel(all_LR$worked_health_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$embr_prev_debil <- recode(all_LR$embr_prev_debil,
@@ -1416,8 +1464,8 @@ fit6 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about, da
 fit7 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
 fit8 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
 fit9 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit10 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit11 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit10 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type, data = all_LR)
+fit11 <- multinom(embr_prev_debil ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type + genetic_cond, data = all_LR)
 
 # Compare
 best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
@@ -1551,7 +1599,7 @@ cat(sep,file="Results symlink/MultReg_embrprevdebil.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,26,31)]
+all_LR <- all_LR[c(8,10:17,20:21,26,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -1564,6 +1612,18 @@ NA = "None";
 else = "Other"')
 levels(all_LR$religion_type)
 all_LR$religion_type <- relevel(all_LR$religion_type, "None")
+# Remove NAs from "worked_health" - now all NAs in "worked_health_type" indicate that person has not worked in health.
+all_LR<-subset(all_LR,!(is.na(all_LR["worked_health"])))
+# Recode worked_health and set None as the comparison category
+all_LR$worked_health_type <- recode(all_LR$worked_health_type,
+'"1" = "Doctor";
+"2" = "Researcher";
+"3" = "Nurse";
+"4" = "Allied";
+NA = "None";
+else = "Other"')
+levels(all_LR$worked_health_type)
+all_LR$worked_health_type <- relevel(all_LR$worked_health_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$edit_for_nondis <- recode(all_LR$edit_for_nondis,
@@ -1621,8 +1681,8 @@ fit6 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about, da
 fit7 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
 fit8 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
 fit9 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit10 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit11 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit10 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type, data = all_LR)
+fit11 <- multinom(edit_for_nondis ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type + genetic_cond, data = all_LR)
 
 # Compare
 best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
@@ -1757,7 +1817,7 @@ cat(sep,file="Results symlink/MultReg_editfornondis.txt",sep="\n",append=T)
 # Duplicate main dataset before collapsing likert levels
 all_LR <- all
 # Remove NAs from dataset (keep relevant variables only to minimise data loss), otherwise can't do LR test of different models
-all_LR <- all_LR[c(8,10:14,16:17,20:21,30,31)]
+all_LR <- all_LR[c(8,10:17,20:21,30,31)]
 # Remove NAs from "religion" - now all NAs in "religion_type" indicate that person has no religion.
 all_LR<-subset(all_LR,!(is.na(all_LR["religion"])))
 # Recode religion and set Christian as the comparison category
@@ -1770,6 +1830,18 @@ NA = "None";
 else = "Other"')
 levels(all_LR$religion_type)
 all_LR$religion_type <- relevel(all_LR$religion_type, "None")
+# Remove NAs from "worked_health" - now all NAs in "worked_health_type" indicate that person has not worked in health.
+all_LR<-subset(all_LR,!(is.na(all_LR["worked_health"])))
+# Recode worked_health and set None as the comparison category
+all_LR$worked_health_type <- recode(all_LR$worked_health_type,
+'"1" = "Doctor";
+"2" = "Researcher";
+"3" = "Nurse";
+"4" = "Allied";
+NA = "None";
+else = "Other"')
+levels(all_LR$worked_health_type)
+all_LR$worked_health_type <- relevel(all_LR$worked_health_type, "None")
 all_LR <- na.omit(all_LR)
 # Recode dependent variable (collapse 6 levels to 3)
 all_LR$gen_mod_food <- recode(all_LR$gen_mod_food,
@@ -1828,8 +1900,8 @@ fit6 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about, data 
 fit7 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level, data = all_LR)
 fit8 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type, data = all_LR)
 fit9 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth, data = all_LR)
-fit10 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health, data = all_LR)
-fit11 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health + genetic_cond, data = all_LR)
+fit10 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type, data = all_LR)
+fit11 <- multinom(gen_mod_food ~ sex + age + ethnicity + GDP + heard_about + edu_level + religion_type + wealth + worked_health_type + genetic_cond, data = all_LR)
 
 # Compare
 best_mod <- anova(fit, fit2, fit3, fit4, fit5, fit6, fit7, fit8, fit9, fit10, fit11)
@@ -2024,7 +2096,7 @@ vif_func<-function(in_frame,thresh=10,trace=T,...){
 
 
 vif_test <- all[c(8,10:14,16:17,20:21,31)]
-vif_test <- na.omit(test)
+vif_test <- na.omit(vif_test)
 vif_test$sex <- recode(vif_test$sex,
 '"M" = 1;
 "F" = 2')
@@ -2049,6 +2121,4 @@ vif_test$religion <- as.numeric(vif_test$religion)
 vif_test$religion_type <- as.numeric(vif_test$religion_type)
 
 vif_func(in_frame=vif_test,thresh=5,trace=T)
-
-
 
