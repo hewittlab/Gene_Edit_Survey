@@ -9,4 +9,4 @@ We developed an online survey to capture an international perspective on the iss
 
 The files in this repository were used in the analysis of the data generated.
 
-The raw data files will be uploaded once the manuscript describing the results has been published.
+The raw and processed data files are available in the Data Directory.
